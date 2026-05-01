@@ -382,7 +382,7 @@ header + .section {
 }
 
 .link-card h3 {
-  margin: 18px 0 8px;
+  margin: 0 0 8px;
   font-size: 22px;
   letter-spacing: -0.04em;
 }
@@ -423,7 +423,6 @@ header + .section {
 }
 
 .arrow {
-  margin-top: 22px;
   color: var(--text);
   opacity: .78;
   font-size: 14px;
