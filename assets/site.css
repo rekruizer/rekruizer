@@ -281,6 +281,23 @@ h1 {
   font-size: 15px;
 }
 
+.booking-lines {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.booking-lines p {
+  color: rgba(245,241,234,.82);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.booking-button {
+  width: fit-content;
+  margin-top: 22px;
+}
+
 .stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -377,16 +394,31 @@ h1 {
   font-size: 14px;
 }
 
-.record-card {
+.record-card,
+.social-card {
   cursor: default;
 }
 
-.record-card:hover {
+.record-card:hover,
+.social-card:hover {
   transform: none;
 }
 
-.record-button {
+.record-button,
+.social-actions {
   width: fit-content;
+}
+
+.social-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.social-button {
+  padding: 10px 12px;
+  font-size: 13px;
 }
 
 .arrow {
@@ -427,7 +459,7 @@ footer {
   }
 
   nav {
-    display: none;
+    display: flex;
   }
 
   .hero {
