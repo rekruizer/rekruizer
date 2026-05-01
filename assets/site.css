@@ -387,6 +387,10 @@ header + .section {
   letter-spacing: -0.04em;
 }
 
+.link-card .tag + h3 {
+  margin-top: 14px;
+}
+
 .link-card p {
   margin: 0;
   color: var(--muted);
