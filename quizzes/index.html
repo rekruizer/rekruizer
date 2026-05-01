@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Тесты по анатомии — Denis Yuce</title>
+  <meta name="description" content="Квизы по анатомии: мышцы, кости, нервы и ориентиры." />
+  <link rel="stylesheet" href="/assets/site.css" />
+</head>
+<body>
+  <main class="page">
+    <header>
+      <a class="brand" href="/">
+        <span class="mark">D</span>
+        <span>Denis Yuce</span>
+      </a>
+
+      <nav aria-label="Навигация">
+        <a href="/">Главная</a>
+        <a href="/quizzes/">Квизы</a>
+        <a href="mailto:rekruizer@yandex.ru">Связь</a>
+      </nav>
+    </header>
+
+    <section class="hero subpage-hero">
+      <div class="hero-main">
+        <div>
+          <div class="breadcrumbs"><a href="/">Главная</a><span>/</span><span>Квизы</span></div>
+          <div class="eyebrow"><span class="dot"></span> Тесты по анатомии</div>
+          <h1>Квизы для закрепления анатомии.</h1>
+          <p class="lead">Практические тесты по мышцам, костям, нервам и ориентирам. Выбирай тему и проходи в своем темпе.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Доступные квизы</h2>
+      </div>
+
+      <div class="links quiz-list">
+        <a class="link-card" href="/quizzes/legs/">
+          <div>
+            <span class="tag">Нижние конечности</span>
+            <h3>Мышцы, кости и нервы</h3>
+            <p>Вопросы по бедру, ягодичной области, голени, стопе и ключевым нервам.</p>
+          </div>
+          <div class="arrow">Начать →</div>
+        </a>
+      </div>
+    </section>
+    <footer>
+      <span>© <span id="year"></span> Denis Yuce</span>
+      <span>denisyuce.com</span>
+    </footer>
+  </main>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
