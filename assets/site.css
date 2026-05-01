@@ -295,7 +295,7 @@ h1 {
 
 .booking-button {
   width: fit-content;
-  margin-top: 22px;
+  margin-top: 32px;
 }
 
 .stats {
@@ -412,13 +412,14 @@ h1 {
 .social-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
   margin-top: 20px;
 }
 
 .social-button {
-  padding: 10px 12px;
-  font-size: 13px;
+  padding: 8px 10px;
+  font-size: 12px;
+  line-height: 1;
 }
 
 .arrow {
@@ -500,6 +501,19 @@ footer {
   .button {
     width: 100%;
     justify-content: center;
+  }
+
+  .social-actions {
+    width: 100%;
+    flex-wrap: nowrap;
+  }
+
+  .social-button {
+    width: auto;
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 9px 6px;
+    font-size: 12px;
   }
 }
 
