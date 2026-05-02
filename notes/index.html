@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Заметки — Денис Пучков</title>
+  <meta name="description" content="Заметки по массажу, сервису, обучению и практике." />
+  <link rel="stylesheet" href="/assets/site.css" />
+</head>
+<body>
+  <main class="page">
+    <header>
+      <a class="brand" href="/">
+        <span class="mark">D</span>
+        <span>Денис Пучков</span>
+      </a>
+
+      <nav aria-label="Навигация">
+        <a href="https://dikidi.net/massages">Онлайн-запись</a>
+      </nav>
+    </header>
+
+    <section class="hero subpage-hero">
+      <div class="hero-main">
+        <div class="quiz-hero-content">
+          <div>
+            <div class="breadcrumbs"><a href="/">Главная</a><span>/</span><span>Заметки</span></div>
+            <h1>Заметки</h1>
+            <p class="lead">Конспекты, наблюдения и рабочие материалы по массажу, сервису и практике.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Все заметки</h2>
+      </div>
+
+      <div class="links quiz-list">
+        <a class="link-card quiz-entry" href="/notes/service-and-spa/">
+          <div>
+            <h3>Сервис и СПА</h3>
+            <p>Типология клиента, мультисенсорный сервис, форматы процедур и алгоритм работы с клиентом.</p>
+          </div>
+          <div class="arrow">Открыть →</div>
+        </a>
+      </div>
+    </section>
+    <footer>
+      <span>© <span id="year"></span> Денис Пучков</span>
+      <span>denisyuce.com</span>
+    </footer>
+  </main>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Сервис и СПА — Денис Пучков</title>
+  <meta name="description" content="Конспект по сервису, СПА и алгоритму работы с клиентом." />
+  <link rel="stylesheet" href="/assets/site.css" />
+</head>
+<body>
+  <main class="page">
+    <header>
+      <a class="brand" href="/">
+        <span class="mark">D</span>
+        <span>Денис Пучков</span>
+      </a>
+
+      <nav aria-label="Навигация">
+        <a href="https://dikidi.net/massages">Онлайн-запись</a>
+      </nav>
+    </header>
+
+    <section class="section note-shell">
+      <div class="breadcrumbs"><a href="/">Главная</a><span>/</span><a href="/notes/">Заметки</a><span>/</span><span>Сервис и СПА</span></div>
+      <div class="section-head">
+        <h1>Сервис и СПА</h1>
+      </div>
+      <p class="lead note-page-lead">Конспект по основам СПА-сервиса, типологии клиента, мультисенсорному воздействию, форматам процедур и алгоритму отношений с клиентом.</p>
+
+      <article class="note-content">
+        <h2>Основы СПА и сервисной логики</h2>
+        <div class="note-source">
+
+  <div class="note-block">
+    <div class="note-block-head">
+      <span>1. Прикладная типология (конституциональные типы)</span>
+    </div>
+    <div class="note-block-body">
+      <p>Корни — аюрведа → тибетская медицина → Пётр Бадмаев (переводчик «Чжуд-Ши»). Базируемся на физиологии и психологии, не на восточной философии.</p>
+      <div class="note-grid note-grid-3">
+        <div class="note-card">
+          <div class="note-card-title">Тип 1 — Астеник</div>
+          <div class="note-row"><span class="note-label">Свойства</span><span class="note-value">холодный, сухой, быстрый</span></div>
+          <div class="note-row"><span class="note-label">Внешность</span><span class="note-value">тонкая кожа, выступающие сосуды и суставы, фасции видны</span></div>
+          <div class="note-row"><span class="note-label">Психика</span><span class="note-value">подвижная, склонность к бессоннице, неврозам</span></div>
+          <div class="note-row"><span class="note-label">При дисбалансе</span><span class="note-value">раздражительность, запоры, газы, потеря аппетита, трещины кожи</span></div>
+          <div class="note-row"><span class="note-label">Доминант. чувства</span><span class="note-value">слух + осязание</span></div>
+        </div>
+        <div class="note-card">
+          <div class="note-card-title">Тип 2 — Нормостеник</div>
+          <div class="note-row"><span class="note-label">Свойства</span><span class="note-value">горячий, влажный</span></div>
+          <div class="note-row"><span class="note-label">Тип телосложения</span><span class="note-value">мышечный тип</span></div>
+          <div class="note-row"><span class="note-label">Техника массажа</span><span class="note-value">послойное проникновение в ткань</span></div>
+          <div class="note-row"><span class="note-label">Осторожно в бане</span><span class="note-value">избегать перегрева!</span></div>
+          <div class="note-row"><span class="note-label">Доминант. чувства</span><span class="note-value">зрение + вкус</span></div>
+        </div>
+        <div class="note-card">
+          <div class="note-card-title">Тип 3 — Эндоморф</div>
+          <div class="note-row"><span class="note-label">Свойства</span><span class="note-value">накопление массы, застойные явления, слизь</span></div>
+          <div class="note-row"><span class="note-label">Риски здоровья</span><span class="note-value">диабет 2 типа, ожирение, желудочные проблемы</span></div>
+          <div class="note-row"><span class="note-label">Техника массажа</span><span class="note-value">активный, двигательный характер, лимфодренаж, работа с жировой тканью</span></div>
+          <div class="note-row"><span class="note-label">Доминант. чувства</span><span class="note-value">обоняние + вкус</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note-block">
+    <div class="note-block-head">
+      <span>2. Мультисенсорное воздействие — 5 каналов</span>
+    </div>
+    <div class="note-block-body">
+      <p>Все 5 каналов должны работать на цель процедуры. Если один канал даёт негатив — он становится доминантным и разрушает впечатление.</p>
+      <div class="note-grid note-grid-5">
+        <div class="note-card note-center">
+          <span class="note-emoji">👃</span>
+          <div class="note-card-title">Обоняние</div>
+          <div class="note-muted">Свежий воздух — приоритет. Ароматизация — едва уловимая. Чистота тела специалиста. Аромат косметики.</div>
+        </div>
+        <div class="note-card note-center">
+          <span class="note-emoji">👂</span>
+          <div class="note-card-title">Слух</div>
+          <div class="note-muted">Нет посторонних звуков. Музыка под конкретную процедуру. Речь: 80% — интонация, не слова. Говорить тихо и осознанно.</div>
+        </div>
+        <div class="note-card note-center">
+          <span class="note-emoji">👁</span>
+          <div class="note-card-title">Зрение</div>
+          <div class="note-muted">Освещение, чистота, материалы без следов. Внешний вид — «консервативная элегантность». Японский минимализм в декоре.</div>
+        </div>
+        <div class="note-card note-center">
+          <span class="note-emoji">👅</span>
+          <div class="note-card-title">Вкус</div>
+          <div class="note-muted">Обязательно предлагать пить: вода, фиточай, сок. Угощения — индивидуальная упаковка, не общая миска.</div>
+        </div>
+        <div class="note-card note-center">
+          <span class="note-emoji">✋</span>
+          <div class="note-card-title">Осязание</div>
+          <div class="note-muted">Кушетка, халат, полотенца, температура пола. Качество первого касания. Динамика тактильного диалога.</div>
+        </div>
+      </div>
+      <div class="note-callout note-warning">Ключевое правило: если 4 канала идеальны, а 1 — с ошибкой, именно этот 1 будет помниться клиенту.</div>
+    </div>
+  </div>
+
+  <div class="note-block">
+    <div class="note-block-head">
+      <span>3. Классификация спа-технологий — 5 глубин</span>
+    </div>
+    <div class="note-block-body">
+      <div class="note-stack">
+        <div class="note-step">
+          <div class="note-num">1</div>
+          <div class="note-step-body">
+            <div class="note-step-title">Экспресс-услуга <span class="note-pill">10–30 мин</span></div>
+            <div class="note-muted">Самостоятельная или демо-версия большой процедуры. Для новых клиентов, для «крючка» интереса. Использовать на выезде (spa catering). Должна включать мультисенсорное воздействие — несмотря на краткость.</div>
+          </div>
+        </div>
+        <div class="note-step">
+          <div class="note-num">2</div>
+          <div class="note-step-body">
+            <div class="note-step-title">Моно-услуга <span class="note-pill">30 мин – 1,5–2 ч</span></div>
+            <div class="note-muted">Один вид услуги, один специалист, один визит. Курс моно-услуг тоже считается моно-услугой.</div>
+          </div>
+        </div>
+        <div class="note-step">
+          <div class="note-num">3</div>
+          <div class="note-step-body">
+            <div class="note-step-title">Композиция</div>
+            <div class="note-muted">Несколько услуг за один визит, направленных на один результат. Пример: пилинг + массаж + обёртывание. Даёт кумулятивный эффект взаимоусиления.</div>
+          </div>
+        </div>
+        <div class="note-step">
+          <div class="note-num">4</div>
+          <div class="note-step-body">
+            <div class="note-step-title">Пакет</div>
+            <div class="note-muted">Разные категории услуг за один визит. Пример: фитнес + баня + массаж + бьюти. Может быть целевым: «для невесты», «после перелёта».</div>
+          </div>
+        </div>
+        <div class="note-step">
+          <div class="note-num">5</div>
+          <div class="note-step-body">
+            <div class="note-step-title">Программа <span class="note-pill">мин. 3 дня</span></div>
+            <div class="note-muted">Комплекс услуг по времени с физиологической логикой. Всегда целевая (коррекция веса, детокс и пр.). Стандарт — 4 недели, 2–3 раза в нед. Включает очную работу + самостоятельные задания клиенту. Даёт устойчивые физиологические и психологические изменения.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note-block">
+    <div class="note-block-head">
+      <span>4. Форматы работы по количеству участников</span>
+    </div>
+    <div class="note-block-body">
+      <div class="note-grid note-grid-2">
+        <div class="note-card">
+          <div class="note-card-title">1:1</div>
+          <div class="note-muted">Стандарт. Один мастер — один клиент.</div>
+        </div>
+        <div class="note-card">
+          <div class="note-card-title">1:2, 1:3, 1:4</div>
+          <div class="note-muted">Один клиент и несколько мастеров одновременно. Пример: индийский массаж в 4 руки + работа с лицом третьим специалистом.</div>
+        </div>
+        <div class="note-card">
+          <div class="note-card-title">1+</div>
+          <div class="note-muted">Один мастер — несколько клиентов. Пример: групповое парение (аuфгусс) в бане.</div>
+        </div>
+        <div class="note-card">
+          <div class="note-card-title">Для меня как массажиста</div>
+          <div class="note-muted">Начинаю с 1:1. Экспресс — инструмент привлечения новых клиентов и введения новых услуг. Думать о развитии в сторону композиций и пакетов.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+        <h2>Алгоритм работы с клиентом</h2>
+        <div class="note-source">
+
+  <div class="note-block">
+    <div class="note-block-head">9-шаговый алгоритм взаимоотношения с клиентом</div>
+    <div class="note-block-body">
+
+      <div class="note-step">
+        <div class="note-num">1</div>
+        <div class="note-step-body">
+          <div class="note-step-title">Выяснение потребности</div>
+          <div class="note-muted">Вопрос: «Какой конечный результат вы хотите?» Ответ клиента кладём на одну из трёх полочек:</div>
+          <div class="note-grid note-grid-3">
+            <div class="note-card">
+              <div class="note-card-title">Здоровье</div>
+              <div class="note-muted">Лечебно-профилактическое. Профилактика заболеваний, адаптивный ресурс, психосоматика.</div>
+            </div>
+            <div class="note-card">
+              <div class="note-card-title">Красота</div>
+              <div class="note-muted">Эстетика. Коррекция фигуры, омоложение, внешний вид.</div>
+            </div>
+            <div class="note-card">
+              <div class="note-card-title">Настроение</div>
+              <div class="note-muted">Психоэмоциональный фон. Расслабление, гармонизация, тонизирование.</div>
+            </div>
+          </div>
+          <div class="note-callout note-tip">Если клиент не знает чего хочет — спросить: «Что сегодня для вас наиболее актуально?»</div>
+        </div>
+      </div>
+
+      <div class="note-step">
+        <div class="note-num">2</div>
+        <div class="note-step-body">
+          <div class="note-step-title">Объективизация — измерить текущее состояние</div>
+          <div class="note-stack note-stack-tight">
+            <div class="note-card note-muted"><b>2.1 Мед. противопоказания</b> — абсолютные (нельзя ничего) и относительные (малый градиент)</div>
+            <div class="note-card note-muted"><b>2.2 Прикладная типология</b> — тип конституции, в т.ч. смешанные (астено-нормо, нормо-гипер)</div>
+            <div class="note-card note-muted"><b>2.3 Исходное состояние проблемы</b> — боль по 10-балльной шкале, объём движения, перекосы, плотность ткани, обхваты, тест Люшера/САН/Спилберга</div>
+            <div class="note-card note-muted"><b>2.4 Тип клиента</b> — А: «вы делаете за меня» / Б: «мы вместе в команде»</div>
+            <div class="note-card note-muted"><b>2.5 Образ жизни</b> — анкета или опрос</div>
+          </div>
+          <div class="note-callout note-tip">Если пропустили до процедуры — в процессе оценить: боль, тепло/холод, твёрдо/эластично, бледно/гиперемично, объём движения в суставах.</div>
+        </div>
+      </div>
+
+      <div class="note-step">
+        <div class="note-num">3</div>
+        <div class="note-step-body">
+          <div class="note-step-title">Составление программы</div>
+          <div class="note-muted">Говорим клиенту: что делаем, сколько времени, сколько процедур. Для клиента Б — фиксируем его зону ответственности: сон, питание, движение, ментальное здоровье. Для клиента А — только ваша часть. Добиваемся устного «контракта».</div>
+        </div>
+      </div>
+
+      <div class="note-step">
+        <div class="note-num">4</div>
+        <div class="note-step-body">
+          <div class="note-step-title">Прогноз</div>
+          <div class="note-muted">Не обещаем точных цифр — говорим о срочном и кумулятивном эффекте. Поясняем: совместная работа (Б) даёт более глубокий и долгий результат, чем только наша работа (А).</div>
+        </div>
+      </div>
+
+      <div class="note-step">
+        <div class="note-num">5</div>
+        <div class="note-step-body">
+          <div class="note-step-title">Реализация услуги</div>
+          <div class="note-muted">Приступаем к работе. Делаем body condition анализ: состояние до, динамика, состояние после. При курсовой работе — строгая дисциплина расписания, приучаем клиента к тому же.</div>
+        </div>
+      </div>
+
+      <div class="note-step">
+        <div class="note-num">6</div>
+        <div class="note-step-body">
+          <div class="note-step-title">Повторная объективизация</div>
+          <div class="note-muted">После завершения услуги/курса — снова измеряем состояние. Показываем клиенту конкретные изменения в цифрах.</div>
+        </div>
+      </div>
+
+      <div class="note-step">
+        <div class="note-num">7</div>
+        <div class="note-step-body">
+          <div class="note-step-title">Фидбэк — обратная связь</div>
+          <div class="note-muted">Спрашиваем: «Как вы оцениваете наш совместный результат?» Фиксируем с разрешения клиента. Позитив → маркетинг. Негатив → подробный разбор, что улучшить.</div>
+        </div>
+      </div>
+
+      <div class="note-step">
+        <div class="note-num">8</div>
+        <div class="note-step-body">
+          <div class="note-step-title">Благодарность</div>
+          <div class="note-muted">Благодарим клиента всегда — вне зависимости от характера отзыва. Маркер осознанного и зрелого специалиста.</div>
+        </div>
+      </div>
+
+      <div class="note-step">
+        <div class="note-num">9</div>
+        <div class="note-step-body">
+          <div class="note-step-title">Пролонгация — продление отношений</div>
+          <div class="note-grid note-grid-2">
+            <div class="note-card">
+              <div class="note-card-title">9.1 Системная</div>
+              <div class="note-muted">Разовый клиент → курс. «Эффект будет системным, если приходить раз в неделю».</div>
+            </div>
+            <div class="note-card">
+              <div class="note-card-title">9.2 Поддерживающая</div>
+              <div class="note-muted">Курс завершён → встречаемся реже (раз в 2 недели) для сохранения результата.</div>
+            </div>
+            <div class="note-card">
+              <div class="note-card-title">9.3 Интеллектуальная</div>
+              <div class="note-muted">Закрыли одну потребность → открываем новую. Убрали живот → предлагаем нормализовать сон.</div>
+            </div>
+            <div class="note-card">
+              <div class="note-card-title">9.4 Углублённая</div>
+              <div class="note-muted">Расширяем «спа-IQ» клиента: консерватор-массажник → добавляем баню, обёртывание.</div>
+            </div>
+            <div class="note-card">
+              <div class="note-card-title">9.5 Перекрёстная</div>
+              <div class="note-muted">Добавляем других специалистов: эндокринолог, психолог, фитнес-тренер, косметолог.</div>
+            </div>
+            <div class="note-card">
+              <div class="note-card-title">9.6 Сарафан</div>
+              <div class="note-muted">Каждый клиент — дверь за которой много других дверей. Воспринимать это как систему.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="note-block">
+    <div class="note-block-head">Категории клиентов</div>
+    <div class="note-block-body">
+      <div class="note-pills">
+        <div class="note-pill">Первичный</div>
+        <div class="note-pill">Повторный</div>
+        <div class="note-pill">Постоянный не системный</div>
+        <div class="note-pill">Постоянный системный ★</div>
+        <div class="note-pill">По сертификату</div>
+      </div>
+      <div class="note-callout note-warning">При повторном визите не расслабляться — именно здесь многие снижают качество работы. Задача: довести каждого клиента до «постоянного системного».</div>
+    </div>
+  </div>
+
+  <div class="note-block">
+    <div class="note-block-head">Лист умного мастера — ежемесячный трекер</div>
+    <div class="note-block-body">
+      <div class="note-table-wrap">
+        <table>
+          <tr>
+            <th>Клиент (+типология)</th>
+            <th>Дата</th>
+            <th>Услуга / мотивация / глубина</th>
+            <th>Стоимость</th>
+            <th>Пролонгация (план)</th>
+            <th>Реализация (факт)</th>
+          </tr>
+          <tr>
+            <td>Василий, тип 2</td>
+            <td>22 июня</td>
+            <td>Транс. массаж, настроение, экспресс 20 мин</td>
+            <td>—</td>
+            <td>24 июня</td>
+            <td>+ / ? / ✗</td>
+          </tr>
+        </table>
+      </div>
+      <div class="note-callout note-tip">
+        <b>Красные флаги:</b> только первичные клиенты без пролонгации → проблема с сервисом или квалификацией. Только моноуслуги, нет ни одной композиции или программы → работаете «плоско», зона риска.
+      </div>
+    </div>
+  </div>
+
+</div>
+      </article>
+    </section>
+    <footer>
+      <span>© <span id="year"></span> Денис Пучков</span>
+      <span>denisyuce.com</span>
+    </footer>
+  </main>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
