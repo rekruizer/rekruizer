@@ -502,7 +502,7 @@
               <div class="field-row">
                 <select id="payMode">
                   <option value="share" selected>Процент от услуги</option>
-                  <option value="fixed">Фикс за час массажа</option>
+                  <option value="fixed">Фикс за час</option>
                 </select>
               </div>
               <div class="field-row" id="shareRow">
@@ -768,8 +768,8 @@
       el.selfClientRow.style.display = mode === "self" ? "flex" : "none";
       if (mode === "self") el.taxHint.textContent = "Самозанятый: 4% с ФЛ, 6% с ЮЛ/ИП.";
       if (mode === "ip") el.taxHint.textContent = "ИП УСН: 6% от дохода. Взносы не учтены.";
-      if (mode === "employee") el.taxHint.textContent = "Сотрудник по ТК: НДФЛ 13%. Взносы обычно сверху.";
-      if (mode === "custom") el.taxHint.textContent = "Свой процент удержаний.";
+      if (mode === "employee") el.taxHint.textContent = "Сотрудник по ТК: НДФЛ от 13%. Взносы обычно сверху.";
+      if (mode === "custom") el.taxHint.textContent = "Свой процент налога.";
     }
 
     function syncPayModeControls() {
