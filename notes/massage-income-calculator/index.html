@@ -224,12 +224,40 @@
       top: 18px;
     }
 
+    .hours-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 34px;
+      padding: 0 12px;
+      border: 1px solid rgba(156,207,147,.42);
+      border-radius: 999px;
+      background: rgba(156,207,147,.14);
+      color: var(--green);
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .hours-badge svg {
+      width: 15px;
+      height: 15px;
+      stroke-width: 2.2;
+    }
+
     .hero-result {
+      position: relative;
       margin-top: 14px;
       padding: 18px;
       border: 1px solid rgba(156,207,147,.38);
       border-radius: 22px;
       background: rgba(156,207,147,.12);
+    }
+
+    .hero-result .hours-badge {
+      position: absolute;
+      top: 14px;
+      right: 14px;
     }
 
     .big-number {
@@ -240,6 +268,23 @@
       letter-spacing: -0.07em;
       font-weight: 780;
       color: var(--green);
+    }
+
+    .net-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 8px 12px;
+    }
+
+    .usd-estimate {
+      display: none;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 18px;
+      font-weight: 750;
+      line-height: 1.1;
+      white-space: nowrap;
     }
 
     .annual-note {
@@ -464,7 +509,7 @@
                 </select>
               </div>
               <div class="field-row" id="taxRow">
-                <input id="tax" type="number" min="0" max="60" step="1" value="4">
+                <input id="tax" type="number" min="0" max="100" step="1" value="4">
                 <span class="unit">%</span>
               </div>
               <p class="calc-muted tax-hint" id="taxHint">Самозанятый: 4% с ФЛ, 6% с ЮЛ/ИП.</p>
@@ -519,7 +564,7 @@
             <div class="control wide">
               <label for="vat">НДС в цене услуги</label>
               <div class="field-row">
-                <input id="vat" type="number" min="0" max="30" step="1" value="0">
+                <input id="vat" type="number" min="0" max="100" step="1" value="0">
                 <span class="unit">%</span>
               </div> 
               <p class="calc-muted" style="margin:0"> Некоторые салоты предлагают % с расчета после НДФЛ, что серьезно уменьшает ваш потенциальный заработок. <br> По умолчанию: 0 </p>
@@ -589,7 +634,17 @@
 
           <div class="hero-result">
             <span class="calc-muted" id="monthlyNetLabel">Итого в месяц после налогов</span>
-            <strong class="big-number" id="monthlyNet">0 ₽</strong>
+            <div class="net-row">
+              <strong class="big-number" id="monthlyNet">0 ₽</strong>
+              <span class="usd-estimate" id="usdEstimate"></span>
+            </div>
+            <span class="hours-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M12 7v5l3 2"></path>
+              </svg>
+              <span id="monthlyHours">за 0 часов</span>
+            </span>
             <div class="annual-note" id="annualNote"></div>
           </div>
           <div class="calc-note" id="guaranteeNote"></div>
@@ -648,13 +703,25 @@
       expenseSession: document.getElementById("expenseSession")
     };
 
+    var usdRubRate = null;
+
     function num(input) {
       var value = parseFloat(input.value);
       return Number.isFinite(value) ? value : 0;
     }
 
+    function percent(input) {
+      var value = Math.min(100, Math.max(0, num(input)));
+      if (num(input) !== value) input.value = value;
+      return value;
+    }
+
     function money(value) {
       return Math.round(value).toLocaleString("ru-RU") + " ₽";
+    }
+
+    function usdMoney(value) {
+      return Math.round(value).toLocaleString("ru-RU") + "$";
     }
 
     function one(value) {
@@ -671,7 +738,7 @@
       if (mode === "self") return num(el.selfClient);
       if (mode === "ip") return 6;
       if (mode === "employee") return 13;
-      return Math.max(0, num(el.tax));
+      return percent(el.tax);
     }
 
     function syncTaxControls() {
@@ -702,13 +769,13 @@
         duration: Math.max(1, num(el.duration)),
         payMode: el.payMode.value,
         fixedRate: Math.max(0, num(el.fixedRate)),
-        share: Math.max(0, num(el.share)) / 100,
+        share: percent(el.share) / 100,
         tax: taxRateFromMode() / 100,
         days: Math.max(0, num(el.days)),
         hours: Math.max(0, overrideHours == null ? num(el.hours) : overrideHours),
         guarantee: Math.max(0, num(el.guarantee)),
-        discount: Math.max(0, num(el.discount)) / 100,
-        vat: Math.max(0, num(el.vat)) / 100,
+        discount: percent(el.discount) / 100,
+        vat: percent(el.vat) / 100,
         salonDiscount: el.salonDiscount.checked,
         expensesEnabled: el.expensesEnabled.checked,
         expenseMonthly: Math.max(0, num(el.expenseMonthly)),
@@ -788,10 +855,19 @@
       el.expensesPanel.hidden = !settings.expensesEnabled;
       document.getElementById("monthlyNetLabel").textContent = settings.expensesEnabled ? "Итого в месяц после налогов и расходов" : "Итого в месяц после налогов";
       document.getElementById("monthlyNet").textContent = money(result.finalMonthlyNet);
+      var usdEstimate = document.getElementById("usdEstimate");
+      if (usdRubRate) {
+        usdEstimate.textContent = "/ ~" + usdMoney(result.finalMonthlyNet / usdRubRate);
+        usdEstimate.style.display = "inline-block";
+      } else {
+        usdEstimate.textContent = "";
+        usdEstimate.style.display = "none";
+      }
       document.getElementById("shiftGross").textContent = money(result.shiftGross);
       document.getElementById("shiftNet").textContent = money(result.shiftNet);
       document.getElementById("hourRate").textContent = money(result.hourRate);
       document.getElementById("sessions").textContent = one(result.sessions);
+      document.getElementById("monthlyHours").textContent = "за " + one(settings.hours * settings.days) + " часов";
       document.getElementById("monthlyGross").textContent = money(result.monthlyGross);
       document.getElementById("monthlyTax").textContent = "-" + money(result.monthlyTax);
       document.getElementById("monthlyExpenses").textContent = "-" + money(result.monthlyExpenses);
@@ -864,6 +940,22 @@
 
     document.getElementById("year").textContent = new Date().getFullYear();
     render();
+
+    fetch("https://www.cbr-xml-daily.com/daily_json.js")
+      .then(function(response) {
+        if (!response.ok) throw new Error("Rate request failed");
+        return response.json();
+      })
+      .then(function(data) {
+        var value = data && data.Valute && data.Valute.USD && data.Valute.USD.Value;
+        if (Number.isFinite(value) && value > 0) {
+          usdRubRate = value;
+          render();
+        }
+      })
+      .catch(function() {
+        usdRubRate = null;
+      });
   </script>
 </body>
 </html>
