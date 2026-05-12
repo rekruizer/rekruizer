@@ -88,6 +88,35 @@
       font-size: 18px;
     }
 
+    .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .reset-button {
+      min-height: 34px;
+      border: 1px solid rgba(245,241,234,.14);
+      border-radius: 999px;
+      background: rgba(255,255,255,.055);
+      color: var(--muted);
+      cursor: pointer;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 0 13px;
+    }
+
+    .reset-button:hover {
+      border-color: rgba(212,163,115,.5);
+      color: var(--text);
+    }
+
+    .reset-button[hidden] {
+      display: none;
+    }
+
     .calc-muted {
       color: var(--muted);
       line-height: 1.55;
@@ -633,7 +662,10 @@
 
       <div class="calc-board">
         <div class="calc-card">
-          <h2>Параметры</h2>
+          <div class="card-head">
+            <h2>Параметры</h2>
+            <button class="reset-button" id="resetCalculator" type="button">Сбросить</button>
+          </div>
           <div class="control-grid">
             <div class="control wide payment-control">
               <label for="payMode">Оплата специалиста</label>
@@ -976,11 +1008,68 @@
       expenseShift: document.getElementById("expenseShift"),
       expenseSession: document.getElementById("expenseSession"),
       timeSummary: document.getElementById("timeSummary"),
+      resetCalculator: document.getElementById("resetCalculator"),
       mobileResultBar: document.getElementById("mobileResultBar"),
       mobileResultNet: document.getElementById("mobileResultNet")
     };
 
     var usdRubRate = null;
+    var storageKey = "denis-income-calculator-settings-v1";
+    var storageFields = [
+      "price",
+      "duration",
+      "payMode",
+      "fixedRate",
+      "share",
+      "selfClient",
+      "tax",
+      "days",
+      "hours",
+      "shiftDuration",
+      "presenceMode",
+      "guarantee",
+      "discount",
+      "firstVisitShare",
+      "firstVisitDiscount",
+      "packageShare",
+      "packageDiscount",
+      "vat",
+      "expenseMonthly",
+      "expenseShift",
+      "expenseSession"
+    ];
+    var storageChecks = ["salonDiscount", "expensesEnabled"];
+    var defaultValues = {
+      mode: "simple",
+      taxMode: "self",
+      fields: {
+        price: "4000",
+        duration: "60",
+        payMode: "share",
+        fixedRate: "1400",
+        share: "40",
+        selfClient: "4",
+        tax: "4",
+        days: "15",
+        hours: "4",
+        shiftDuration: "12",
+        presenceMode: "full",
+        guarantee: "4000",
+        discount: "0",
+        firstVisitShare: "0",
+        firstVisitDiscount: "0",
+        packageShare: "0",
+        packageDiscount: "0",
+        vat: "0",
+        expenseMonthly: "0",
+        expenseShift: "0",
+        expenseSession: "0"
+      },
+      checks: {
+        salonDiscount: true,
+        expensesEnabled: false
+      }
+    };
 
     function num(input) {
       var value = parseFloat(input.value);
@@ -1050,6 +1139,127 @@
 
     function syncPresenceControls() {
       el.shiftDurationField.hidden = el.presenceMode.value !== "full";
+    }
+
+    function canUseLocalStorage() {
+      try {
+        if (typeof localStorage === "undefined") return false;
+        var testKey = storageKey + "-test";
+        localStorage.setItem(testKey, "1");
+        localStorage.removeItem(testKey);
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }
+
+    function selectedChipIndexes() {
+      var selected = {};
+      document.querySelectorAll(".chips").forEach(function(group) {
+        var chips = Array.prototype.slice.call(group.querySelectorAll(".chip"));
+        var index = chips.findIndex(function(chip) {
+          return chip.dataset.selected === "true";
+        });
+        if (index >= 0) selected[group.dataset.target] = index;
+      });
+      return selected;
+    }
+
+    function currentSettingsData() {
+      var data = {
+        mode: el.calcShell.dataset.mode,
+        taxMode: selectedTaxMode(),
+        fields: {},
+        checks: {}
+      };
+      storageFields.forEach(function(key) {
+        if (el[key]) data.fields[key] = String(el[key].value);
+      });
+      storageChecks.forEach(function(key) {
+        if (el[key]) data.checks[key] = !!el[key].checked;
+      });
+      return data;
+    }
+
+    function settingsAreDefault() {
+      var data = currentSettingsData();
+      if (data.mode !== defaultValues.mode) return false;
+      if (data.taxMode !== defaultValues.taxMode) return false;
+      return storageFields.every(function(key) {
+        return !el[key] || data.fields[key] === defaultValues.fields[key];
+      }) && storageChecks.every(function(key) {
+        return !el[key] || data.checks[key] === defaultValues.checks[key];
+      });
+    }
+
+    function syncResetButton() {
+      el.resetCalculator.hidden = settingsAreDefault();
+    }
+
+    function applySettingsData(data) {
+      if (!data) return;
+      if (data.mode === "simple" || data.mode === "advanced") {
+        el.calcShell.dataset.mode = data.mode;
+      }
+      if (data.fields) {
+        Object.keys(data.fields).forEach(function(key) {
+          if (el[key]) el[key].value = data.fields[key];
+        });
+      }
+      if (data.checks) {
+        Object.keys(data.checks).forEach(function(key) {
+          if (el[key]) el[key].checked = !!data.checks[key];
+        });
+      }
+      if (data.taxMode) {
+        document.querySelectorAll("input[name='taxMode']").forEach(function(input) {
+          input.checked = input.value === data.taxMode;
+        });
+      }
+      document.querySelectorAll(".chips").forEach(function(group) {
+        var chips = Array.prototype.slice.call(group.querySelectorAll(".chip"));
+        chips.forEach(function(chip) {
+          delete chip.dataset.selected;
+        });
+        var index = data.chips && data.chips[group.dataset.target];
+        if (Number.isInteger(index) && chips[index]) chips[index].dataset.selected = "true";
+      });
+    }
+
+    function saveSettings() {
+      if (!canUseLocalStorage()) return;
+      var data = {
+        mode: el.calcShell.dataset.mode,
+        taxMode: selectedTaxMode(),
+        fields: {},
+        checks: {},
+        chips: selectedChipIndexes()
+      };
+      storageFields.forEach(function(key) {
+        if (el[key]) data.fields[key] = el[key].value;
+      });
+      storageChecks.forEach(function(key) {
+        if (el[key]) data.checks[key] = el[key].checked;
+      });
+      localStorage.setItem(storageKey, JSON.stringify(data));
+    }
+
+    function restoreSettings() {
+      if (!canUseLocalStorage()) return;
+      try {
+        var raw = localStorage.getItem(storageKey);
+        if (!raw) return;
+        var data = JSON.parse(raw);
+        applySettingsData(data);
+      } catch (error) {
+        localStorage.removeItem(storageKey);
+      }
+    }
+
+    function resetCalculatorSettings() {
+      if (canUseLocalStorage()) localStorage.removeItem(storageKey);
+      applySettingsData(defaultValues);
+      render();
     }
 
     function attractionDiscountPercent() {
@@ -1219,6 +1429,8 @@
       }
 
       setActiveChips();
+      saveSettings();
+      syncResetButton();
     }
 
     document.querySelectorAll("input, select").forEach(function(input) {
@@ -1248,6 +1460,8 @@
         render();
       });
     });
+
+    el.resetCalculator.addEventListener("click", resetCalculatorSettings);
 
     var resultObserver = null;
     function setupMobileResultBar() {
@@ -1282,6 +1496,7 @@
     }
 
     document.getElementById("year").textContent = new Date().getFullYear();
+    restoreSettings();
     render();
     setupMobileResultBar();
 
