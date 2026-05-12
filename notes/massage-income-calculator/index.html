@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Калькулятор дохода массажиста — Денис Пучков</title>
-  <meta name="description" content="Калькулятор дохода массажиста по цене услуги, проценту, графику, загрузке, гарантии и налогам." />
+  <title>Калькулятор дохода специалиста — Денис Пучков</title>
+  <meta name="description" content="Калькулятор дохода специалистов по цене услуги, проценту, графику, загрузке, гарантии и налогам." />
   <link rel="stylesheet" href="/assets/site.css" />
   <style>
     .calc-shell {
@@ -23,6 +23,38 @@
       color: var(--muted);
       line-height: 1.65;
       font-size: 16px;
+    }
+
+    .mode-switch {
+      display: inline-flex;
+      gap: 6px;
+      margin: 0 0 18px;
+      padding: 5px;
+      border: 1px solid rgba(245,241,234,.12);
+      border-radius: 999px;
+      background: rgba(255,255,255,.045);
+    }
+
+    .mode-switch button {
+      min-height: 38px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 0 16px;
+    }
+
+    .mode-switch button.active {
+      background: rgba(212,163,115,.18);
+      color: var(--text);
+    }
+
+    .calc-shell[data-mode="simple"] .advanced-only {
+      display: none;
     }
 
     .calc-board {
@@ -66,6 +98,13 @@
       line-height: 1.5;
     }
 
+    .control .calc-muted,
+    .toggle-row .calc-muted,
+    .expense-panel > .calc-muted,
+    .tax-hint {
+      font-size: 13px;
+    }
+
     .control-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -87,7 +126,42 @@
       grid-column: 1 / -1;
     }
 
+    .mini-field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .payment-control {
+      gap: 8px;
+    }
+
+    .payment-control .mini-field {
+      margin-top: 10px;
+    }
+
+    .service-fields {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .tax-detail {
+      margin-top: 10px;
+    }
+
+    .nested-grid {
+      margin-top: 6px;
+    }
+
+    .help-text {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
     .control label,
+    .mini-field label,
     .toggle-label {
       color: var(--muted);
       font-size: 12px;
@@ -217,10 +291,22 @@
       background: rgba(255,255,255,.045);
     }
 
-    .toggle-row input {
+    .toggle-row > input,
+    .toggle-head > input {
       width: 46px;
       height: 26px;
       accent-color: var(--accent);
+    }
+
+    .toggle-row.expandable {
+      display: block;
+    }
+
+    .toggle-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
     }
 
     .expense-panel {
@@ -326,6 +412,57 @@
       color: var(--muted);
     }
 
+    .time-summary {
+      margin-top: 12px;
+      padding: 14px;
+      border: 1px solid rgba(245,241,234,.12);
+      border-radius: 18px;
+      background: rgba(255,255,255,.045);
+    }
+
+    .time-summary[hidden] {
+      display: none;
+    }
+
+    .time-summary h3 {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: inherit;
+      font-weight: 400;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    .time-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .time-summary-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .time-summary-item strong {
+      display: block;
+      margin-top: 5px;
+      color: var(--text);
+      font-size: 20px;
+      letter-spacing: -0.04em;
+    }
+
+    .time-summary-item[hidden],
+    .mini-field[hidden] {
+      display: none;
+    }
+
+    .calc-shell[data-mode="advanced"] .hero-result .hours-badge {
+      display: none;
+    }
+
     .result-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -399,7 +536,9 @@
       }
 
       .control-grid,
-      .result-grid {
+      .result-grid,
+      .time-summary-grid,
+      .service-fields {
         grid-template-columns: 1fr;
       }
 
@@ -481,57 +620,67 @@
       </nav>
     </header>
 
-    <section class="section calc-shell">
+    <section class="section calc-shell" data-mode="simple">
       <div class="breadcrumbs"><a href="/">Главная</a><span>/</span><a href="/notes/">Полезное</a><span>/</span><span>Калькулятор дохода</span></div>
       <div class="section-head">
-        <h1>Калькулятор дохода массажиста</h1>
+        <h1>Калькулятор дохода специалиста</h1>
       </div>
       <p class="calc-lead">Меняй цену услуги, процент, график, загрузку, налоги и расходы. Калькулятор сразу покажет доход за смену и месяц, влияние гарантии и примерную нагрузку по часам.</p>
+      <div class="mode-switch" aria-label="Режим калькулятора">
+        <button class="active" type="button" data-mode="simple">Обычный</button>
+        <button type="button" data-mode="advanced">Расширенный</button>
+      </div>
 
       <div class="calc-board">
         <div class="calc-card">
           <h2>Параметры</h2>
           <div class="control-grid">
-            <div class="control">
-              <label for="price">Стоимость услуги</label>
-              <div class="field-row">
-                <input id="price" type="number" min="0" step="100" value="4000">
-                <span class="unit">₽</span>
-              </div>
-            </div>
-
-            <div class="control">
-              <label for="duration">Длительность услуги</label>
-              <div class="field-row">
-                <select id="duration">
-                  <option value="30">30 минут</option>
-                  <option value="60" selected>60 минут</option>
-                  <option value="90">90 минут</option>
-                  <option value="120">120 минут</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="control">
-              <label for="payMode">Доля массажиста</label>
+            <div class="control wide payment-control">
+              <label for="payMode">Оплата специалиста</label>
               <div class="field-row">
                 <select id="payMode">
                   <option value="share" selected>Процент от услуги</option>
                   <option value="fixed">Фикс за час</option>
                 </select>
               </div>
-              <div class="field-row" id="shareRow">
-                <input id="share" type="number" min="0" max="100" step="1" value="40">
-                <span class="unit">%</span>
+              <div class="service-fields" id="serviceFields">
+                <div class="mini-field" id="priceBlock">
+                  <label for="price">Стоимость услуги</label>
+                  <div class="field-row">
+                    <input id="price" type="number" min="0" step="100" value="4000">
+                    <span class="unit">₽</span>
+                  </div>
+                </div>
+                <div class="mini-field" id="durationBlock">
+                  <label for="duration">Длительность услуги</label>
+                  <div class="field-row">
+                    <select id="duration">
+                      <option value="30">30 минут</option>
+                      <option value="60" selected>60 минут</option>
+                      <option value="90">90 минут</option>
+                      <option value="120">120 минут</option>
+                    </select>
+                  </div>
+                </div>
               </div>
-              <div class="chips" data-target="share" id="shareChips">
-                <button class="chip" type="button" data-value="35">35%</button>
-                <button class="chip" type="button" data-value="40" data-default="true">40%</button>
-                <button class="chip" type="button" data-value="50">50%</button>
+              <div class="mini-field" id="shareBlock">
+                <label for="share">Доля от услуги</label>
+                <div class="field-row" id="shareRow">
+                  <input id="share" type="number" min="0" max="100" step="1" value="40">
+                  <span class="unit">%</span>
+                </div>
+                <div class="chips" data-target="share" id="shareChips">
+                  <button class="chip" type="button" data-value="35">35%</button>
+                  <button class="chip" type="button" data-value="40" data-default="true">40%</button>
+                  <button class="chip" type="button" data-value="50">50%</button>
+                </div>
               </div>
-              <div class="field-row" id="fixedRateRow">
-                <input id="fixedRate" type="number" min="0" step="100" value="1400">
-                <span class="unit">₽/ч</span>
+              <div class="mini-field" id="fixedRateBlock">
+                <label for="fixedRate">Фиксированная ставка за час</label>
+                <div class="field-row" id="fixedRateRow">
+                  <input id="fixedRate" type="number" min="0" step="100" value="1400">
+                  <span class="unit">₽/ч</span>
+                </div>
               </div>
             </div>
 
@@ -543,13 +692,13 @@
                 <label class="status-option"><input type="radio" name="taxMode" value="employee">Сотрудник по ТК</label>
                 <label class="status-option"><input type="radio" name="taxMode" value="custom">Свой %</label>
               </div>
-              <div class="field-row" id="selfClientRow">
+              <div class="field-row tax-detail" id="selfClientRow">
                 <select id="selfClient">
                   <option value="4" selected>ФЛ — 4%</option>
                   <option value="6">ЮЛ/ИП — 6%</option>
                 </select>
               </div>
-              <div class="field-row" id="taxRow">
+              <div class="field-row tax-detail" id="taxRow">
                 <input id="tax" type="number" min="0" max="100" step="1" value="4">
                 <span class="unit">%</span>
               </div>
@@ -571,8 +720,8 @@
               </div>
             </div>
 
-            <div class="control">
-              <label for="hours">Ср.Часов массажа в смену</label>
+            <div class="control wide">
+              <label for="hours">Ср.Часов услуг в смену</label>
               <div class="field-row">
                 <input id="hours" type="number" min="0" max="14" step="0.5" value="4">
                 <span class="unit">ч</span>
@@ -583,36 +732,95 @@
                 <button class="chip" type="button" data-value="8">8 ч</button>
                 <button class="chip" type="button" data-value="10">10 ч</button>
               </div>
-              <p class="calc-muted" style="margin:0">Это именно часы массажа в смену. Количество процедур считается отдельно по длительности услуги.</p>
+              <p class="calc-muted" style="margin:0">Это именно часы услуг в смену. Количество процедур считается отдельно по длительности услуги.</p>
             </div>
 
-            <div class="control">
+            <div class="control wide advanced-only">
+              <label>Время в салоне</label>
+              <div class="control-grid nested-grid">
+                <div class="mini-field">
+                  <label for="presenceMode">Присутствие</label>
+                  <div class="field-row">
+                    <select id="presenceMode">
+                      <option value="full" selected>Нужно быть всю смену</option>
+                      <option value="appointments">Можно приходить под записи</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="mini-field" id="shiftDurationField">
+                  <label for="shiftDuration">Длительность смены</label>
+                  <div class="field-row">
+                    <input id="shiftDuration" type="number" min="1" max="24" step="0.5" value="12">
+                    <span class="unit">ч</span>
+                  </div>
+                </div>
+              </div>
+              <p class="help-text">Оплачиваемые часы услуг и реальное время в салоне могут сильно отличаться. Это влияет на доход за час вашего времени.</p>
+            </div>
+
+            <div class="control wide">
               <label for="guarantee">Гарантия за смену</label>
               <div class="field-row">
                 <input id="guarantee" type="number" min="0" step="500" value="4000">
                 <span class="unit">₽</span>
               </div>
+              <p class="help-text">Это сумма, которую вы гарантированно получите за выход. Часто салоны предлагают такое условие.</p>
             </div>
 
-            <div class="control">
-              <label for="discount">Скидка клиенту</label>
-              <div class="field-row">
-                <input id="discount" type="number" min="0" max="100" step="1" value="0">
-                <span class="unit">%</span>
+            <div class="control wide advanced-only">
+              <label>Привлечение</label>
+              <p class="help-text">Скидки на первый визит и абонементы уменьшают средний чек не у всех клиентов, а только у части потока. Здесь считаем среднюю скидку по месяцу.</p>
+              <div class="control-grid nested-grid">
+                <div class="mini-field">
+                  <label for="firstVisitShare">Доля первых визитов</label>
+                  <div class="field-row">
+                    <input id="firstVisitShare" type="number" min="0" max="100" step="1" value="0">
+                    <span class="unit">%</span>
+                  </div>
+                </div>
+                <div class="mini-field">
+                  <label for="firstVisitDiscount">Скидка первого визита</label>
+                  <div class="field-row">
+                    <input id="firstVisitDiscount" type="number" min="0" max="100" step="1" value="0">
+                    <span class="unit">%</span>
+                  </div>
+                </div>
+                <div class="mini-field">
+                  <label for="packageShare">Доля абонементов</label>
+                  <div class="field-row">
+                    <input id="packageShare" type="number" min="0" max="100" step="1" value="0">
+                    <span class="unit">%</span>
+                  </div>
+                </div>
+                <div class="mini-field">
+                  <label for="packageDiscount">Скидка абонемента</label>
+                  <div class="field-row">
+                    <input id="packageDiscount" type="number" min="0" max="100" step="1" value="0">
+                    <span class="unit">%</span>
+                  </div>
+                </div>
+                <div class="mini-field">
+                  <label for="discount">Прочая средняя скидка</label>
+                  <div class="field-row">
+                    <input id="discount" type="number" min="0" max="100" step="1" value="0">
+                    <span class="unit">%</span>
+                  </div>
+                </div>
               </div>
+              <p class="help-text" id="attractionHint">Средняя скидка по потоку: 0%</p>
             </div>
 
-            <div class="control wide">
+            <div class="control wide advanced-only">
               <label for="vat">НДС в цене услуги</label>
               <div class="field-row">
                 <input id="vat" type="number" min="0" max="100" step="1" value="0">
                 <span class="unit">%</span>
               </div> 
-              <p class="calc-muted" style="margin:0"> Некоторые салоты предлагают % с расчета после НДФЛ, что серьезно уменьшает ваш потенциальный заработок. <br> По умолчанию: 0 </p>
+              <p class="calc-muted" style="margin:0"> Некоторые салоны предлагают % с расчета после НДС, что серьезно уменьшает ваш потенциальный заработок. <br> По умолчанию: 0 </p>
             </div>
           </div>
 
-          <div class="toggle-row">
+          <div class="toggle-row advanced-only">
             <div>
               <div class="toggle-label">Скидка за счёт салона</div>
               <div class="calc-muted">Если включено, твой процент считается от полной цены услуги.</div>
@@ -620,42 +828,43 @@
             <input id="salonDiscount" type="checkbox" checked>
           </div>
 
-          <div class="toggle-row">
-            <div>
-              <div class="toggle-label">Учитывать расходы</div>
-              <div class="calc-muted">Дополнительный блок для аренды, расходников, дороги и комиссий.</div>
+          <div class="toggle-row expandable advanced-only">
+            <div class="toggle-head">
+              <div>
+                <div class="toggle-label">Учитывать расходы</div>
+                <div class="calc-muted">Расходы в месяц, за смену, за сеанс.</div>
+              </div>
+              <input id="expensesEnabled" type="checkbox">
             </div>
-            <input id="expensesEnabled" type="checkbox">
-          </div>
 
-          <div class="expense-panel" id="expensesPanel" hidden>
-            <div class="control-grid">
-              <div class="control">
-                <label for="expenseMonthly">Постоянные расходы в месяц</label>
-                <div class="field-row">
-                  <input id="expenseMonthly" type="number" min="0" step="500" value="0">
-                  <span class="unit">₽</span>
+            <div class="expense-panel" id="expensesPanel" hidden>
+              <div class="control-grid nested-grid">
+                <div class="mini-field">
+                  <label for="expenseMonthly">Постоянные расходы в месяц</label>
+                  <div class="field-row">
+                    <input id="expenseMonthly" type="number" min="0" step="500" value="0">
+                    <span class="unit">₽</span>
+                  </div>
+                </div>
+
+                <div class="mini-field">
+                  <label for="expenseShift">Расходы за смену</label>
+                  <div class="field-row">
+                    <input id="expenseShift" type="number" min="0" step="100" value="0">
+                    <span class="unit">₽</span>
+                  </div>
+                </div>
+
+                <div class="mini-field">
+                  <label for="expenseSession">Расходники за сеанс</label>
+                  <div class="field-row">
+                    <input id="expenseSession" type="number" min="0" step="50" value="0">
+                    <span class="unit">₽</span>
+                  </div>
                 </div>
               </div>
-
-              <div class="control">
-                <label for="expenseShift">Расходы за смену</label>
-                <div class="field-row">
-                  <input id="expenseShift" type="number" min="0" step="100" value="0">
-                  <span class="unit">₽</span>
-                </div>
-              </div>
-
-              <div class="control">
-                <label for="expenseSession">Расходники за сеанс</label>
-                <div class="field-row">
-                  <input id="expenseSession" type="number" min="0" step="50" value="0">
-                  <span class="unit">₽</span>
-                </div>
-              </div>
-
+              <p class="calc-muted" style="margin:10px 0 0">Расходы вычитаются из дохода после налогов: месячные расходы + расходы за смену + расходы за каждый сеанс.</p>
             </div>
-            <p class="calc-muted" style="margin:10px 0 0">Расходы вычитаются из дохода после налогов: месячные расходы + расходы за смену + расходы за каждый сеанс.</p>
           </div>
         </div>
 
@@ -663,7 +872,7 @@
           <h2>Результат</h2>
 
           <div class="result-grid">
-            <div class="metric"><span>Ставка за час массажа</span><strong id="hourRate">0 ₽</strong></div>
+            <div class="metric"><span>Ставка за час</span><strong id="hourRate">0 ₽</strong></div>
             <div class="metric"><span>Сеансов в смену</span><strong id="sessions">0</strong></div>
             <div class="metric"><span>Начисление за смену</span><strong id="shiftGross">0 ₽</strong></div>
             <div class="metric"><span>После налогов за смену</span><strong id="shiftNet">0 ₽</strong></div>
@@ -690,6 +899,27 @@
             </div>
             <div class="annual-note" id="annualNote"></div>
           </div>
+          <div class="time-summary" id="timeSummary" hidden>
+            <h3>Время и загрузка</h3>
+            <div class="time-summary-grid">
+              <div class="time-summary-item">
+                <span>Часов услуг в месяц</span>
+                <strong id="summaryMassageHours">0 ч</strong>
+              </div>
+              <div class="time-summary-item">
+                <span>В салоне в месяц</span>
+                <strong id="salonHours">0 ч</strong>
+              </div>
+              <div class="time-summary-item">
+                <span>Доход/час в салоне</span>
+                <strong id="salonHourRate">0 ₽</strong>
+              </div>
+              <div class="time-summary-item" id="salonLoadItem">
+                <span>Загрузка смены</span>
+                <strong id="salonLoad">0%</strong>
+              </div>
+            </div>
+          </div>
           <div class="calc-note" id="guaranteeNote"></div>
         </aside>
       </div>
@@ -708,12 +938,17 @@
 
   <script>
     var el = {
+      calcShell: document.querySelector(".calc-shell"),
       price: document.getElementById("price"),
+      priceBlock: document.getElementById("priceBlock"),
+      serviceFields: document.getElementById("serviceFields"),
       duration: document.getElementById("duration"),
       payMode: document.getElementById("payMode"),
       fixedRate: document.getElementById("fixedRate"),
+      fixedRateBlock: document.getElementById("fixedRateBlock"),
       fixedRateRow: document.getElementById("fixedRateRow"),
       share: document.getElementById("share"),
+      shareBlock: document.getElementById("shareBlock"),
       shareRow: document.getElementById("shareRow"),
       shareChips: document.getElementById("shareChips"),
       tax: document.getElementById("tax"),
@@ -723,8 +958,16 @@
       taxHint: document.getElementById("taxHint"),
       days: document.getElementById("days"),
       hours: document.getElementById("hours"),
+      shiftDuration: document.getElementById("shiftDuration"),
+      shiftDurationField: document.getElementById("shiftDurationField"),
+      presenceMode: document.getElementById("presenceMode"),
       guarantee: document.getElementById("guarantee"),
       discount: document.getElementById("discount"),
+      firstVisitShare: document.getElementById("firstVisitShare"),
+      firstVisitDiscount: document.getElementById("firstVisitDiscount"),
+      packageShare: document.getElementById("packageShare"),
+      packageDiscount: document.getElementById("packageDiscount"),
+      attractionHint: document.getElementById("attractionHint"),
       vat: document.getElementById("vat"),
       salonDiscount: document.getElementById("salonDiscount"),
       expensesEnabled: document.getElementById("expensesEnabled"),
@@ -732,6 +975,7 @@
       expenseMonthly: document.getElementById("expenseMonthly"),
       expenseShift: document.getElementById("expenseShift"),
       expenseSession: document.getElementById("expenseSession"),
+      timeSummary: document.getElementById("timeSummary"),
       mobileResultBar: document.getElementById("mobileResultBar"),
       mobileResultNet: document.getElementById("mobileResultNet")
     };
@@ -789,15 +1033,40 @@
 
     function syncPayModeControls() {
       var fixed = el.payMode.value === "fixed";
-      el.shareRow.style.display = fixed ? "none" : "flex";
-      el.shareChips.style.display = fixed ? "none" : "flex";
-      el.fixedRateRow.style.display = fixed ? "flex" : "none";
+      el.serviceFields.style.display = fixed ? "none" : "grid";
+      el.shareBlock.style.display = fixed ? "none" : "grid";
+      el.fixedRateBlock.style.display = fixed ? "grid" : "none";
+    }
+
+    function isAdvancedMode() {
+      return el.calcShell.dataset.mode === "advanced";
+    }
+
+    function syncModeControls() {
+      document.querySelectorAll(".mode-switch button").forEach(function(button) {
+        button.classList.toggle("active", button.dataset.mode === el.calcShell.dataset.mode);
+      });
+    }
+
+    function syncPresenceControls() {
+      el.shiftDurationField.hidden = el.presenceMode.value !== "full";
+    }
+
+    function attractionDiscountPercent() {
+      var firstVisitEffect = percent(el.firstVisitShare) * percent(el.firstVisitDiscount) / 100;
+      var packageEffect = percent(el.packageShare) * percent(el.packageDiscount) / 100;
+      var otherEffect = percent(el.discount);
+      return Math.min(100, firstVisitEffect + packageEffect + otherEffect);
     }
 
     function currentSettings(overrideHours) {
       syncPayModeControls();
       syncTaxControls();
+      syncModeControls();
+      syncPresenceControls();
+      var advancedMode = isAdvancedMode();
       return {
+        advancedMode: advancedMode,
         price: Math.max(0, num(el.price)),
         duration: Math.max(1, num(el.duration)),
         payMode: el.payMode.value,
@@ -806,11 +1075,13 @@
         tax: taxRateFromMode() / 100,
         days: Math.max(0, num(el.days)),
         hours: Math.max(0, overrideHours == null ? num(el.hours) : overrideHours),
+        shiftDuration: Math.max(1, num(el.shiftDuration)),
+        presenceMode: el.presenceMode.value,
         guarantee: Math.max(0, num(el.guarantee)),
-        discount: percent(el.discount) / 100,
-        vat: percent(el.vat) / 100,
-        salonDiscount: el.salonDiscount.checked,
-        expensesEnabled: el.expensesEnabled.checked,
+        discount: advancedMode ? attractionDiscountPercent() / 100 : 0,
+        vat: advancedMode ? percent(el.vat) / 100 : 0,
+        salonDiscount: advancedMode && el.salonDiscount.checked,
+        expensesEnabled: advancedMode && el.expensesEnabled.checked,
         expenseMonthly: Math.max(0, num(el.expenseMonthly)),
         expenseShift: Math.max(0, num(el.expenseShift)),
         expenseSession: Math.max(0, num(el.expenseSession))
@@ -838,6 +1109,11 @@
         ? settings.expenseMonthly + (settings.expenseShift * settings.days) + (settings.expenseSession * sessions * settings.days)
         : 0;
       var finalMonthlyNet = monthlyNet - monthlyExpenses;
+      var massageHours = settings.hours * settings.days;
+      var salonHoursPerShift = settings.presenceMode === "full" ? Math.max(settings.shiftDuration, settings.hours) : settings.hours;
+      var salonHours = salonHoursPerShift * settings.days;
+      var salonLoad = settings.presenceMode === "full" && settings.shiftDuration > 0 ? settings.hours / settings.shiftDuration * 100 : 0;
+      var salonHourRate = salonHours > 0 ? finalMonthlyNet / salonHours : 0;
       var breakEvenHours = hourRate > 0 ? settings.guarantee / hourRate : 0;
       return {
         paidPrice: paidPrice,
@@ -856,6 +1132,10 @@
         monthlyNet: monthlyNet,
         monthlyExpenses: monthlyExpenses,
         finalMonthlyNet: finalMonthlyNet,
+        massageHours: massageHours,
+        salonHours: salonHours,
+        salonLoad: salonLoad,
+        salonHourRate: salonHourRate,
         breakEvenHours: breakEvenHours
       };
     }
@@ -901,13 +1181,22 @@
       document.getElementById("shiftNet").textContent = money(result.shiftNet);
       document.getElementById("hourRate").textContent = money(result.hourRate);
       document.getElementById("sessions").textContent = one(result.sessions);
-      document.getElementById("monthlyHours").textContent = "за " + one(settings.hours * settings.days) + " часов";
+      document.getElementById("monthlyHours").textContent = "за " + one(result.massageHours) + " часов";
       document.getElementById("monthlyGross").textContent = money(result.monthlyGross);
       document.getElementById("monthlyTax").textContent = "-" + money(result.monthlyTax);
+      document.getElementById("summaryMassageHours").textContent = one(result.massageHours) + " ч";
+      document.getElementById("salonHours").textContent = one(result.salonHours) + " ч";
+      document.getElementById("salonHourRate").textContent = money(result.salonHourRate);
+      document.getElementById("salonLoad").textContent = Math.round(result.salonLoad).toLocaleString("ru-RU") + "%";
+      document.getElementById("salonLoadItem").hidden = settings.presenceMode !== "full";
+      el.timeSummary.hidden = !settings.advancedMode;
       document.getElementById("monthlyExpenses").textContent = "-" + money(result.monthlyExpenses);
       document.getElementById("monthlyBeforeExpenses").textContent = money(result.monthlyNet);
       document.getElementById("monthlyExpensesMetric").hidden = !settings.expensesEnabled;
       document.getElementById("monthlyBeforeExpensesMetric").hidden = !settings.expensesEnabled;
+      if (el.attractionHint) {
+        el.attractionHint.textContent = "Средняя скидка по потоку: " + Math.round(settings.discount * 100).toLocaleString("ru-RU") + "%";
+      }
       var annualNet = result.finalMonthlyNet * 12;
       var annualGross = result.monthlyGross * 12;
       var annualLabel = settings.expensesEnabled ? "За год после налогов и расходов:" : "За год после налогов:";
@@ -922,7 +1211,7 @@
       var guaranteeNote = document.getElementById("guaranteeNote");
       if (settings.guarantee > 0 && result.guaranteeUsed) {
         var modeText = settings.payMode === "fixed" ? "по фиксированной ставке" : "по проценту";
-        guaranteeNote.textContent = "Сейчас срабатывает гарантия: " + modeText + " выходит " + money(result.commissionShift) + " за смену, поэтому начисляется " + money(settings.guarantee) + ". Чтобы выйти выше гарантии, нужно примерно " + one(result.breakEvenHours) + " ч массажа в смену.";
+        guaranteeNote.textContent = "Сейчас срабатывает гарантия: " + modeText + " выходит " + money(result.commissionShift) + " за смену, поэтому начисляется " + money(settings.guarantee) + ". Чтобы выйти выше гарантии, нужно примерно " + one(result.breakEvenHours) + " ч услуг в смену.";
         guaranteeNote.style.display = "block";
       } else {
         guaranteeNote.textContent = "";
@@ -949,6 +1238,13 @@
         });
         chip.dataset.selected = "true";
         el[target].value = chip.dataset.value;
+        render();
+      });
+    });
+
+    document.querySelectorAll(".mode-switch button").forEach(function(button) {
+      button.addEventListener("click", function() {
+        el.calcShell.dataset.mode = button.dataset.mode;
         render();
       });
     });
