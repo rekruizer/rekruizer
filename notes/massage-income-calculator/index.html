@@ -57,6 +57,11 @@
       display: none;
     }
 
+    .calc-shell[data-mode="simple"] .advanced-duration,
+    .calc-shell[data-mode="advanced"] .simple-duration {
+      display: none;
+    }
+
     .calc-board {
       display: grid;
       grid-template-columns: minmax(0, 1.05fr) minmax(360px, .95fr);
@@ -169,6 +174,12 @@
     }
 
     .service-fields {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .fixed-fields {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 12px;
@@ -525,6 +536,10 @@
       color: #ff8f8f;
     }
 
+    .metric.negative.neutral strong {
+      color: var(--text);
+    }
+
     .calc-note {
       margin-top: 14px;
       padding: 14px;
@@ -567,7 +582,8 @@
       .control-grid,
       .result-grid,
       .time-summary-grid,
-      .service-fields {
+      .service-fields,
+      .fixed-fields {
         grid-template-columns: 1fr;
       }
 
@@ -685,13 +701,18 @@
                 </div>
                 <div class="mini-field" id="durationBlock">
                   <label for="duration">Длительность услуги</label>
-                  <div class="field-row">
+                  <div class="field-row simple-duration">
                     <select id="duration">
                       <option value="30">30 минут</option>
+                      <option value="45">45 минут</option>
                       <option value="60" selected>60 минут</option>
                       <option value="90">90 минут</option>
                       <option value="120">120 минут</option>
                     </select>
+                  </div>
+                  <div class="field-row advanced-duration">
+                    <input id="durationCustom" type="number" min="1" max="300" step="5" value="60">
+                    <span class="unit">мин</span>
                   </div>
                 </div>
               </div>
@@ -707,11 +728,13 @@
                   <button class="chip" type="button" data-value="50">50%</button>
                 </div>
               </div>
-              <div class="mini-field" id="fixedRateBlock">
-                <label for="fixedRate">Фиксированная ставка за час</label>
-                <div class="field-row" id="fixedRateRow">
-                  <input id="fixedRate" type="number" min="0" step="100" value="1400">
-                  <span class="unit">₽/ч</span>
+              <div class="fixed-fields" id="fixedFields">
+                <div class="mini-field" id="fixedRateBlock">
+                  <label for="fixedRate">Фиксированная ставка за час</label>
+                  <div class="field-row" id="fixedRateRow">
+                    <input id="fixedRate" type="number" min="0" step="100" value="1400">
+                    <span class="unit">₽/ч</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -888,7 +911,7 @@
                 </div>
 
                 <div class="mini-field">
-                  <label for="expenseSession">Расходники за сеанс</label>
+                  <label for="expenseSession">Расходы за сеанс</label>
                   <div class="field-row">
                     <input id="expenseSession" type="number" min="0" step="50" value="0">
                     <span class="unit">₽</span>
@@ -909,7 +932,7 @@
             <div class="metric"><span>Начисление за смену</span><strong id="shiftGross">0 ₽</strong></div>
             <div class="metric"><span>После налогов за смену</span><strong id="shiftNet">0 ₽</strong></div>
             <div class="metric"><span>До налогов в месяц</span><strong id="monthlyGross">0 ₽</strong></div>
-            <div class="metric negative"><span>Налогов в месяц</span><strong id="monthlyTax">0 ₽</strong></div>
+            <div class="metric negative neutral" id="monthlyTaxMetric"><span>Налогов в месяц</span><strong id="monthlyTax">0 ₽</strong></div>
             <div class="metric" id="monthlyBeforeExpensesMetric" hidden><span>После налогов до расходов</span><strong id="monthlyBeforeExpenses">0 ₽</strong></div>
             <div class="metric negative" id="monthlyExpensesMetric" hidden><span>Расходы в месяц</span><strong id="monthlyExpenses">0 ₽</strong></div>
           </div>
@@ -974,9 +997,12 @@
       price: document.getElementById("price"),
       priceBlock: document.getElementById("priceBlock"),
       serviceFields: document.getElementById("serviceFields"),
+      durationBlock: document.getElementById("durationBlock"),
       duration: document.getElementById("duration"),
+      durationCustom: document.getElementById("durationCustom"),
       payMode: document.getElementById("payMode"),
       fixedRate: document.getElementById("fixedRate"),
+      fixedFields: document.getElementById("fixedFields"),
       fixedRateBlock: document.getElementById("fixedRateBlock"),
       fixedRateRow: document.getElementById("fixedRateRow"),
       share: document.getElementById("share"),
@@ -1018,6 +1044,7 @@
     var storageFields = [
       "price",
       "duration",
+      "durationCustom",
       "payMode",
       "fixedRate",
       "share",
@@ -1045,6 +1072,7 @@
       fields: {
         price: "4000",
         duration: "60",
+        durationCustom: "60",
         payMode: "share",
         fixedRate: "1400",
         share: "40",
@@ -1086,6 +1114,15 @@
       return Math.round(value).toLocaleString("ru-RU") + " ₽";
     }
 
+    function negativeMoney(value) {
+      return value > 0 ? "-" + money(value) : money(0);
+    }
+
+    function syncNegativeMetric(metricId, value) {
+      var metric = document.getElementById(metricId);
+      if (metric) metric.classList.toggle("neutral", value <= 0);
+    }
+
     function usdMoney(value) {
       return Math.round(value).toLocaleString("ru-RU") + "$";
     }
@@ -1122,9 +1159,15 @@
 
     function syncPayModeControls() {
       var fixed = el.payMode.value === "fixed";
-      el.serviceFields.style.display = fixed ? "none" : "grid";
+      el.priceBlock.style.display = fixed ? "none" : "grid";
       el.shareBlock.style.display = fixed ? "none" : "grid";
-      el.fixedRateBlock.style.display = fixed ? "grid" : "none";
+      el.fixedFields.style.display = fixed ? "grid" : "none";
+      if (fixed && el.durationBlock.parentElement !== el.fixedFields) {
+        el.fixedFields.appendChild(el.durationBlock);
+      }
+      if (!fixed && el.durationBlock.parentElement !== el.serviceFields) {
+        el.serviceFields.appendChild(el.durationBlock);
+      }
     }
 
     function isAdvancedMode() {
@@ -1183,7 +1226,6 @@
 
     function settingsAreDefault() {
       var data = currentSettingsData();
-      if (data.mode !== defaultValues.mode) return false;
       if (data.taxMode !== defaultValues.taxMode) return false;
       return storageFields.every(function(key) {
         return !el[key] || data.fields[key] === defaultValues.fields[key];
@@ -1257,8 +1299,14 @@
     }
 
     function resetCalculatorSettings() {
-      if (canUseLocalStorage()) localStorage.removeItem(storageKey);
-      applySettingsData(defaultValues);
+      var currentMode = el.calcShell.dataset.mode;
+      var resetValues = {
+        mode: currentMode,
+        taxMode: defaultValues.taxMode,
+        fields: defaultValues.fields,
+        checks: defaultValues.checks
+      };
+      applySettingsData(resetValues);
       render();
     }
 
@@ -1278,7 +1326,7 @@
       return {
         advancedMode: advancedMode,
         price: Math.max(0, num(el.price)),
-        duration: Math.max(1, num(el.duration)),
+        duration: Math.max(1, advancedMode ? num(el.durationCustom) : num(el.duration)),
         payMode: el.payMode.value,
         fixedRate: Math.max(0, num(el.fixedRate)),
         share: percent(el.share) / 100,
@@ -1393,14 +1441,16 @@
       document.getElementById("sessions").textContent = one(result.sessions);
       document.getElementById("monthlyHours").textContent = "за " + one(result.massageHours) + " часов";
       document.getElementById("monthlyGross").textContent = money(result.monthlyGross);
-      document.getElementById("monthlyTax").textContent = "-" + money(result.monthlyTax);
+      document.getElementById("monthlyTax").textContent = negativeMoney(result.monthlyTax);
+      syncNegativeMetric("monthlyTaxMetric", result.monthlyTax);
       document.getElementById("summaryMassageHours").textContent = one(result.massageHours) + " ч";
       document.getElementById("salonHours").textContent = one(result.salonHours) + " ч";
       document.getElementById("salonHourRate").textContent = money(result.salonHourRate);
       document.getElementById("salonLoad").textContent = Math.round(result.salonLoad).toLocaleString("ru-RU") + "%";
       document.getElementById("salonLoadItem").hidden = settings.presenceMode !== "full";
       el.timeSummary.hidden = !settings.advancedMode;
-      document.getElementById("monthlyExpenses").textContent = "-" + money(result.monthlyExpenses);
+      document.getElementById("monthlyExpenses").textContent = negativeMoney(result.monthlyExpenses);
+      syncNegativeMetric("monthlyExpensesMetric", result.monthlyExpenses);
       document.getElementById("monthlyBeforeExpenses").textContent = money(result.monthlyNet);
       document.getElementById("monthlyExpensesMetric").hidden = !settings.expensesEnabled;
       document.getElementById("monthlyBeforeExpensesMetric").hidden = !settings.expensesEnabled;
