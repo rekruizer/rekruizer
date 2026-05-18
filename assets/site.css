@@ -746,6 +746,10 @@ footer {
   gap: 8px;
 }
 
+.note-after {
+  margin-top: 14px;
+}
+
 .note-step {
   display: flex;
   gap: 12px;
