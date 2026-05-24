@@ -6,19 +6,11 @@
   <title>Основы СПА-уходов по телу — Денис Пучков</title>
   <meta name="description" content="Конспект по технологической схеме СПА-уходов по телу: ошибори, welcome contact, пилинг, маска, обёртывание и завершающее средство." />
   <link rel="stylesheet" href="/assets/site.css" />
+  <script src="/assets/site.js" defer></script>
 </head>
 <body>
   <main class="page">
-    <header>
-      <a class="brand" href="/">
-        <span class="mark">D</span>
-        <span>Денис Пучков</span>
-      </a>
-
-      <nav aria-label="Навигация">
-        <a href="https://dikidi.net/massages">Онлайн-запись</a>
-      </nav>
-    </header>
+    <div data-site-header></div>
 
     <section class="section note-shell">
       <div class="breadcrumbs"><a href="/">Главная</a><span>/</span><a href="/notes/">Полезное</a><span>/</span><span>Основы СПА-уходов по телу</span></div>
@@ -448,14 +440,7 @@
       </article>
     </section>
 
-    <footer>
-      <span>© <span id="year"></span> Денис Пучков</span>
-      <span>denisyuce.com</span>
-    </footer>
+    <div data-site-footer></div>
   </main>
-
-  <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
-  </script>
 </body>
 </html>

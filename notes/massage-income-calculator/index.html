@@ -6,6 +6,7 @@
   <title>Калькулятор дохода специалиста — Денис Пучков</title>
   <meta name="description" content="Калькулятор дохода специалистов по цене услуги, проценту, графику, загрузке, гарантии и налогам." />
   <link rel="stylesheet" href="/assets/site.css" />
+  <script src="/assets/site.js" defer></script>
   <style>
     .calc-shell {
       max-width: 1180px;
@@ -654,16 +655,7 @@
 </head>
 <body>
   <main class="page">
-    <header>
-      <a class="brand" href="/">
-        <span class="mark">D</span>
-        <span>Денис Пучков</span>
-      </a>
-
-      <nav aria-label="Навигация">
-        <a href="https://dikidi.net/massages">Онлайн-запись</a>
-      </nav>
-    </header>
+    <div data-site-header></div>
 
     <section class="section calc-shell" data-mode="simple">
       <div class="breadcrumbs"><a href="/">Главная</a><span>/</span><a href="/notes/">Полезное</a><span>/</span><span>Калькулятор дохода</span></div>
@@ -980,10 +972,7 @@
       </div>
     </section>
 
-    <footer>
-      <span>© <span id="year"></span> Денис Пучков</span>
-      <span>denisyuce.com</span>
-    </footer>
+    <div data-site-footer></div>
   </main>
 
   <div class="mobile-result-bar" id="mobileResultBar" aria-hidden="true">
@@ -1545,7 +1534,6 @@
       }
     }
 
-    document.getElementById("year").textContent = new Date().getFullYear();
     restoreSettings();
     render();
     setupMobileResultBar();

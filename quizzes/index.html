@@ -6,19 +6,11 @@
   <title>Тесты по анатомии — Денис Пучков</title>
   <meta name="description" content="Тесты по анатомии: мышцы, кости, нервы и ориентиры." />
   <link rel="stylesheet" href="/assets/site.css" />
+  <script src="/assets/site.js" defer></script>
 </head>
 <body>
   <main class="page">
-    <header>
-      <a class="brand" href="/">
-        <span class="mark">D</span>
-        <span>Денис Пучков</span>
-      </a>
-
-      <nav aria-label="Навигация">
-        <a href="https://dikidi.net/massages">Онлайн-запись</a>
-      </nav>
-    </header>
+    <div data-site-header></div>
 
     <section class="hero subpage-hero">
       <div class="hero-main">
@@ -96,14 +88,7 @@
         </a>
       </div>
     </section>
-    <footer>
-      <span>© <span id="year"></span> Денис Пучков</span>
-      <span>denisyuce.com</span>
-    </footer>
+    <div data-site-footer></div>
   </main>
-
-  <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
-  </script>
 </body>
 </html>
