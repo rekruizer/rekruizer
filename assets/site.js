@@ -86,8 +86,15 @@
   function initGoalTracking() {
     document.addEventListener("click", function (event) {
       var link = event.target.closest && event.target.closest("a[href]");
-      if (!link) return;
-      reachGoal(detectGoal(link));
+      if (link) {
+        reachGoal(detectGoal(link));
+        return;
+      }
+
+      var serviceRow = event.target.closest && event.target.closest(".price-line[data-service-url]");
+      if (serviceRow) {
+        window.location.href = serviceRow.getAttribute("data-service-url");
+      }
     });
   }
 

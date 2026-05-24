@@ -24,7 +24,7 @@
         </div>
 
         <div class="hero-actions">
-          <a class="button primary" href="https://dikidi.net/massages">Онлайн-запись</a>
+          <a class="button primary" href="https://dikidi.net/massages" data-goal="online_booking_click">Онлайн-запись</a>
         </div>
       </div>
 
@@ -42,6 +42,214 @@
           </div>
         </div>
       </aside>
+    </section>
+
+    <section class="section" id="services">
+      <div class="price-panel">
+        <div class="price-aside">
+          <div>
+            <div class="eyebrow"><span class="dot"></span> Услуги и цены</div>
+            <h2>Прайс</h2>
+            <div class="price-filter-group">
+              <span>Направления</span>
+              <div class="price-chips">
+                <span>Классика</span>
+                <span>По зонам</span>
+                <span>Лимфодренаж</span>
+                <span>Расслабление</span>
+                <span>Спортивный</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="price-table-wrap">
+          <div class="price-table-head">
+            <span>Услуга</span>
+            <span>Время</span>
+            <span>Цена</span>
+            <span></span>
+          </div>
+
+          <div class="price-category" id="price-promo">Акции</div>
+          <div class="price-line" data-service-url="/services/first-visit/">
+            <a class="price-row-link" href="/services/first-visit/">
+            <div class="price-name">Первое посещение — со скидкой</div>
+            <div class="price-time">60 мин</div>
+            <div class="price-cost"><span class="old-price">2 990 ₽</span><span class="new-price">2 390 ₽</span></div>
+            </a>
+            <a class="price-book" href="https://dikidi.net/massages?p=2.pi-ssm-sd&s=22470908&rl=0_undefined" data-goal="service_first_visit_60_click">Записаться</a>
+          </div>
+
+          <div class="price-category" id="price-zone">Массаж по зонам</div>
+          <div class="price-line" data-service-url="/services/back-neck/">
+            <a class="price-row-link" href="/services/back-neck/">
+            <div class="price-name">Спина + плечи + шея</div>
+            <div class="price-time">45 мин</div>
+            <div class="price-cost">1 990 ₽</div>
+            </a>
+            <a class="price-book" href="https://dikidi.net/massages?p=2.pi-ssm-sd&s=22461255&rl=0_undefined" data-goal="service_back_neck_45_click">Записаться</a>
+          </div>
+          <div class="price-line" data-service-url="/services/face/">
+            <a class="price-row-link" href="/services/face/">
+            <div class="price-name">Массаж лица</div>
+            <div class="price-time">45 мин</div>
+            <div class="price-cost">2 490 ₽</div>
+            </a>
+            <a class="price-book" href="https://dikidi.net/massages?p=2.pi-ssm-sd&s=22446587&rl=0_undefined" data-goal="service_face_massage_click">Записаться</a>
+          </div>
+
+          <div class="price-category" id="price-classic">Классика</div>
+          <div class="price-line" data-service-url="/services/classic/">
+            <a class="price-row-link" href="/services/classic/">
+            <div class="price-name">Классический массаж</div>
+            <div class="price-time">60 мин</div>
+            <div class="price-cost">2 990 ₽</div>
+            </a>
+            <a class="price-book" href="https://dikidi.net/massages?p=2.pi-ssm-sd&s=22022788&rl=0_undefined" data-goal="service_classic_60_click">Записаться</a>
+          </div>
+          <div class="price-line" data-service-url="/services/classic/">
+            <a class="price-row-link" href="/services/classic/">
+            <div class="price-name">Классический массаж</div>
+            <div class="price-time">90 мин</div>
+            <div class="price-cost">3 990 ₽</div>
+            </a>
+            <a class="price-book" href="https://dikidi.net/massages?p=2.pi-ssm-sd&s=22083841&rl=0_undefined" data-goal="service_classic_90_click">Записаться</a>
+          </div>
+
+          <div class="price-category" id="price-lymph">Лимфодренажный</div>
+          <div class="price-line" data-service-url="/services/lymph/">
+            <a class="price-row-link" href="/services/lymph/">
+            <div class="price-name">Лимфодренажный массаж</div>
+            <div class="price-time">60 мин</div>
+            <div class="price-cost">2 990 ₽</div>
+            </a>
+            <a class="price-book" href="https://dikidi.net/massages?p=2.pi-ssm-sd&s=22446970&rl=0_undefined" data-goal="service_lymph_60_click">Записаться</a>
+          </div>
+          <div class="price-line" data-service-url="/services/lymph/">
+            <a class="price-row-link" href="/services/lymph/">
+            <div class="price-name">Лимфодренажный массаж</div>
+            <div class="price-time">90 мин</div>
+            <div class="price-cost">3 990 ₽</div>
+            </a>
+            <a class="price-book" href="https://dikidi.net/massages?p=2.pi-ssm-sd&s=22446974&rl=0_undefined" data-goal="service_lymph_90_click">Записаться</a>
+          </div>
+
+          <div class="price-category" id="price-relax">Расслабляющий</div>
+          <div class="price-line" data-service-url="/services/relax/">
+            <a class="price-row-link" href="/services/relax/">
+            <div class="price-name">Расслабляющий массаж</div>
+            <div class="price-time">60 мин</div>
+            <div class="price-cost">2 990 ₽</div>
+            </a>
+            <a class="price-book" href="https://dikidi.net/massages?p=2.pi-ssm-sd&s=22446669&rl=0_undefined" data-goal="service_relax_60_click">Записаться</a>
+          </div>
+          <div class="price-line" data-service-url="/services/relax/">
+            <a class="price-row-link" href="/services/relax/">
+            <div class="price-name">Расслабляющий массаж</div>
+            <div class="price-time">90 мин</div>
+            <div class="price-cost">3 990 ₽</div>
+            </a>
+            <a class="price-book" href="https://dikidi.net/massages?p=2.pi-ssm-sd&s=22446697&rl=0_undefined" data-goal="service_relax_90_click">Записаться</a>
+          </div>
+
+          <div class="price-category" id="price-sport">Спортивный</div>
+          <div class="price-line" data-service-url="/services/sport/">
+            <a class="price-row-link" href="/services/sport/">
+            <div class="price-name">Спортивный массаж</div>
+            <div class="price-time">60 мин</div>
+            <div class="price-cost">2 990 ₽</div>
+            </a>
+            <a class="price-book" href="https://dikidi.net/massages?p=2.pi-ssm-sd&s=22461114&rl=0_undefined" data-goal="service_sport_60_click">Записаться</a>
+          </div>
+          <div class="price-line" data-service-url="/services/sport/">
+            <a class="price-row-link" href="/services/sport/">
+            <div class="price-name">Спортивный массаж</div>
+            <div class="price-time">90 мин</div>
+            <div class="price-cost">3 990 ₽</div>
+            </a>
+            <a class="price-book" href="https://dikidi.net/massages?p=2.pi-ssm-sd&s=22461132&rl=0_undefined" data-goal="service_sport_90_click">Записаться</a>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="subscriptions">
+      <div class="section-head">
+        <h2>Абонементы</h2>
+        <p>Для тех, кто планирует несколько встреч и хочет зафиксировать более выгодную стоимость.</p>
+      </div>
+
+      <div class="subscription-grid">
+        <a class="subscription-card" href="https://dikidi.net/massages?p=2.pi-ssm-sd&s=22461095&rl=0_undefined" data-goal="service_sub_4_60_click">
+          <span>4 × 60 минут</span>
+          <h3>Абонемент 4 × 60 минут</h3>
+          <div class="subscription-price"><span class="new-price">10 800 ₽</span><span class="old-price">11 960 ₽</span></div>
+          <div class="subscription-action">Купить →</div>
+        </a>
+
+        <a class="subscription-card" href="https://dikidi.net/massages?p=2.pi-ssm-sd&s=22461101&rl=0_undefined" data-goal="service_sub_4_90_click">
+          <span>4 × 90 минут</span>
+          <h3>Абонемент 4 × 90 минут</h3>
+          <div class="subscription-price"><span class="new-price">14 400 ₽</span><span class="old-price">15 960 ₽</span></div>
+          <div class="subscription-action">Купить →</div>
+        </a>
+
+        <a class="subscription-card" href="https://dikidi.net/massages?p=2.pi-ssm-sd&s=22461104&rl=0_undefined" data-goal="service_sub_8_60_click">
+          <span>8 × 60 минут</span>
+          <h3>Абонемент 8 × 60 минут</h3>
+          <div class="subscription-price"><span class="new-price">20 400 ₽</span><span class="old-price">23 920 ₽</span></div>
+          <div class="subscription-action">Купить →</div>
+        </a>
+
+        <a class="subscription-card" href="https://dikidi.net/massages?p=2.pi-ssm-sd&s=22461106&rl=0_undefined" data-goal="service_sub_8_90_click">
+          <span>8 × 90 минут</span>
+          <h3>Абонемент 8 × 90 минут</h3>
+          <div class="subscription-price"><span class="new-price">27 200 ₽</span><span class="old-price">31 920 ₽</span></div>
+          <div class="subscription-action">Купить →</div>
+        </a>
+      </div>
+    </section>
+
+
+    <section class="section" id="faq">
+      <div class="section-head">
+        <h2>Вопросы перед записью</h2>
+        <p>Ответы на частые вопросы</p>
+      </div>
+
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>Как выбрать подходящий вид массажа?</summary>
+          <p>Если сомневаетесь — выбирайте классический массаж на 60 или 90 минут. На первом сеансе мы обсудим жалобы, образ жизни и зоны напряжения, после чего я предложу наиболее подходящий формат работы.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Когда массаж лучше отложить?</summary>
+          <p>При температуре, остром воспалении, свежих травмах, выраженной слабости, инфекциях, сильной внезапной боли, онемении, потере чувствительности или других необычных симптомах. В таких случаях безопаснее сначала получить медицинскую консультацию.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Что происходит на первом сеансе?</summary>
+          <p>Сначала я уточняю запрос, зоны дискомфорта и ограничения. Затем оцениваю напряжение тканей и подбираю интенсивность. Во время массажа можно говорить, если где-то слишком чувствительно или хочется изменить давление.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Остаются ли синяки после массажа?</summary>
+          <p>При выполнении процедур опытными специалистами синяки не остаются. Если у вас чувствительная кожа, мы подберём щадящие техники, чтобы избежать таких эффектов.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Больно ли делать массаж?</summary>
+          <p>Интенсивность массажа регулируется в зависимости от ваших предпочтений и ощущений. Мы подбираем индивидуальный подход, чтобы процедуры были комфортными и эффективными.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Как проходит запись и оплата?</summary>
+          <p>Запись открывается через DIKIDI: вы выбираете услугу, дату и время. Оплата происходит уже на месте после прихода на сеанс — доступны разные способы оплаты.</p>
+        </details>
+      </div>
     </section>
 
     <section class="section" id="pages">
