@@ -934,31 +934,64 @@ footer a:hover {
     border-radius: 28px;
   }
 
-  .price-aside {
-    gap: 24px;
+  .price-aside > div {
+    display: block;
   }
 
   .price-filter-group {
     display: none;
   }
 
+  .price-table-wrap {
+    padding-top: 0;
+  }
+
   .price-table-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 14px;
+    padding: 0;
+  }
+
+  .price-table-head span:nth-child(2),
+  .price-table-head span:nth-child(4) {
     display: none;
   }
 
+  .price-category {
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .price-category::after {
+    right: 0;
+    left: 0;
+  }
+
   .price-line {
-    grid-template-columns: 1fr auto;
-    gap: 8px 14px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    gap: 6px 14px;
+    padding: 12px 0;
+  }
+
+  .price-name {
+    grid-column: 1;
+    grid-row: 1;
   }
 
   .price-time {
     grid-column: 1;
     grid-row: 2;
+    align-self: start;
+    text-align: left;
   }
 
   .price-cost {
     grid-column: 2;
     grid-row: 1;
+    justify-self: end;
+    align-self: end;
     text-align: right;
     align-items: flex-end;
   }
@@ -966,6 +999,9 @@ footer a:hover {
   .price-book {
     grid-column: 2;
     grid-row: 2;
+    justify-self: end;
+    min-height: 32px;
+    padding: 8px 12px;
   }
 
   .subscription-grid {
@@ -1026,6 +1062,15 @@ footer a:hover {
     padding: 9px 6px;
     font-size: 12px;
   }
+
+  .price-panel {
+    padding: 24px 26px;
+  }
+
+  .price-aside .eyebrow {
+    margin-bottom: 14px;
+  }
+
 }
 
 .subpage-hero {
@@ -1921,22 +1966,19 @@ footer a:hover {
 
 @media (max-width: 860px) {
   .price-row-link {
-    grid-column: 1;
-    grid-row: 1 / 3;
-    grid-template-columns: 1fr;
-    gap: 8px;
+    display: contents;
   }
 
   .price-row-link .price-time {
-    grid-column: auto;
-    grid-row: auto;
+    grid-column: 1;
+    grid-row: 2;
   }
 
   .price-row-link .price-cost {
-    grid-column: auto;
-    grid-row: auto;
-    text-align: left;
-    align-items: flex-start;
+    grid-column: 2;
+    grid-row: 1;
+    text-align: right;
+    align-items: flex-end;
   }
 }
 
