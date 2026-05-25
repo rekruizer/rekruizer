@@ -716,6 +716,9 @@ header + .section {
   box-shadow: none;
   overflow: hidden;
   transition: border-color .2s ease, background .2s ease;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .faq-item:hover {
@@ -725,6 +728,8 @@ header + .section {
 
 .faq-item summary {
   position: relative;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
   display: flex;
   align-items: center;
   justify-content: space-between;
