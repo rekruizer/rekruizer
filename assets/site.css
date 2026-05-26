@@ -11,6 +11,11 @@
   --green: #9ccf93;
   --shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
   --radius: 28px;
+  --button-radius-sm: 12px;
+  --button-radius-md: 14px;
+  --button-radius-lg: 16px;
+  --button-active-bg: linear-gradient(135deg, #f3d5b5, #d4a373);
+  --button-active-bg-hover: linear-gradient(135deg, #f3d5b5, #d4a373);
 }
 
 * {
@@ -214,7 +219,7 @@ h1 {
   align-items: center;
   gap: 10px;
   padding: 14px 18px;
-  border-radius: 999px;
+  border-radius: var(--button-radius-lg);
   border: 1px solid var(--line);
   background: rgba(255,255,255,.07);
   color: var(--text);
@@ -232,7 +237,11 @@ h1 {
 .button.primary {
   color: #15100c;
   border-color: transparent;
-  background: linear-gradient(135deg, #f3d5b5, #d4a373);
+  background: var(--button-active-bg);
+}
+
+.button.primary:hover {
+  background: var(--button-active-bg-hover);
 }
 
 .hero-side {
@@ -619,7 +628,7 @@ header + .section {
   justify-content: center;
   min-height: 34px;
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--button-radius-sm);
   padding: 8px 12px;
   color: var(--text);
   background: rgba(255,255,255,.05);
@@ -632,12 +641,12 @@ header + .section {
   transform: translateY(-1px);
   border-color: rgba(212,163,115,.58);
   color: #15100c;
-  background: linear-gradient(135deg, #f3d5b5, #d4a373);
+  background: var(--button-active-bg);
 }
 
 .price-line:hover .price-book {
   color: #15100c;
-  background: linear-gradient(135deg, #f3d5b5, #d4a373);
+  background: var(--button-active-bg);
 }
 
 .subscription-grid {
@@ -647,13 +656,12 @@ header + .section {
 }
 
 .subscription-card {
-  min-height: 190px;
+  min-height: 204px;
   border: 1px solid var(--line);
   border-radius: 24px;
   padding: 20px 18px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   background: linear-gradient(145deg, rgba(255,255,255,.11), rgba(255,255,255,.045));
   box-shadow: var(--shadow);
   transition: transform .22s ease, border-color .22s ease, background .22s ease;
@@ -673,7 +681,7 @@ header + .section {
   color: var(--green);
   background: rgba(156,207,147,.08);
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .subscription-card h3 {
@@ -685,6 +693,7 @@ header + .section {
 }
 
 .subscription-price {
+  display: flex;
   flex-direction: row;
   align-items: baseline;
   gap: 8px;
@@ -697,11 +706,32 @@ header + .section {
 }
 
 .subscription-action {
-  margin-top: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: auto;
+  min-height: 40px;
+  border: 1px solid rgba(245,241,234,.1);
+  border-radius: var(--button-radius-md);
+  padding: 10px 14px;
   color: var(--text);
-  opacity: .82;
+  background: rgba(255,255,255,.065);
   font-size: 14px;
-  font-weight: 750;
+  font-weight: 620;
+  transition: transform .2s ease, background .2s ease, border .2s ease, color .2s ease;
+}
+
+.subscription-card:hover .subscription-action {
+  transform: translateY(-1px);
+  border-color: transparent;
+  color: #15100c;
+  background: var(--button-active-bg);
+}
+
+.subscription-action span {
+  font-size: 16px;
+  line-height: 1;
 }
 
 .faq-list {
@@ -851,14 +881,18 @@ footer a:hover {
 
 .cookie-notice__button {
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--button-radius-md);
   padding: 11px 14px;
   color: #15100c;
-  background: linear-gradient(135deg, #f3d5b5, #d4a373);
+  background: var(--button-active-bg);
   font: inherit;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
+}
+
+.cookie-notice__button:hover {
+  background: var(--button-active-bg-hover);
 }
 
 .privacy-page {
@@ -1331,7 +1365,7 @@ footer a:hover {
   justify-content: center;
   border-radius: 999px;
   color: #15100c;
-  background: linear-gradient(135deg, #f3d5b5, #d4a373);
+  background: var(--button-active-bg);
   font-size: 12px;
   font-weight: 800;
 }
@@ -1747,10 +1781,10 @@ footer a:hover {
 }
 
 .service-option em {
-  border-radius: 999px;
+  border-radius: var(--button-radius-md);
   padding: 10px 14px;
   color: #15100c;
-  background: linear-gradient(135deg, #f3d5b5, #d4a373);
+  background: var(--button-active-bg);
   font-size: 14px;
   font-style: normal;
   font-weight: 800;
