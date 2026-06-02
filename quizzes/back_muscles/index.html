@@ -57,6 +57,38 @@ var CATS=[
 ];
 
 var QS=[
+
+  /* ══ БАЗОВЫЙ СТАРТ ══ */
+  {cat:'trap',level:1,
+   q:'Какая мышца чаще всего ощущается как «зажатые плечи» в верхней части спины?',
+   correct:'Верхняя порция трапециевидной мышцы',
+   wrong:['Нижняя порция трапеции','Широчайшая мышца спины','Квадратная мышца поясницы'],
+   exp:'Когда клиент говорит про «каменные плечи», чаще всего речь о верхней трапеции и леваторе лопатки. Это базовая точка входа в анатомию спины.'},
+
+  {cat:'lats',level:1,
+   q:'Широчайшая мышца спины в основном двигает...',
+   correct:'Плечо',
+   wrong:['Колено','Стопу','Нижнюю челюсть'],
+   exp:'Широчайшая крепится к плечевой кости и двигает плечо: разгибает, приводит и ротирует внутрь. Поэтому боль/укорочение широчайшей влияет на подъём руки.'},
+
+  {cat:'erector',level:1,
+   q:'Главная общая функция разгибателей позвоночника?',
+   correct:'Разгибать и удерживать позвоночник',
+   wrong:['Сгибать локоть','Поднимать подъязычную кость','Разгибать колено'],
+   exp:'Разгибатели позвоночника удерживают осанку и помогают выпрямляться. Это база перед изучением iliocostalis, longissimus и spinalis.'},
+
+  {cat:'rhomb',level:1,
+   q:'Какие мышцы чаще связывают лопатку с позвоночником?',
+   correct:'Ромбовидные мышцы',
+   wrong:['Икроножные мышцы','Мышцы предплечья','Квадрицепс'],
+   exp:'Ромбовидные лежат между позвоночником и медиальным краем лопатки. Это простая анатомическая опора перед вопросами про приведение и стабилизацию лопатки.'},
+
+  {cat:'sub',level:1,
+   q:'Подзатылочные мышцы расположены...',
+   correct:'Между верхними шейными позвонками и затылочной костью',
+   wrong:['В области поясницы','На передней поверхности бедра','В подошве стопы'],
+   exp:'Подзатылочные мышцы — маленькая глубокая группа под затылком. Их важно знать при работе с напряжением шеи и головной болью.'},
+
   // ТРАПЕЦИЯ
   {cat:'trap',q:'На какие три части делится трапециевидная мышца и каковы их функции?',
    correct:'Верхняя — поднимает лопатку и голову; средняя — приводит лопатку к позвоночнику; нижняя — опускает лопатку',
@@ -113,8 +145,8 @@ var QS=[
 
   // РАЗГИБАТЕЛИ ПОЗВОНОЧНИКА
   {cat:'erector',q:'Erector spinae (выпрямитель позвоночника) — три колонны от медиальной к латеральной?',
-   correct:'Остистая (spinalis) → длиннейшая (longissimus) → подвздошно-рёберная (iliocostalis)',
-   wrong:['Полуостистая → многораздельная → вращатели','Подвздошно-рёберная → длиннейшая → остистая','Многораздельная → длиннейшая → полуостистая'],
+   correct:['Остистая (spinalis)','Длиннейшая (longissimus)','Подвздошно-рёберная (iliocostalis)'],
+   wrong:['Полуостистая','Многораздельная','Вращатели','Квадратная мышца поясницы'],
    exp:'Мнемоника: «ИЛ — Длинный — Остряк» (Iliocostalis — Longissimus — Spinalis) снаружи внутрь. Или по латыни: SIL (Spinalis, от средней линии → Iliocostalis, самая латеральная). Это поверхностный слой разгибателей, хорошо доступный при массаже паравертебральной зоны.'},
   {cat:'erector',q:'Подвздошно-рёберная мышца (m. iliocostalis) — откуда начинается?',
    correct:'От крестца, гребня подвздошной кости и пояснично-грудной фасции',
@@ -153,8 +185,8 @@ var QS=[
 
   // ПОДЗАТЫЛОЧНЫЕ
   {cat:'sub',q:'Какие четыре мышцы составляют подзатылочную группу?',
-   correct:'Большая и малая задние прямые мышцы головы + верхняя и нижняя косые мышцы головы',
-   wrong:['Полуостистая, ременная, нижняя косая, большая задняя прямая','Ременная, трапеция, полуостистая, верхняя косая','Длиннейшая головы, полуостистая, нижняя косая, прямая задняя'],
+   correct:['Большая задняя прямая мышца головы','Малая задняя прямая мышца головы','Верхняя косая мышца головы','Нижняя косая мышца головы'],
+   wrong:['Полуостистая мышца головы','Ременная мышца головы','Длиннейшая мышца головы','Верхняя трапеция'],
    exp:'Подзатылочные — самые глубокие мышцы шеи, расположены между затылочной костью (C0), атлантом (C1) и осевым позвонком (C2). Иннервируются подзатылочным нервом (C1). Их дисфункция — частая причина головной боли напряжения и цервикогенных головных болей.'},
   {cat:'sub',q:'Подзатылочный треугольник — что в нём проходит?',
    correct:'Позвоночная артерия + подзатылочный нерв (C1)',
@@ -170,31 +202,31 @@ var QS=[
    exp:'Большой затылочный нерв огибает нижний край нижней косой мышцы и прободает полуостистую и трапецию. Спазм этих мышц → невралгия с болью от затылка до темени. Расслабляющий массаж подзатылочной группы — один из эффективных методов при затылочных головных болях.'},
 
   // КЛИНИКА И МАССАЖ
-  {cat:'clinic',q:'Синдром верхнего перекрёста (upper crossed syndrome по Янде) — какие мышцы укорочены, какие ослаблены?',
+  {cat:'clinic',level:3,q:'Синдром верхнего перекрёста (upper crossed syndrome по Янде) — какие мышцы укорочены, какие ослаблены?',
    correct:'Укорочены: верхняя трапеция, леватор лопатки, большая грудная, малая грудная. Ослаблены: глубокие сгибатели шеи, нижняя трапеция, передняя зубчатая, ромбовидные',
    wrong:['Укорочены: нижняя трапеция и ромбовидные; ослаблены: верхняя трапеция и большая грудная','Укорочены: все мышцы спины; ослаблены: все мышцы груди','Укорочены: глубокие сгибатели шеи; ослаблены: поверхностные разгибатели'],
    exp:'Верхний перекрёст — типичная картина офисного работника: голова выдвинута вперёд, плечи подняты и скруглены. Массаж укороченных мышц (верхняя трапеция, леватор, грудные) — важная часть работы. Но без укрепления ослабленных результат будет временным. Для массажиста — информация о необходимости давать клиенту упражнения.'},
-  {cat:'clinic',q:'Боль в пояснице. Триггерные точки какой мышцы имитируют почечную колику или боль в крестцово-подвздошном суставе?',
+  {cat:'clinic',level:3,q:'Боль в пояснице. Триггерные точки какой мышцы имитируют почечную колику или боль в крестцово-подвздошном суставе?',
    correct:'Квадратная мышца поясницы (m. quadratus lumborum)',
    wrong:['Многораздельная мышца','Подвздошно-рёберная мышца (поясничная порция)','Широчайшая мышца спины'],
    exp:'QL — «королева боли в пояснице» по Трэвелл и Саймонс. Триггерные точки в глубоких волокнах дают боль в крестцово-подвздошный сустав, ягодицу и большой вертел; в поверхностных — вдоль гребня подвздошной кости. Боль усиливается при переворачивании в постели. Доступ: пациент на боку, работа пальцами латеральнее erector spinae у 12-го ребра.'},
-  {cat:'clinic',q:'«Крыловидная лопатка» (scapula alata) — нарушение функции какой мышцы?',
+  {cat:'clinic',level:3,q:'«Крыловидная лопатка» (scapula alata) — нарушение функции какой мышцы?',
    correct:'Передней зубчатой мышцы (слабость → медиальный край лопатки отстаёт от грудной клетки)',
    wrong:['Ромбовидных мышц (слабость → лопатка отходит латерально)','Нижней порции трапеции','Леватора лопатки'],
    exp:'При слабости передней зубчатой лопатка не прижата к грудной клетке — медиальный край «крылит» особенно при нагрузке на вытянутую руку. Причина: повреждение длинного грудного нерва (C5–C7). Массажист видит асимметрию лопаток ещё при осмотре пациента стоя — важный диагностический признак.'},
-  {cat:'clinic',q:'При массаже паравертебральной зоны грудного отдела какую структуру важно ИЗБЕГАТЬ при глубоком давлении поперечно на остистые отростки?',
+  {cat:'clinic',level:3,q:'При массаже паравертебральной зоны грудного отдела какую структуру важно ИЗБЕГАТЬ при глубоком давлении поперечно на остистые отростки?',
    correct:'Остистые отростки и межостистые связки — прямое давление на них болезненно и бесполезно; работают латеральнее, на мышечные брюшки',
    wrong:['Широчайшую мышцу — она слишком поверхностна','Нижние углы лопаток — там проходят нервы','Рёберные углы — давление на них допустимо'],
    exp:'Классическая ошибка новичка — давить на остистые отростки. Паравертебральные мышцы расположены латеральнее: от 1–2 до 4–5 см от средней линии. Именно туда направлено давление при глубоком массаже спины. Работа вдоль остистых отростков — мягкое растягивание межостистых промежутков, а не компрессия.'},
-  {cat:'clinic',q:'Иннервация трапециевидной мышцы — её клиническое значение?',
+  {cat:'clinic',level:3,q:'Иннервация трапециевидной мышцы — её клиническое значение?',
    correct:'Добавочный нерв (XI пара ЧМН) + шейное сплетение C3–C4; поражение XI нерва → невозможность пожать плечом и слабость наклона головы',
    wrong:['Только шейное сплетение C3–C4; ЧМН не участвует','Грудоспинной нерв (C6–C8)','Дорзальный нерв лопатки C4–C5'],
    exp:'XI пара (n. accessorius) — единственная мышца конечности, иннервируемая черепным нервом. Нерв уязвим при операциях на шее (биопсия лимфоузлов, каротидная эндартерэктомия). Выпадение → «опущенное плечо» и крыловидная лопатка (при поражении и трапеции, и зубчатой). Для массажиста — знание иннервации помогает понять, почему «вечно напряжённая трапеция» может быть не спазмом, а компенсацией слабости.'},
-  {cat:'clinic',q:'Фасциальная цепь задней поверхности тела (superficial back line по Майерсу) — какие структуры она объединяет?',
+  {cat:'clinic',level:3,q:'Фасциальная цепь задней поверхности тела (superficial back line по Майерсу) — какие структуры она объединяет?',
    correct:'Подошвенная фасция → икроножная → хамстринги → крестцово-бугорная связка → erector spinae → затылочная фасция → апоневроз головы → надбровные дуги',
    wrong:['Только мышцы спины от крестца до затылка, без связи с ногами','Широчайшая → ягодичные → хамстринги → икроножная → ахиллово','Квадрицепс → подвздошно-большеберцовый тракт → широчайшая → трапеция'],
    exp:'Концепция Томаса Майерса «Анатомические поезда» — не классическая анатомия, но полезная клиническая модель. Натяжение в подошвенной фасции передаётся через всю заднюю цепь до затылка. Объясняет, почему массаж стоп может снизить напряжение в пояснице, и почему при работе со спиной важен глобальный подход. Для практики важно понимать: локальный спазм редко бывает изолированным.'},
-  {cat:'clinic',q:'Точка приложения для работы с ромбовидными при массаже — как её найти?',
+  {cat:'clinic',level:3,q:'Точка приложения для работы с ромбовидными при массаже — как её найти?',
    correct:'Медиальный край лопатки: отвести руку за спину (лопатка отходит, освобождая доступ) и работать поперечным трением вдоль медиального края',
    wrong:['Работают исключительно по средней линии позвоночника между остистыми отростками','Ромбовидные недоступны для прямого массажа из-за трапеции','Работают по ости лопатки, не по медиальному краю'],
    exp:'Классический приём: рука клиента заведена за спину (ладонь на пояснице) — лопатка отходит латерально и медиальный край становится доступен. Можно работать большим пальцем или костяшками. Если просить клиента подтягивать лопатки к позвоночнику во время массажа — это усиливает проприоцептивный эффект и помогает «найти» мышцу.'}
@@ -206,15 +238,130 @@ function shuffleArr(a){
   return b;
 }
 
-var shuffledQS=shuffleArr(QS);
+var shuffledQS=buildQuestionOrder();
 var cur=0,score=0,answered=false;
 var catScores={};
-CATS.forEach(function(c){catScores[c.id]={ok:0,tot:0}});
-QS.forEach(function(q){catScores[q.cat].tot++});
+function resetCatScores(list){
+  CATS.forEach(function(c){catScores[c.id]={ok:0,tot:0}});
+  list.forEach(function(q){if(catScores[q.cat])catScores[q.cat].tot++});
+}
+resetCatScores(shuffledQS);
 function getCat(id){return CATS.find(function(c){return c.id===id})}
 function setProgress(n,t){document.getElementById('prog-fill').style.width=(n/t*100)+'%'}
 
+function getDifficulty(q){
+  if(q.level)return q.level;
+  if(q.difficulty==='basic')return 1;
+  if(q.difficulty==='advanced'||q.difficulty==='clinical')return 3;
+  return 2;
+}
+function buildQuestionOrder(){
+  var levels=[1,2,3];
+  var result=[];
+  levels.forEach(function(level){
+    result=result.concat(shuffleArr(QS.filter(function(q){return getDifficulty(q)===level})));
+  });
+  return result;
+}
+
+function errorsKey(){return 'quiz-errors:'+location.pathname}
+function questionId(q){return q.q}
+function getStoredErrors(){
+  try{return JSON.parse(localStorage.getItem(errorsKey())||'[]')}catch(e){return []}
+}
+function saveStoredErrors(ids){
+  localStorage.setItem(errorsKey(),JSON.stringify(ids));
+}
+function rememberError(q){
+  var ids=getStoredErrors();
+  var id=questionId(q);
+  if(ids.indexOf(id)===-1){ids.push(id);saveStoredErrors(ids)}
+}
+function forgetError(q){
+  var id=questionId(q);
+  var ids=getStoredErrors().filter(function(x){return x!==id});
+  saveStoredErrors(ids);
+}
+function getErrorQuestions(){
+  var ids=getStoredErrors();
+  return QS.filter(function(q){return ids.indexOf(questionId(q))>-1});
+}
+function startErrorReview(){
+  var list=getErrorQuestions();
+  if(!list.length)return;
+  shuffledQS=shuffleArr(list);
+  cur=0;score=0;answered=false;
+  resetCatScores(shuffledQS);
+  document.getElementById('result-box').style.display='none';
+  document.getElementById('quiz-area').style.display='block';
+  setProgress(0,shuffledQS.length);
+  showQ();
+}
+function renderErrorReviewButton(){
+  var restart=document.getElementById('restart-btn');
+  var old=document.getElementById('errors-btn');
+  if(old)old.remove();
+  var list=getErrorQuestions();
+  if(!list.length)return;
+  var btn=document.createElement('button');
+  btn.className='button primary';
+  btn.id='errors-btn';
+  btn.type='button';
+  btn.textContent='Повторить ошибки ('+list.length+')';
+  btn.addEventListener('click',startErrorReview);
+  restart.parentNode.insertBefore(btn,restart);
+}
+
 var currentCorrectIdx=0;
+var currentCorrectSet=[];
+var currentIsMulti=false;
+
+function isMultiQuestion(q){
+  return Array.isArray(q.correct);
+}
+
+function optionText(item){
+  return (item&&typeof item==='object')?item.text:item;
+}
+
+function wrongReason(q,value){
+  var found=(q.wrong||[]).find(function(item){return item&&typeof item==='object'&&item.text===value});
+  return found&&found.reason?found.reason:'';
+}
+
+function sameSet(a,b){
+  if(a.length!==b.length)return false;
+  var map={};
+  a.forEach(function(x){map[x]=true});
+  return b.every(function(x){return map[x]});
+}
+
+function finishAnswer(isCorrect, chosenValues){
+  if(answered)return;
+  answered=true;
+  var q=shuffledQS[cur];
+  var allBtns=document.querySelectorAll('.opt');
+  allBtns.forEach(function(b){
+    b.disabled=true;
+    var isRight=currentCorrectSet.indexOf(b.dataset.value)>-1;
+    var isChosen=chosenValues.indexOf(b.dataset.value)>-1;
+    if(isRight)b.classList.add('correct');
+    if(isChosen&&!isRight)b.classList.add('wrong');
+  });
+  var checkBtn=document.querySelector('.quiz-check-btn');
+  if(checkBtn)checkBtn.disabled=true;
+  if(isCorrect){score++;catScores[q.cat].ok++;forgetError(q)}else{rememberError(q)}
+  var expBox=document.getElementById('exp-box');
+  expBox.textContent=q.exp;
+  if(!isCorrect){
+    var reasons=chosenValues.map(function(v){return wrongReason(q,v)}).filter(Boolean);
+    if(reasons.length){
+      expBox.textContent+='\n\nПочему выбранный вариант неверен: '+reasons.join(' ');
+    }
+  }
+  expBox.style.display='block';
+  document.getElementById('next-btn').style.display='inline-block';
+}
 
 function showQ(){
   var q=shuffledQS[cur];
@@ -231,35 +378,63 @@ function showQ(){
   var nextBtn=document.getElementById('next-btn');
   nextBtn.style.display='none';
   nextBtn.textContent=(cur===shuffledQS.length-1)?'Посмотреть результаты →':'Следующий вопрос →';
-  var opts4=[q.correct].concat(q.wrong);
-  var shuffledOpts=shuffleArr(opts4);
+
+  currentIsMulti=isMultiQuestion(q);
+  currentCorrectSet=currentIsMulti?q.correct.slice():[q.correct];
+  var opts=(currentIsMulti?q.correct:q.correct?[q.correct]:[]).concat(q.wrong||[]);
+  var shuffledOpts=shuffleArr(opts);
   currentCorrectIdx=shuffledOpts.indexOf(q.correct);
+
   var optsDiv=document.getElementById('options');
   optsDiv.innerHTML='';
+  if(currentIsMulti){
+    var hint=document.createElement('div');
+    hint.className='multi-hint';
+    hint.textContent='Выберите все подходящие варианты';
+    optsDiv.appendChild(hint);
+  }
   shuffledOpts.forEach(function(txt,i){
     var btn=document.createElement('button');
-    btn.className='opt';
-    btn.textContent=txt;
+    btn.className=currentIsMulti?'opt multi-opt':'opt';
+    var label=optionText(txt);
+    btn.textContent=label;
     btn.dataset.idx=i;
+    btn.dataset.value=label;
     optsDiv.appendChild(btn);
   });
+  if(currentIsMulti){
+    var check=document.createElement('button');
+    check.className='button primary quiz-check-btn';
+    check.type='button';
+    check.textContent='Проверить ответ';
+    check.disabled=true;
+    optsDiv.appendChild(check);
+  }
   answered=false;
 }
 
 document.getElementById('options').addEventListener('click',function(e){
+  var checkBtn=e.target.closest('.quiz-check-btn');
+  if(checkBtn){
+    if(answered||checkBtn.disabled)return;
+    var selected=Array.prototype.slice.call(document.querySelectorAll('.opt.selected')).map(function(b){return b.dataset.value});
+    finishAnswer(sameSet(selected,currentCorrectSet),selected);
+    return;
+  }
+
   var btn=e.target.closest('.opt');
   if(!btn||answered)return;
-  answered=true;
-  var chosen=parseInt(btn.dataset.idx);
-  var correct=currentCorrectIdx;
-  var q=shuffledQS[cur];
-  var allBtns=document.querySelectorAll('.opt');
-  allBtns.forEach(function(b){b.disabled=true});
-  allBtns[correct].classList.add('correct');
-  if(chosen!==correct){allBtns[chosen].classList.add('wrong')}
-  if(chosen===correct){score++;catScores[q.cat].ok++}
-  document.getElementById('exp-box').style.display='block';
-  document.getElementById('next-btn').style.display='inline-block';
+
+  if(currentIsMulti){
+    btn.classList.toggle('selected');
+    var anySelected=document.querySelectorAll('.opt.selected').length>0;
+    var check=document.querySelector('.quiz-check-btn');
+    if(check)check.disabled=!anySelected;
+    return;
+  }
+
+  var chosen=[btn.dataset.value];
+  finishAnswer(chosen[0]===currentCorrectSet[0],chosen);
 });
 
 document.getElementById('next-btn').addEventListener('click',function(){
@@ -271,8 +446,8 @@ document.getElementById('next-btn').addEventListener('click',function(){
 
 document.getElementById('restart-btn').addEventListener('click',function(){
   cur=0;score=0;answered=false;
-  CATS.forEach(function(c){catScores[c.id]={ok:0,tot:catScores[c.id].tot}});
-  shuffledQS=shuffleArr(QS);
+  shuffledQS=buildQuestionOrder();
+  resetCatScores(shuffledQS);
   document.getElementById('result-box').style.display='none';
   document.getElementById('quiz-area').style.display='block';
   setProgress(0,shuffledQS.length);
@@ -311,6 +486,7 @@ function showResults(){
       +'<span class="cr-val">'+s.ok+'/'+s.tot+'</span>';
     cr.appendChild(row);
   });
+  renderErrorReviewButton();
 }
 
 showQ();

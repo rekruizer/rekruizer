@@ -58,6 +58,14 @@ var CATS=[
 
 var QS=[
 
+  /* ══ БАЗОВЫЙ СТАРТ ══ */
+  {cat:'func',level:1,q:'Главная защитная роль кожи — это...',correct:'Барьер между организмом и внешней средой',wrong:['Двигать суставы','Производить силу мышцы','Перекачивать кровь как сердце'],exp:'Кожа защищает от механических, химических, микробных и температурных факторов. Поэтому состояние кожи важно оценивать до массажа.'},
+  {cat:'layers',level:1,q:'Самый наружный слой кожи называется...',correct:'Эпидермис',wrong:['Гиподерма','Фасция','Надкостница'],exp:'Эпидермис — наружный слой кожи. Ниже расположена дерма, а ещё глубже — гиподерма/подкожная клетчатка.'},
+  {cat:'massage',level:1,q:'Перед массажем кожу клиента нужно...',correct:'Осмотреть и оценить',wrong:['Игнорировать, если клиент пришёл на массаж мышц','Всегда прогревать до покраснения','Сразу массировать максимально глубоко'],exp:'Осмотр кожи помогает заметить противопоказания, отёк, воспаление, сухость, раздражение или повреждения.'},
+  {cat:'layers',level:1,q:'Какой слой кожи расположен глубже эпидермиса?',correct:'Дерма',wrong:['Эмаль','Сухожилие','Синовиальная жидкость'],exp:'Дерма лежит под эпидермисом. В ней много сосудов, нервных окончаний и соединительной ткани — поэтому она важна для реакции кожи на массаж.'},
+  {cat:'recept',level:1,q:'Что помогает коже чувствовать прикосновение и давление?',correct:'Рецепторы',wrong:['Зубы','Надкостница черепа','Желчь'],exp:'Кожные рецепторы передают нервной системе информацию о прикосновении, давлении, температуре и боли. Поэтому качество контакта в массаже имеет физиологический смысл.'},
+
+
   /* ── СЛОИ КОЖИ ── */
   {cat:'layers',
    q:'Из каких трёх основных слоёв состоит кожа (снаружи внутрь)?',
@@ -172,8 +180,8 @@ var QS=[
 
   {cat:'func',
    q:'Терморегуляция через кожу — два основных механизма?',
-   correct:'Потоотделение (испарение охлаждает кожу) + изменение кровотока в дерме (расширение сосудов → больше теплоотдачи; сужение → меньше)',
-   wrong:['Только потоотделение; кровоток не участвует в терморегуляции','Только пиломоторный рефлекс («гусиная кожа») и изменение позы','Только изменение толщины рогового слоя в зависимости от температуры'],
+   correct:['Потоотделение / испарительное охлаждение','Изменение кровотока в дерме'],
+   wrong:['Пиломоторный рефлекс как основной механизм','Изменение толщины рогового слоя','Изменение позы тела'],
    exp:'Кожные сосуды содержат до 1,5 л крови — колоссальный «радиатор». При перегреве: симпатическая система расширяет сосуды дермы → кровь отдаёт тепло через кожу + потовые железы усиливают работу. При переохлаждении: вазоконстрикция → «экономия» тепла. Для массажиста: после расслабляющего массажа кожа теплее — это реальное расширение дермальных сосудов, а не просто «приятное ощущение». Клиент может почувствовать жар после массажа — норма, объясните ему это заранее.'},
 
   {cat:'func',
@@ -228,8 +236,8 @@ var QS=[
 
   {cat:'massage',
    q:'Как правильно оценить состояние кожи клиента перед массажем?',
-   correct:'Визуально: цвет, тургор, наличие поражений, отёки; пальпаторно: температура, влажность, подвижность (skin rolling тест), болезненность; собрать анамнез по кожным заболеваниям',
-   wrong:['Только спросить о жалобах — визуальная оценка не нужна массажисту','Только проверить наличие открытых ран и воспалений, остальное не важно','Оценка кожи — задача дерматолога, массажист работает только с мышцами'],
+   correct:['Цвет и тургор кожи','Поражения и отёки','Температура и влажность','Подвижность кожи / skin rolling','Болезненность','Анамнез по кожным заболеваниям'],
+   wrong:['Только жалобы без осмотра','Только открытые раны','Только анализы у дерматолога'],
    exp:'Осмотр кожи — первое, что делает массажист. Тургор: захватить складку и отпустить — у молодых распрямляется мгновенно, у пожилых и обезвоженных — медленно. Температурная асимметрия: одна зона холоднее другой = нарушение кровотока или рефлекторный спазм сосудов. Пастозность (мягкий отёк): надавить пальцем — ямка не остаётся (у лимфатического отёка остаётся). Всё это — диагностическая информация, которую кожа «рассказывает» до начала массажа.'},
 
   {cat:'massage',
@@ -277,14 +285,129 @@ function shuffleArr(a){
   return b;
 }
 
-var shuffledQS=shuffleArr(QS);
+var shuffledQS=buildQuestionOrder();
 var cur=0,score=0,answered=false;
 var catScores={};
-CATS.forEach(function(c){catScores[c.id]={ok:0,tot:0}});
-QS.forEach(function(q){catScores[q.cat].tot++});
+function resetCatScores(list){
+  CATS.forEach(function(c){catScores[c.id]={ok:0,tot:0}});
+  list.forEach(function(q){if(catScores[q.cat])catScores[q.cat].tot++});
+}
+resetCatScores(shuffledQS);
 function getCat(id){return CATS.find(function(c){return c.id===id})}
 function setProgress(n,t){document.getElementById('prog-fill').style.width=(n/t*100)+'%'}
+
+function getDifficulty(q){
+  if(q.level)return q.level;
+  if(q.difficulty==='basic')return 1;
+  if(q.difficulty==='advanced'||q.difficulty==='clinical')return 3;
+  return 2;
+}
+function buildQuestionOrder(){
+  var levels=[1,2,3];
+  var result=[];
+  levels.forEach(function(level){
+    result=result.concat(shuffleArr(QS.filter(function(q){return getDifficulty(q)===level})));
+  });
+  return result;
+}
+
+function errorsKey(){return 'quiz-errors:'+location.pathname}
+function questionId(q){return q.q}
+function getStoredErrors(){
+  try{return JSON.parse(localStorage.getItem(errorsKey())||'[]')}catch(e){return []}
+}
+function saveStoredErrors(ids){
+  localStorage.setItem(errorsKey(),JSON.stringify(ids));
+}
+function rememberError(q){
+  var ids=getStoredErrors();
+  var id=questionId(q);
+  if(ids.indexOf(id)===-1){ids.push(id);saveStoredErrors(ids)}
+}
+function forgetError(q){
+  var id=questionId(q);
+  var ids=getStoredErrors().filter(function(x){return x!==id});
+  saveStoredErrors(ids);
+}
+function getErrorQuestions(){
+  var ids=getStoredErrors();
+  return QS.filter(function(q){return ids.indexOf(questionId(q))>-1});
+}
+function startErrorReview(){
+  var list=getErrorQuestions();
+  if(!list.length)return;
+  shuffledQS=shuffleArr(list);
+  cur=0;score=0;answered=false;
+  resetCatScores(shuffledQS);
+  document.getElementById('result-box').style.display='none';
+  document.getElementById('quiz-area').style.display='block';
+  setProgress(0,shuffledQS.length);
+  showQ();
+}
+function renderErrorReviewButton(){
+  var restart=document.getElementById('restart-btn');
+  var old=document.getElementById('errors-btn');
+  if(old)old.remove();
+  var list=getErrorQuestions();
+  if(!list.length)return;
+  var btn=document.createElement('button');
+  btn.className='button primary';
+  btn.id='errors-btn';
+  btn.type='button';
+  btn.textContent='Повторить ошибки ('+list.length+')';
+  btn.addEventListener('click',startErrorReview);
+  restart.parentNode.insertBefore(btn,restart);
+}
 var currentCorrectIdx=0;
+var currentCorrectSet=[];
+var currentIsMulti=false;
+
+function isMultiQuestion(q){
+  return Array.isArray(q.correct);
+}
+
+function optionText(item){
+  return (item&&typeof item==='object')?item.text:item;
+}
+
+function wrongReason(q,value){
+  var found=(q.wrong||[]).find(function(item){return item&&typeof item==='object'&&item.text===value});
+  return found&&found.reason?found.reason:'';
+}
+
+function sameSet(a,b){
+  if(a.length!==b.length)return false;
+  var map={};
+  a.forEach(function(x){map[x]=true});
+  return b.every(function(x){return map[x]});
+}
+
+function finishAnswer(isCorrect, chosenValues){
+  if(answered)return;
+  answered=true;
+  var q=shuffledQS[cur];
+  var allBtns=document.querySelectorAll('.opt');
+  allBtns.forEach(function(b){
+    b.disabled=true;
+    var isRight=currentCorrectSet.indexOf(b.dataset.value)>-1;
+    var isChosen=chosenValues.indexOf(b.dataset.value)>-1;
+    if(isRight)b.classList.add('correct');
+    if(isChosen&&!isRight)b.classList.add('wrong');
+  });
+  var checkBtn=document.querySelector('.quiz-check-btn');
+  if(checkBtn)checkBtn.disabled=true;
+  if(isCorrect){score++;catScores[q.cat].ok++;forgetError(q)}else{rememberError(q)}
+  var expBox=document.getElementById('exp-box');
+  expBox.textContent=q.exp;
+  if(!isCorrect){
+    var reasons=chosenValues.map(function(v){return wrongReason(q,v)}).filter(Boolean);
+    if(reasons.length){
+      expBox.textContent+='\n\nПочему выбранный вариант неверен: '+reasons.join(' ');
+    }
+  }
+  expBox.style.display='block';
+  document.getElementById('next-btn').style.display='inline-block';
+}
 
 function showQ(){
   var q=shuffledQS[cur];
@@ -301,35 +424,63 @@ function showQ(){
   var nextBtn=document.getElementById('next-btn');
   nextBtn.style.display='none';
   nextBtn.textContent=(cur===shuffledQS.length-1)?'Посмотреть результаты →':'Следующий вопрос →';
-  var opts=[q.correct].concat(q.wrong);
-  var shuffled=shuffleArr(opts);
-  currentCorrectIdx=shuffled.indexOf(q.correct);
+
+  currentIsMulti=isMultiQuestion(q);
+  currentCorrectSet=currentIsMulti?q.correct.slice():[q.correct];
+  var opts=(currentIsMulti?q.correct:q.correct?[q.correct]:[]).concat(q.wrong||[]);
+  var shuffledOpts=shuffleArr(opts);
+  currentCorrectIdx=shuffledOpts.indexOf(q.correct);
+
   var optsDiv=document.getElementById('options');
   optsDiv.innerHTML='';
-  shuffled.forEach(function(txt,i){
+  if(currentIsMulti){
+    var hint=document.createElement('div');
+    hint.className='multi-hint';
+    hint.textContent='Выберите все подходящие варианты';
+    optsDiv.appendChild(hint);
+  }
+  shuffledOpts.forEach(function(txt,i){
     var btn=document.createElement('button');
-    btn.className='opt';
-    btn.textContent=txt;
+    btn.className=currentIsMulti?'opt multi-opt':'opt';
+    var label=optionText(txt);
+    btn.textContent=label;
     btn.dataset.idx=i;
+    btn.dataset.value=label;
     optsDiv.appendChild(btn);
   });
+  if(currentIsMulti){
+    var check=document.createElement('button');
+    check.className='button primary quiz-check-btn';
+    check.type='button';
+    check.textContent='Проверить ответ';
+    check.disabled=true;
+    optsDiv.appendChild(check);
+  }
   answered=false;
 }
 
 document.getElementById('options').addEventListener('click',function(e){
+  var checkBtn=e.target.closest('.quiz-check-btn');
+  if(checkBtn){
+    if(answered||checkBtn.disabled)return;
+    var selected=Array.prototype.slice.call(document.querySelectorAll('.opt.selected')).map(function(b){return b.dataset.value});
+    finishAnswer(sameSet(selected,currentCorrectSet),selected);
+    return;
+  }
+
   var btn=e.target.closest('.opt');
   if(!btn||answered)return;
-  answered=true;
-  var chosen=parseInt(btn.dataset.idx);
-  var correct=currentCorrectIdx;
-  var q=shuffledQS[cur];
-  var all=document.querySelectorAll('.opt');
-  all.forEach(function(b){b.disabled=true});
-  all[correct].classList.add('correct');
-  if(chosen!==correct)all[chosen].classList.add('wrong');
-  if(chosen===correct){score++;catScores[q.cat].ok++}
-  document.getElementById('exp-box').style.display='block';
-  document.getElementById('next-btn').style.display='inline-block';
+
+  if(currentIsMulti){
+    btn.classList.toggle('selected');
+    var anySelected=document.querySelectorAll('.opt.selected').length>0;
+    var check=document.querySelector('.quiz-check-btn');
+    if(check)check.disabled=!anySelected;
+    return;
+  }
+
+  var chosen=[btn.dataset.value];
+  finishAnswer(chosen[0]===currentCorrectSet[0],chosen);
 });
 
 document.getElementById('next-btn').addEventListener('click',function(){
@@ -341,8 +492,8 @@ document.getElementById('next-btn').addEventListener('click',function(){
 
 document.getElementById('restart-btn').addEventListener('click',function(){
   cur=0;score=0;answered=false;
-  CATS.forEach(function(c){catScores[c.id]={ok:0,tot:catScores[c.id].tot}});
-  shuffledQS=shuffleArr(QS);
+  shuffledQS=buildQuestionOrder();
+  resetCatScores(shuffledQS);
   document.getElementById('result-box').style.display='none';
   document.getElementById('quiz-area').style.display='block';
   setProgress(0,shuffledQS.length);
@@ -380,6 +531,7 @@ function showResults(){
       +'<span class="cr-val">'+s.ok+'/'+s.tot+'</span>';
     cr.appendChild(row);
   });
+  renderErrorReviewButton();
 }
 
 showQ();
