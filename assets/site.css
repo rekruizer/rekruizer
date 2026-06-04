@@ -2270,7 +2270,7 @@ footer a:hover {
   letter-spacing: -0.025em;
 }
 
-.muscle-article p { margin: 0 0 20px; }
+.muscle-article p { margin: 0 0 0; }
 
 .muscle-article a {
   color: #f0cda9;
@@ -2357,7 +2357,7 @@ footer a:hover {
 .lecture-toc a {
   display: block;
   padding: 7px 0 7px 12px;
-  border-left: 2px solid transparent;
+  border-left: 1px solid transparent;
   color: rgba(245,241,234,.46);
   font-size: 13px;
   line-height: 1.35;
@@ -2464,7 +2464,7 @@ footer a:hover {
     white-space: nowrap;
     padding: 8px 11px;
     border: 1px solid rgba(245,241,234,.12);
-    border-radius: 999px;
+    border-radius: 12px;
     background: rgba(255,255,255,.035);
   }
 
