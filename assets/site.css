@@ -11,6 +11,11 @@
   --green: #9ccf93;
   --shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
   --radius: 28px;
+  --layout-page: 1120px;
+  --layout-section: 1040px;
+  --layout-readable: 820px;
+  --layout-article: 760px;
+  --layout-toc: 240px;
   --button-radius-sm: 12px;
   --button-radius-md: 14px;
   --button-radius-lg: 16px;
@@ -65,7 +70,7 @@ summary,
 }
 
 .page {
-  width: min(1120px, calc(100% - 40px));
+  width: min(var(--layout-page), calc(100% - 40px));
   margin: 0 auto;
   padding: 28px 0 56px;
 }
@@ -1013,7 +1018,7 @@ footer a:hover {
 
 @media (max-width: 860px) {
   .page {
-    width: min(100% - 28px, 1120px);
+    width: min(100% - 28px, var(--layout-page));
     padding-top: 18px;
   }
 
@@ -2180,4 +2185,443 @@ footer a:hover {
   max-width: none;
   margin: -1px -1px 0;
   border-radius: 22px 22px 16px 16px;
+}
+
+
+/* Muscle knowledge base / lecture pages */
+.content-hero {
+  margin: 0 auto 34px;
+  max-width: var(--layout-page);
+  border: 1px solid rgba(245,241,234,.12);
+  border-radius: 34px;
+  padding: clamp(28px, 5vw, 54px);
+  background: linear-gradient(145deg, rgba(255,255,255,.08), rgba(255,255,255,.028));
+  box-shadow: 0 24px 70px rgba(0,0,0,.28);
+  overflow: hidden;
+  position: relative;
+}
+
+.content-hero::after {
+  content: "";
+  position: absolute;
+  right: -150px;
+  top: -170px;
+  width: 390px;
+  height: 390px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(212,163,115,.24), transparent 68%);
+  pointer-events: none;
+}
+
+
+
+.content-hero h1 {
+  font-size: clamp(36px, 5.2vw, 62px);
+  max-width: 860px;
+}
+
+.lecture-shell {
+  display: grid;
+  grid-template-columns: minmax(0, var(--layout-article)) var(--layout-toc);
+  align-items: start;
+  justify-content: center;
+  gap: 56px;
+  margin: 0 auto;
+  max-width: var(--layout-page);
+}
+
+.muscle-article {
+  min-width: 0;
+  color: rgba(245,241,234,.84);
+  font-size: 17px;
+  line-height: 1.82;
+}
+
+.muscle-article > *:first-child { margin-top: 0; }
+.muscle-article > *:last-child { margin-bottom: 0; }
+
+.muscle-article h2,
+.muscle-article h3,
+.muscle-article h4 {
+  color: var(--text);
+  letter-spacing: -0.045em;
+  line-height: 1.12;
+  scroll-margin-top: 28px;
+}
+
+.muscle-article h2 {
+  margin: 46px 0 14px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(245,241,234,.13);
+  font-size: clamp(27px, 3vw, 36px);
+  font-weight: 760;
+}
+
+.muscle-article h3 {
+  margin: 38px 0 12px;
+  font-size: clamp(22px, 2.4vw, 28px);
+  font-weight: 730;
+}
+
+.muscle-article h4 {
+  margin: 28px 0 10px;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.muscle-article p { margin: 0 0 20px; }
+
+.muscle-article a {
+  color: #f0cda9;
+  text-decoration: underline;
+  text-decoration-color: rgba(240,205,169,.28);
+  text-underline-offset: 4px;
+  transition: color .2s ease, text-decoration-color .2s ease;
+}
+
+.muscle-article a:hover {
+  color: #f6dfc8;
+  text-decoration-color: rgba(246,223,200,.75);
+}
+
+.muscle-article ul,
+.muscle-article ol {
+  margin: 0 0 24px;
+  padding-left: 1.35em;
+}
+
+.muscle-article li { margin: 9px 0; }
+
+.muscle-article strong { color: rgba(245,241,234,.96); }
+
+.muscle-article img {
+  display: block;
+  width: auto;
+  max-width: min(100%, 720px);
+  height: auto;
+  margin: 30px auto 34px;
+  border-radius: 24px;
+  border: 1px solid rgba(245,241,234,.12);
+  background: rgba(255,255,255,.035);
+  box-shadow: 0 20px 54px rgba(0,0,0,.24);
+}
+
+.muscle-article table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 26px 0;
+  overflow: hidden;
+  border-radius: 18px;
+}
+
+.muscle-article th,
+.muscle-article td {
+  border: 1px solid var(--line);
+  padding: 12px 14px;
+  vertical-align: top;
+}
+
+.muscle-article blockquote {
+  margin: 26px 0;
+  padding: 18px 20px;
+  border-left: 3px solid var(--accent);
+  border-radius: 18px;
+  background: rgba(212,163,115,.08);
+}
+
+.lecture-toc {
+  position: sticky;
+  top: 22px;
+  max-height: calc(100vh - 44px);
+  overflow: auto;
+  padding: 6px 0 10px 18px;
+  border-left: 1px solid rgba(245,241,234,.11);
+  color: rgba(245,241,234,.52);
+}
+
+.lecture-toc__label {
+  margin: 0 0 12px;
+  color: rgba(243,213,181,.86);
+  font-size: 12px;
+  font-weight: 720;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.lecture-toc__nav {
+  display: grid;
+  gap: 3px;
+}
+
+.lecture-toc a {
+  display: block;
+  padding: 7px 0 7px 12px;
+  border-left: 2px solid transparent;
+  color: rgba(245,241,234,.46);
+  font-size: 13px;
+  line-height: 1.35;
+  text-decoration: none;
+  transition: color .18s ease, border-color .18s ease, transform .18s ease;
+}
+
+.lecture-toc a:hover {
+  color: rgba(245,241,234,.82);
+}
+
+.lecture-toc a.is-active {
+  color: var(--text);
+  border-left-color: var(--accent);
+  transform: translateX(2px);
+}
+
+.muscle-article #tocmenu,
+.muscle-article .kamatoc,
+.muscle-toc-title {
+  display: none;
+}
+
+.muscle-directory {
+  display: grid;
+  gap: 18px;
+  margin-top: 26px;
+}
+
+.muscle-letter {
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  padding: 20px;
+  background: rgba(255,255,255,.055);
+}
+
+.muscle-letter h2 {
+  margin: 0 0 14px;
+  color: #f3d5b5;
+  font-size: 28px;
+}
+
+.muscle-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.muscle-list a {
+  padding: 12px 13px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255,255,255,.045);
+  color: rgba(245,241,234,.9);
+  transition: .2s ease;
+}
+
+.muscle-list a:hover {
+  color: var(--text);
+  transform: translateY(-1px);
+  border-color: rgba(212,163,115,.38);
+  background: rgba(212,163,115,.1);
+}
+
+.back-link {
+  max-width: var(--layout-page);
+  margin: 32px auto 0;
+}
+
+.back-link a {
+  display: inline-flex;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255,255,255,.06);
+  color: #f3d5b5;
+}
+
+@media (max-width: 1120px) {
+  .lecture-shell {
+    grid-template-columns: minmax(0, var(--layout-article));
+    max-width: var(--layout-readable);
+  }
+
+  .lecture-toc {
+    position: static;
+    grid-row: 1;
+    max-height: none;
+    margin-bottom: 6px;
+    padding: 16px;
+    border: 1px solid rgba(245,241,234,.12);
+    border-radius: 22px;
+    background: rgba(255,255,255,.035);
+  }
+
+  .lecture-toc__nav {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+
+  .lecture-toc a {
+    white-space: nowrap;
+    padding: 8px 11px;
+    border: 1px solid rgba(245,241,234,.12);
+    border-radius: 999px;
+    background: rgba(255,255,255,.035);
+  }
+
+  .lecture-toc a.is-active {
+    border-color: rgba(212,163,115,.55);
+    transform: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .muscle-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 640px) {
+  .muscle-article { font-size: 16px; line-height: 1.76; }
+  .muscle-list { grid-template-columns: 1fr; }
+  .muscle-article img { border-radius: 18px; }
+  header { align-items: flex-start; }
+  nav { flex-wrap: wrap; justify-content: flex-end; }
+}
+
+/* Muscles index catalog */
+.muscle-index .content-hero {
+  margin-bottom: 26px;
+}
+
+.muscle-catalog {
+  max-width: var(--layout-page);
+  margin: 0 auto 52px;
+}
+
+.muscle-catalog-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  gap: 22px;
+  align-items: end;
+  margin-bottom: 22px;
+  padding: 26px;
+  border: 1px solid rgba(245,241,234,.12);
+  border-radius: 28px;
+  background: linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.03));
+}
+
+.muscle-catalog-head .eyebrow {
+  margin-bottom: 16px;
+}
+
+.muscle-catalog-head h2 {
+  margin: 0;
+  font-size: clamp(34px, 5vw, 56px);
+  line-height: 1;
+  letter-spacing: -0.06em;
+}
+
+.muscle-catalog-head p {
+  max-width: 650px;
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.muscle-search {
+  display: grid;
+  gap: 8px;
+}
+
+.muscle-search span {
+  color: rgba(243,213,181,.82);
+  font-size: 12px;
+  font-weight: 720;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.muscle-search input {
+  width: 100%;
+  min-height: 54px;
+  border: 1px solid rgba(245,241,234,.16);
+  border-radius: 18px;
+  outline: none;
+  padding: 0 16px;
+  color: var(--text);
+  background: rgba(13,15,18,.58);
+  font: inherit;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+}
+
+.muscle-search input:focus {
+  border-color: rgba(212,163,115,.58);
+  box-shadow: 0 0 0 4px rgba(212,163,115,.12);
+}
+
+.muscle-index .muscle-directory {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 0;
+}
+
+.muscle-index .muscle-letter {
+  padding: 18px;
+  border-radius: 22px;
+  background: rgba(255,255,255,.04);
+}
+
+.muscle-index .muscle-letter h2 {
+  margin-bottom: 12px;
+  font-size: 22px;
+}
+
+.muscle-index .muscle-list {
+  grid-template-columns: 1fr;
+  gap: 7px;
+}
+
+.muscle-index .muscle-list a {
+  padding: 10px 12px;
+  border-radius: 14px;
+  font-size: 15px;
+}
+
+.muscle-empty {
+  margin-bottom: 14px;
+  padding: 16px 18px;
+  border: 1px solid rgba(212,163,115,.32);
+  border-radius: 18px;
+  color: #f3d5b5;
+  background: rgba(212,163,115,.08);
+}
+
+.muscle-reference {
+  max-width: var(--layout-readable);
+  margin: 0 auto;
+}
+
+.muscle-reference-head {
+  margin-bottom: 18px;
+}
+
+.muscle-reference-head h2 {
+  margin: 0;
+  font-size: clamp(30px, 4vw, 44px);
+  letter-spacing: -0.055em;
+}
+
+.muscle-reference-head p {
+  margin-top: 10px;
+}
+
+.muscle-index-article {
+  padding-top: 8px;
+}
+
+@media (max-width: 900px) {
+  .muscle-catalog-head,
+  .muscle-index .muscle-directory {
+    grid-template-columns: 1fr;
+  }
 }
