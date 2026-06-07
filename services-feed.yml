@@ -29,7 +29,7 @@
         <url>https://denisyuce.com/services/lymph/</url>
       </set>
       <set id="s-relax">
-        <name>Расслабляющий массаж в Крылатском</name>
+        <name>� асслабляющий массаж в Крылатском</name>
         <url>https://denisyuce.com/services/relax/</url>
       </set>
       <set id="s-sport">
@@ -48,10 +48,10 @@
         <picture>https://denisyuce.com/assets/services/back-neck-45.png</picture>
         <description>Спина + плечи + шея, массажист, 45 минут. Фокусная работа со спиной, плечевым поясом и шейно-воротниковой зоной.</description>
         <sales_notes>45 минут — 1 990 ₽</sales_notes>
-        <param name="Рейтинг">0</param>
+        <param name="� ейтинг">0</param>
         <param name="Число отзывов">0</param>
         <param name="Годы опыта">0</param>
-        <param name="Регион">Москва, Крылатское, Молодёжная, Кунцево</param>
+        <param name="� егион">Москва, Крылатское, Молодёжная, Кунцево</param>
         <param name="Конверсия">100</param>
         <param name="Ссылка на телефон">tel:+79951568066</param>
         <param name="Ссылка на чат">https://t.me/massage_yuce</param>
@@ -63,7 +63,7 @@
         <param name="Выполняется по адресу исполнителя">true</param>
         <param name="Выполняется по адресу заказчика">false</param>
         <param name="Бригада">false</param>
-        <param name="Об исполнителе">Оздоровительный массаж: классический, спортивный, лимфодренажный. Приём в INDI, Москва, Рублёвское шоссе 34к2.</param>
+        <param name="Об исполнителе">Оздоровительный массаж: классический, спортивный, лимфодренажный. Приём в INDI, Москва, � ублёвское шоссе 34к2.</param>
       </offer>
       <offer id="face-45" available="true">
         <name>Денис Пучков</name>
@@ -75,10 +75,10 @@
         <picture>https://denisyuce.com/assets/services/face-60.png</picture>
         <description>Массаж лица, массажист, 45 минут. Мягкая работа с лицом, жевательными мышцами, областью лба, висков и шеи.</description>
         <sales_notes>45 минут — 2 490 ₽</sales_notes>
-        <param name="Рейтинг">0</param>
+        <param name="� ейтинг">0</param>
         <param name="Число отзывов">0</param>
         <param name="Годы опыта">0</param>
-        <param name="Регион">Москва, Крылатское, Молодёжная, Кунцево</param>
+        <param name="� егион">Москва, Крылатское, Молодёжная, Кунцево</param>
         <param name="Конверсия">90</param>
         <param name="Ссылка на телефон">tel:+79951568066</param>
         <param name="Ссылка на чат">https://t.me/massage_yuce</param>
@@ -90,7 +90,7 @@
         <param name="Выполняется по адресу исполнителя">true</param>
         <param name="Выполняется по адресу заказчика">false</param>
         <param name="Бригада">false</param>
-        <param name="Об исполнителе">Оздоровительный массаж: классический, спортивный, лимфодренажный. Приём в INDI, Москва, Рублёвское шоссе 34к2.</param>
+        <param name="Об исполнителе">Оздоровительный массаж: классический, спортивный, лимфодренажный. Приём в INDI, Москва, � ублёвское шоссе 34к2.</param>
       </offer>
       <offer id="classic" available="true">
         <name>Денис Пучков</name>
@@ -102,10 +102,10 @@
         <picture>https://denisyuce.com/assets/services/classic-60.png</picture>
         <description>Классический массаж, массажист. Универсальный массаж для снижения мышечного напряжения, восстановления после нагрузки и ощущения лёгкости в теле.</description>
         <sales_notes>60 минут — 2 990 ₽; 90 минут — 3 990 ₽</sales_notes>
-        <param name="Рейтинг">0</param>
+        <param name="� ейтинг">0</param>
         <param name="Число отзывов">0</param>
         <param name="Годы опыта">0</param>
-        <param name="Регион">Москва, Крылатское, Молодёжная, Кунцево</param>
+        <param name="� егион">Москва, Крылатское, Молодёжная, Кунцево</param>
         <param name="Конверсия">110</param>
         <param name="Ссылка на телефон">tel:+79951568066</param>
         <param name="Ссылка на чат">https://t.me/massage_yuce</param>
@@ -117,7 +117,7 @@
         <param name="Выполняется по адресу исполнителя">true</param>
         <param name="Выполняется по адресу заказчика">false</param>
         <param name="Бригада">false</param>
-        <param name="Об исполнителе">Оздоровительный массаж: классический, спортивный, лимфодренажный. Приём в INDI, Москва, Рублёвское шоссе 34к2.</param>
+        <param name="Об исполнителе">Оздоровительный массаж: классический, спортивный, лимфодренажный. Приём в INDI, Москва, � ублёвское шоссе 34к2.</param>
       </offer>
       <offer id="lymph" available="true">
         <name>Денис Пучков</name>
@@ -129,10 +129,10 @@
         <picture>https://denisyuce.com/assets/services/lymph-60.png</picture>
         <description>Лимфодренажный массаж, массажист. Мягкий ритмичный массаж для ощущения лёгкости, снижения общей отёчности и спокойного восстановления.</description>
         <sales_notes>60 минут — 2 990 ₽; 90 минут — 3 990 ₽</sales_notes>
-        <param name="Рейтинг">0</param>
+        <param name="� ейтинг">0</param>
         <param name="Число отзывов">0</param>
         <param name="Годы опыта">0</param>
-        <param name="Регион">Москва, Крылатское, Молодёжная, Кунцево</param>
+        <param name="� егион">Москва, Крылатское, Молодёжная, Кунцево</param>
         <param name="Конверсия">95</param>
         <param name="Ссылка на телефон">tel:+79951568066</param>
         <param name="Ссылка на чат">https://t.me/massage_yuce</param>
@@ -144,7 +144,7 @@
         <param name="Выполняется по адресу исполнителя">true</param>
         <param name="Выполняется по адресу заказчика">false</param>
         <param name="Бригада">false</param>
-        <param name="Об исполнителе">Оздоровительный массаж: классический, спортивный, лимфодренажный. Приём в INDI, Москва, Рублёвское шоссе 34к2.</param>
+        <param name="Об исполнителе">Оздоровительный массаж: классический, спортивный, лимфодренажный. Приём в INDI, Москва, � ублёвское шоссе 34к2.</param>
       </offer>
       <offer id="relax" available="true">
         <name>Денис Пучков</name>
@@ -154,12 +154,12 @@
         <categoryId>15</categoryId>
         <set-ids>s-relax</set-ids>
         <picture>https://denisyuce.com/assets/services/relax-60.png</picture>
-        <description>Расслабляющий массаж, массажист. Спокойный массаж для снижения напряжения, восстановления нервной системы и глубокого отдыха.</description>
+        <description>� асслабляющий массаж, массажист. Спокойный массаж для снижения напряжения, восстановления нервной системы и глубокого отдыха.</description>
         <sales_notes>60 минут — 2 990 ₽; 90 минут — 3 990 ₽</sales_notes>
-        <param name="Рейтинг">0</param>
+        <param name="� ейтинг">0</param>
         <param name="Число отзывов">0</param>
         <param name="Годы опыта">0</param>
-        <param name="Регион">Москва, Крылатское, Молодёжная, Кунцево</param>
+        <param name="� егион">Москва, Крылатское, Молодёжная, Кунцево</param>
         <param name="Конверсия">95</param>
         <param name="Ссылка на телефон">tel:+79951568066</param>
         <param name="Ссылка на чат">https://t.me/massage_yuce</param>
@@ -171,7 +171,7 @@
         <param name="Выполняется по адресу исполнителя">true</param>
         <param name="Выполняется по адресу заказчика">false</param>
         <param name="Бригада">false</param>
-        <param name="Об исполнителе">Оздоровительный массаж: классический, спортивный, лимфодренажный. Приём в INDI, Москва, Рублёвское шоссе 34к2.</param>
+        <param name="Об исполнителе">Оздоровительный массаж: классический, спортивный, лимфодренажный. Приём в INDI, Москва, � ублёвское шоссе 34к2.</param>
       </offer>
       <offer id="sport" available="true">
         <name>Денис Пучков</name>
@@ -183,10 +183,10 @@
         <picture>https://denisyuce.com/assets/services/sport-60.png</picture>
         <description>Спортивный массаж, массажист. Более активный массаж для восстановления после нагрузки, снижения мышечной забитости и избыточного напряжения.</description>
         <sales_notes>60 минут — 2 990 ₽; 90 минут — 3 990 ₽</sales_notes>
-        <param name="Рейтинг">0</param>
+        <param name="� ейтинг">0</param>
         <param name="Число отзывов">0</param>
         <param name="Годы опыта">0</param>
-        <param name="Регион">Москва, Крылатское, Молодёжная, Кунцево</param>
+        <param name="� егион">Москва, Крылатское, Молодёжная, Кунцево</param>
         <param name="Конверсия">100</param>
         <param name="Ссылка на телефон">tel:+79951568066</param>
         <param name="Ссылка на чат">https://t.me/massage_yuce</param>
@@ -198,7 +198,7 @@
         <param name="Выполняется по адресу исполнителя">true</param>
         <param name="Выполняется по адресу заказчика">false</param>
         <param name="Бригада">false</param>
-        <param name="Об исполнителе">Оздоровительный массаж: классический, спортивный, лимфодренажный. Приём в INDI, Москва, Рублёвское шоссе 34к2.</param>
+        <param name="Об исполнителе">Оздоровительный массаж: классический, спортивный, лимфодренажный. Приём в INDI, Москва, � ублёвское шоссе 34к2.</param>
       </offer>
     </offers>
   </shop>
