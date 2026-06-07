@@ -67,8 +67,8 @@
       color: var(--muted);
       cursor: pointer;
       font: inherit;
-      font-size: 13px;
-      font-weight: 800;
+      font-size: var(--button-font-size-md);
+      font-weight: var(--button-font-weight);
       padding: 0 16px;
     }
 
@@ -126,20 +126,20 @@
 
     .reset-button {
       min-height: 34px;
-      border: 1px solid rgba(245,241,234,.14);
+      border: 1px solid var(--line);
       border-radius: var(--button-radius-sm);
-      background: rgba(255,255,255,.055);
-      color: var(--muted);
+      background: var(--button-bg);
+      color: var(--text);
       cursor: pointer;
       font: inherit;
-      font-size: 13px;
-      font-weight: 800;
+      font-size: var(--button-font-size-sm);
+      font-weight: var(--button-font-weight);
       padding: 0 13px;
     }
 
     .reset-button:hover {
-      border-color: rgba(212,163,115,.5);
-      color: var(--text);
+      border-color: var(--button-border-hover);
+      background: var(--button-bg-hover);
     }
 
     .reset-button[hidden] {
@@ -229,7 +229,7 @@
     .toggle-label {
       color: var(--muted);
       font-size: 12px;
-      font-weight: 700;
+      font-weight: var(--font-weight-bold);
       letter-spacing: .04em;
       text-transform: uppercase;
     }
@@ -250,7 +250,7 @@
       color: var(--text);
       font: inherit;
       font-size: 16px;
-      font-weight: 700;
+      font-weight: var(--font-weight-bold);
       padding: 12px 13px;
       outline: none;
     }
@@ -292,8 +292,8 @@
 
     .chip {
       border: 1px solid var(--line);
-      border-radius: var(--button-radius-sm);
-      background: rgba(255,255,255,.055);
+      border-radius: var(--button-radius-lg);
+      background: var(--button-bg);
       color: var(--text);
       cursor: pointer;
       display: inline-grid;
@@ -301,8 +301,8 @@
       min-width: 44px;
       min-height: 36px;
       font: inherit;
-      font-size: 13px;
-      font-weight: 700;
+      font-size: var(--button-font-size-sm);
+      font-weight: var(--button-font-weight);
       padding: 0 11px;
       transition: background .16s, border-color .16s;
     }
@@ -326,11 +326,11 @@
       min-height: 38px;
       padding: 9px 11px;
       border: 1px solid var(--line);
-      border-radius: 14px;
+      border-radius: var(--button-radius-md);
       background: rgba(255,255,255,.045);
       color: var(--text);
-      font-size: 13px;
-      font-weight: 700;
+      font-size: var(--button-font-size-md);
+      font-weight: var(--button-font-weight);
       cursor: pointer;
     }
 
@@ -400,7 +400,7 @@
       background: rgba(156,207,147,.14);
       color: var(--green);
       font-size: 13px;
-      font-weight: 800;
+      font-weight: var(--font-weight-bold);
       white-space: nowrap;
     }
 
@@ -431,7 +431,7 @@
       font-size: clamp(42px, 6vw, 70px);
       line-height: .95;
       letter-spacing: -0.07em;
-      font-weight: 780;
+      font-weight: var(--font-weight-bold);
       color: var(--green);
     }
 
@@ -447,7 +447,7 @@
       margin-bottom: 8px;
       color: var(--muted);
       font-size: 18px;
-      font-weight: 750;
+      font-weight: var(--font-weight-bold);
       line-height: 1.1;
       white-space: nowrap;
     }
@@ -469,7 +469,7 @@
       font-size: clamp(22px, 3vw, 34px);
       line-height: 1;
       letter-spacing: -0.05em;
-      font-weight: 780;
+      font-weight: var(--font-weight-bold);
     }
 
     .annual-limit {
@@ -492,7 +492,7 @@
       margin: 0 0 12px;
       color: var(--muted);
       font-size: inherit;
-      font-weight: 400;
+      font-weight: var(--font-weight-medium);
       letter-spacing: 0;
       text-transform: none;
     }
@@ -510,11 +510,12 @@
       line-height: 1.35;
     }
 
-    .time-summary-item strong {
+    .time-summary-item .text-bold {
       display: block;
       margin-top: 5px;
       color: var(--text);
       font-size: 20px;
+      font-weight: var(--font-weight-bold);
       letter-spacing: -0.04em;
     }
 
@@ -548,19 +549,20 @@
       line-height: 1.35;
     }
 
-    .metric strong {
+    .metric .text-bold {
       display: block;
       margin-top: 6px;
       color: var(--text);
       font-size: 22px;
+      font-weight: var(--font-weight-bold);
       letter-spacing: -0.04em;
     }
 
-    .metric.negative strong {
+    .metric.negative .text-bold {
       color: #ff8f8f;
     }
 
-    .metric.negative.neutral strong {
+    .metric.negative.neutral .text-bold {
       color: var(--text);
     }
 
@@ -664,12 +666,13 @@
       .mobile-result-bar span {
         color: var(--muted);
         font-size: 16px;
-        font-weight: 600;
+        font-weight: var(--font-weight-semibold);
       }
 
-      .mobile-result-bar strong {
+      .mobile-result-bar .text-bold {
         color: var(--green);
         font-size: 24px;
+        font-weight: var(--font-weight-bold);
         line-height: 1;
         letter-spacing: -0.05em;
       }
@@ -682,7 +685,7 @@
     <div data-site-header></div>
 
     <section class="section calc-shell" data-mode="simple">
-      <div class="breadcrumbs"><a href="/">Главная</a><span>/</span><a href="/notes/">Полезное</a><span>/</span><span>Калькулятор дохода</span></div>
+      <div class="breadcrumbs"><a href="/">Главная</a><span>/</span><a href="/notes/">Полезное</a></div>
       <div class="section-head">
         <h1>Калькулятор дохода специалиста</h1>
       </div>
@@ -943,14 +946,14 @@
           <h2>Результат</h2>
 
           <div class="result-grid">
-            <div class="metric"><span>Ставка за час</span><strong id="hourRate">0 ₽</strong></div>
-            <div class="metric"><span>Сеансов в смену</span><strong id="sessions">0</strong></div>
-            <div class="metric"><span>Начисление за смену</span><strong id="shiftGross">0 ₽</strong></div>
-            <div class="metric"><span>После налогов за смену</span><strong id="shiftNet">0 ₽</strong></div>
-            <div class="metric"><span>До налогов в месяц</span><strong id="monthlyGross">0 ₽</strong></div>
-            <div class="metric negative neutral" id="monthlyTaxMetric"><span>Налогов в месяц</span><strong id="monthlyTax">0 ₽</strong></div>
-            <div class="metric" id="monthlyBeforeExpensesMetric" hidden><span>После налогов до расходов</span><strong id="monthlyBeforeExpenses">0 ₽</strong></div>
-            <div class="metric negative" id="monthlyExpensesMetric" hidden><span>Расходы в месяц</span><strong id="monthlyExpenses">0 ₽</strong></div>
+            <div class="metric"><span>Ставка за час</span><span id="hourRate" class="text-bold">0 ₽</span></div>
+            <div class="metric"><span>Сеансов в смену</span><span id="sessions" class="text-bold">0</span></div>
+            <div class="metric"><span>Начисление за смену</span><span id="shiftGross" class="text-bold">0 ₽</span></div>
+            <div class="metric"><span>После налогов за смену</span><span id="shiftNet" class="text-bold">0 ₽</span></div>
+            <div class="metric"><span>До налогов в месяц</span><span id="monthlyGross" class="text-bold">0 ₽</span></div>
+            <div class="metric negative neutral" id="monthlyTaxMetric"><span>Налогов в месяц</span><span id="monthlyTax" class="text-bold">0 ₽</span></div>
+            <div class="metric" id="monthlyBeforeExpensesMetric" hidden><span>После налогов до расходов</span><span id="monthlyBeforeExpenses" class="text-bold">0 ₽</span></div>
+            <div class="metric negative" id="monthlyExpensesMetric" hidden><span>Расходы в месяц</span><span id="monthlyExpenses" class="text-bold">0 ₽</span></div>
           </div>
 
           <div class="hero-result">
@@ -965,7 +968,7 @@
               </span>
             </div>
             <div class="net-row">
-              <strong class="big-number" id="monthlyNet">0 ₽</strong>
+              <span class="big-number text-bold" id="monthlyNet">0 ₽</span>
               <span class="usd-estimate" id="usdEstimate"></span>
             </div>
             <div class="annual-note" id="annualNote"></div>
@@ -975,19 +978,19 @@
             <div class="time-summary-grid">
               <div class="time-summary-item">
                 <span>Часов услуг в месяц</span>
-                <strong id="summaryMassageHours">0 ч</strong>
+                <span id="summaryMassageHours" class="text-bold">0 ч</span>
               </div>
               <div class="time-summary-item">
                 <span>В салоне в месяц</span>
-                <strong id="salonHours">0 ч</strong>
+                <span id="salonHours" class="text-bold">0 ч</span>
               </div>
               <div class="time-summary-item">
                 <span>Доход/час в салоне</span>
-                <strong id="salonHourRate">0 ₽</strong>
+                <span id="salonHourRate" class="text-bold">0 ₽</span>
               </div>
               <div class="time-summary-item" id="salonLoadItem">
                 <span>Загрузка смены</span>
-                <strong id="salonLoad">0%</strong>
+                <span id="salonLoad" class="text-bold">0%</span>
               </div>
             </div>
           </div>
@@ -1001,7 +1004,7 @@
 
   <div class="mobile-result-bar" id="mobileResultBar" aria-hidden="true">
     <span>Итого в месяц</span>
-    <strong id="mobileResultNet">0 ₽</strong>
+    <span id="mobileResultNet" class="text-bold">0 ₽</span>
   </div>
 
   <script>

@@ -6,18 +6,67 @@
     var mounts = document.querySelectorAll("[data-site-header]");
     mounts.forEach(function (mount) {
       mount.outerHTML = [
-        '<header>',
+        '<header class="site-header">',
         '  <a class="brand" href="/">',
         '    <span class="mark">D</span>',
         '    <span>Денис Пучков</span>',
         '  </a>',
-        '  <nav aria-label="Навигация">',
+        '  <nav class="site-nav" aria-label="Навигация">',
         '    <a href="/services/">Услуги</a>',
         '    <a href="/notes/">Полезное</a>',
-        '    <a href="https://dikidi.net/massages" data-goal="online_booking_click">Онлайн-запись</a>',
+        '    <a class="site-nav__booking" href="https://dikidi.net/massages" data-goal="online_booking_click">Онлайн-запись</a>',
         '  </nav>',
+        '  <button class="mobile-menu-toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="mobile-menu">',
+        '    <span></span><span></span>',
+        '  </button>',
+        '  <div class="mobile-menu" id="mobile-menu" aria-hidden="true">',
+        '    <div class="mobile-menu__top">',
+        '      <a class="brand" href="/">',
+        '        <span class="mark">D</span>',
+        '        <span>Денис Пучков</span>',
+        '      </a>',
+        '      <button class="mobile-menu__close" type="button" aria-label="Закрыть меню"><span></span><span></span></button>',
+        '    </div>',
+        '    <div class="mobile-menu__content">',
+        '      <nav class="mobile-menu__nav" aria-label="Мобильная навигация">',
+        '        <a href="/">Главная</a>',
+        '        <a href="/services/">Услуги</a>',
+        '        <a href="/notes/">Полезное</a>',
+        '        <a href="/muscles/">База мышц</a>',
+        '        <a href="/quizzes/">Тесты</a>',
+        '      </nav>',
+        '    </div>',
+        '    <div class="mobile-menu__bottom">',
+        '      <p class="mobile-menu__offer">Скидка 20% на первый визит</p>',
+        '      <a class="button primary mobile-menu__cta" href="https://dikidi.net/massages" data-goal="online_booking_click">Записаться</a>',
+        '    </div>',
+        '  </div>',
         '</header>'
       ].join("");
+    });
+  }
+
+  function initMobileMenu() {
+    var toggle = document.querySelector(".mobile-menu-toggle");
+    var menu = document.querySelector(".mobile-menu");
+    if (!toggle || !menu) return;
+
+    var close = menu.querySelector(".mobile-menu__close");
+    var links = menu.querySelectorAll("a");
+
+    function setOpen(isOpen) {
+      document.body.classList.toggle("mobile-menu-open", isOpen);
+      toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      menu.setAttribute("aria-hidden", isOpen ? "false" : "true");
+    }
+
+    toggle.addEventListener("click", function () { setOpen(true); });
+    if (close) close.addEventListener("click", function () { setOpen(false); });
+    links.forEach(function (link) {
+      link.addEventListener("click", function () { setOpen(false); });
+    });
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") setOpen(false);
     });
   }
 
@@ -237,6 +286,35 @@
     headings.forEach(function (heading) { observer.observe(heading); });
   }
 
+
+  function normalizeVisibleBreadcrumbs() {
+    var headings = Array.prototype.slice.call(document.querySelectorAll("h1"));
+    var headingText = headings.length ? headings[0].textContent.trim().replace(/\s+/g, " ") : "";
+    if (!headingText) return;
+
+    document.querySelectorAll(".breadcrumbs").forEach(function (crumbs) {
+      var items = Array.prototype.slice.call(crumbs.children).filter(function (node) {
+        return node.matches && (node.matches("a") || node.matches("span"));
+      });
+      if (!items.length) return;
+
+      var last = items[items.length - 1];
+      if (!last.matches("span")) return;
+
+      var lastText = last.textContent.trim().replace(/\s+/g, " ");
+      var isCurrentPage = lastText && (
+        lastText === headingText ||
+        headingText.indexOf(lastText) === 0 ||
+        lastText.indexOf(headingText) === 0
+      );
+      if (!isCurrentPage) return;
+
+      var previous = last.previousElementSibling;
+      last.remove();
+      if (previous && previous.matches("span") && previous.textContent.trim() === "/") previous.remove();
+    });
+  }
+
   function initCookieNotice() {
     try {
       if (localStorage.getItem(COOKIE_NOTICE_KEY) === "accepted") return;
@@ -264,8 +342,10 @@
 
   renderHeader();
   renderFooter();
+  initMobileMenu();
   initMetrika();
   initGoalTracking();
+  normalizeVisibleBreadcrumbs();
   initLectureToc();
   initMuscleSearch();
   initCookieNotice();

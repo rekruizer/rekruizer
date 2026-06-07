@@ -54,8 +54,8 @@
     .clinical-progress { height: 7px; border-radius: 999px; background: rgba(245,241,234,.13); overflow: hidden; }
     .clinical-progress-fill { height: 100%; width: 0%; border-radius: inherit; background: var(--accent); transition: width .25s ease; }
     .case-head { display: grid; gap: 12px; }
-    .case-badge { width: fit-content; display: inline-flex; align-items: center; gap: 8px; padding: 7px 11px; border-radius: 999px; font-size: 12px; font-weight: 700; border: 1px solid rgba(255,255,255,.08); }
-    .case-title { font-size: clamp(23px, 3.2vw, 34px); line-height: 1.12; letter-spacing: -0.05em; font-weight: 760; color: var(--text); }
+    .case-badge { width: fit-content; display: inline-flex; align-items: center; gap: 8px; padding: 7px 11px; border-radius: 999px; font-size: 12px; font-weight: var(--font-weight-bold); border: 1px solid rgba(255,255,255,.08); }
+    .case-title { font-size: clamp(23px, 3.2vw, 34px); line-height: 1.12; letter-spacing: -0.05em; font-weight: var(--font-weight-bold); color: var(--text); }
     .step-dots { display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: 13px; }
     .step-dot { width: 8px; height: 8px; border-radius: 999px; background: rgba(245,241,234,.18); }
     .step-dot.done { background: rgba(156,207,147,.8); }
@@ -63,10 +63,10 @@
     .story-stack { display: grid; gap: 8px; }
     .story-item { color: var(--muted); line-height: 1.65; padding: 14px 16px; border-radius: 14px; background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.055); }
     .story-item.current { color: var(--text); background: rgba(255,255,255,.065); border-color: rgba(212,163,115,.22); border-left: 3px solid var(--accent); border-radius: 0 16px 16px 0; }
-    .decision-label { color: var(--accent); font-size: 12px; font-weight: 740; letter-spacing: .08em; text-transform: uppercase; }
-    .decision-question { font-size: clamp(19px, 2.2vw, 26px); line-height: 1.35; letter-spacing: -0.03em; font-weight: 720; color: var(--text); margin-top: -4px; }
+    .decision-label { color: var(--accent); font-size: 12px; font-weight: var(--font-weight-bold); letter-spacing: .08em; text-transform: uppercase; }
+    .decision-question { font-size: clamp(19px, 2.2vw, 26px); line-height: 1.35; letter-spacing: -0.03em; font-weight: var(--font-weight-bold); color: var(--text); margin-top: -4px; }
     .decision-options { display: grid; gap: 10px; }
-    .decision-option { width: 100%; text-align: left; padding: 15px 16px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.055); color: var(--text); font: inherit; line-height: 1.5; cursor: pointer; transition: background .16s, border-color .16s, transform .16s; }
+    .decision-option { width: 100%; text-align: left; padding: 15px 16px; border: 1px solid var(--line); border-radius: var(--button-radius-md); background: rgba(255,255,255,.055); color: var(--text); font: inherit; font-weight: var(--button-font-weight); line-height: 1.5; cursor: pointer; transition: background .16s, border-color .16s, transform .16s; }
     .decision-option:hover:not([disabled]) { background: rgba(255,255,255,.095); border-color: rgba(212,163,115,.42); transform: translateY(-1px); }
     .decision-option[disabled] { cursor: default; }
     .decision-option.selected.best, .decision-option.best-answer { border-color: rgba(156,207,147,.78); background: rgba(156,207,147,.18); }
@@ -75,15 +75,15 @@
     .decision-option.selected.risky { border-color: rgba(211,91,91,.72); background: rgba(211,91,91,.18); }
     .feedback-card { display: none; padding: 18px; border-radius: 18px; background: rgba(255,255,255,.06); border: 1px solid var(--line); }
     .feedback-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
-    .feedback-verdict { font-weight: 760; font-size: 17px; }
+    .feedback-verdict { font-weight: var(--font-weight-bold); font-size: 17px; }
     .feedback-score { color: var(--muted); font-size: 13px; white-space: nowrap; }
     .feedback-card p { margin: 0 0 10px; color: var(--muted); line-height: 1.65; }
-    .feedback-card p strong { color: var(--text); }
-    .details-btn { margin-top: 4px; border: 0; background: transparent; color: var(--accent); font: inherit; font-weight: 700; cursor: pointer; padding: 0; }
+    .feedback-card p .text-bold { color: var(--text); font-weight: var(--font-weight-bold); }
+    .details-btn { margin-top: 4px; border: 0; background: transparent; color: var(--accent); font: inherit; font-weight: var(--button-font-weight); cursor: pointer; padding: 0; }
     .details-text { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--muted); line-height: 1.65; }
     .case-summary, .clinical-result { display: none; }
     .case-summary-card { text-align: center; padding: 18px 0; }
-    .case-score { font-size: clamp(42px, 7vw, 76px); line-height: 1; font-weight: 780; letter-spacing: -0.06em; color: var(--text); }
+    .case-score { font-size: clamp(42px, 7vw, 76px); line-height: 1; font-weight: var(--font-weight-bold); letter-spacing: -0.06em; color: var(--text); }
     .case-note { color: var(--muted); margin: 10px auto 20px; max-width: 680px; line-height: 1.6; }
     .profile-grid { display: grid; gap: 12px; margin-top: 18px; }
     .profile-row { display: grid; grid-template-columns: minmax(150px, 1.1fr) minmax(120px, 2fr) 54px; gap: 12px; align-items: center; color: var(--muted); font-size: 14px; }
@@ -91,7 +91,7 @@
     .profile-fill { height: 100%; border-radius: inherit; background: var(--accent); }
     .result-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 18px 0; }
     .result-stat { background: rgba(255,255,255,.055); border: 1px solid var(--line); border-radius: 16px; padding: 16px; text-align: center; }
-    .result-stat strong { display: block; color: var(--text); font-size: 28px; letter-spacing: -0.03em; }
+    .result-stat .text-bold { display: block; color: var(--text); font-size: 28px; font-weight: var(--font-weight-bold); letter-spacing: -0.03em; }
     .result-stat span { color: var(--muted); font-size: 12px; }
     .result-text { color: var(--muted); line-height: 1.65; }
     @media (max-width: 720px) {
@@ -107,7 +107,7 @@
     <div data-site-header></div>
 
     <section class="section quiz-shell">
-      <div class="breadcrumbs"><a href="/">Главная</a><span>/</span><a href="/quizzes/">Тесты</a><span>/</span><span>Клиническое мышление</span></div>
+      <div class="breadcrumbs"><a href="/">Главная</a><span>/</span><a href="/quizzes/">Тесты</a></div>
       <div class="section-head clinical-intro">
         <h1>Клиническое мышление</h1>
         <p>Интерактивные мини-приёмы для массажиста: клиент приходит с жалобой, ты собираешь данные, проверяешь безопасность, строишь рабочую гипотезу и выбираешь стратегию в рамках своей зоны ответственности.</p>
@@ -133,8 +133,8 @@
                 <div class="feedback-verdict" id="feedback-verdict"></div>
                 <div class="feedback-score" id="feedback-score"></div>
               </div>
-              <p><strong>Почему:</strong> <span id="feedback-why"></span></p>
-              <p><strong>Практический вывод:</strong> <span id="feedback-takeaway"></span></p>
+              <p><span class="text-bold">Почему:</span> <span id="feedback-why"></span></p>
+              <p><span class="text-bold">Практический вывод:</span> <span id="feedback-takeaway"></span></p>
               <button class="details-btn" id="details-btn" type="button">Подробнее</button>
               <div class="details-text" id="details-text"></div>
             </div>
@@ -154,9 +154,9 @@
             <div class="result-title">Все кейсы пройдены</div>
             <p class="result-text" id="result-subtitle"></p>
             <div class="result-stats">
-              <div class="result-stat"><strong id="total-pct"></strong><span>общий результат</span></div>
-              <div class="result-stat"><strong id="total-score"></strong><span>баллы</span></div>
-              <div class="result-stat"><strong id="total-cases"></strong><span>кейсов</span></div>
+              <div class="result-stat"><span id="total-pct" class="text-bold"></span><span>общий результат</span></div>
+              <div class="result-stat"><span id="total-score" class="text-bold"></span><span>баллы</span></div>
+              <div class="result-stat"><span id="total-cases" class="text-bold"></span><span>кейсов</span></div>
             </div>
             <div class="divider"></div>
             <div class="sec-lbl">профиль навыков</div>
