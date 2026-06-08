@@ -6,7 +6,6 @@ without installing dependencies.
 """
 from __future__ import annotations
 
-import json
 import re
 from dataclasses import dataclass
 from datetime import datetime
@@ -57,6 +56,12 @@ DESCRIPTION_BY_SLUG_TIME = {
 }
 
 @dataclass(frozen=True)
+class Category:
+    id: str
+    name: str
+
+
+@dataclass(frozen=True)
 class Offer:
     id: str
     name: str
@@ -67,6 +72,8 @@ class Offer:
     booking_url: str
     picture: str
     description: str
+    category_id: str
+    category_name: str
 
 
 def clean_text(value: str) -> str:
@@ -95,10 +102,42 @@ def normalize_booking_url(url: str) -> str:
     return urlunparse(parsed._replace(query=urlencode(pairs)))
 
 
+def category_id_from_name(name: str, index: int) -> str:
+    # Stable ids keep Yandex from creating duplicate categories after feed updates.
+    known = {
+        "Акции": "1",
+        "Массаж по зонам": "2",
+        "Классика": "3",
+        "Лимфодренажный": "4",
+        "Расслабляющий": "5",
+        "Спортивный": "6",
+    }
+    return known.get(name, str(index + 1))
+
+
+def extract_price_categories(html: str) -> list[tuple[int, Category]]:
+    categories: list[tuple[int, Category]] = []
+    for index, match in enumerate(re.finditer(r'<div class="price-category"[^>]*>(.*?)</div>', html, re.S)):
+        name = clean_text(match.group(1))
+        categories.append((match.start(), Category(id=category_id_from_name(name, index), name=name)))
+    return categories
+
+
+def category_for_position(categories: list[tuple[int, Category]], position: int) -> Category:
+    current = Category(id="1", name="Массаж")
+    for category_position, category in categories:
+        if category_position > position:
+            break
+        current = category
+    return current
+
+
 def extract_rows(html: str) -> Iterable[dict[str, str]]:
+    categories = extract_price_categories(html)
     starts = list(re.finditer(r'<div class="price-line" data-service-url="([^"]+)">', html))
     for index, match in enumerate(starts):
         service_url = match.group(1)
+        category = category_for_position(categories, match.start())
         block_start = match.end()
         block_end = starts[index + 1].start() if index + 1 < len(starts) else html.find('</section>', block_start)
         block = html[block_start:block_end]
@@ -117,6 +156,8 @@ def extract_rows(html: str) -> Iterable[dict[str, str]]:
             "price_raw": clean_text(new.group(1) if new else cost.group(1)),
             "oldprice_raw": clean_text(old.group(1)) if old else "",
             "booking_url": booking.group(1),
+            "category_id": category.id,
+            "category_name": category.name,
         }
 
 
@@ -165,6 +206,8 @@ def build_offers() -> list[Offer]:
                 booking_url=normalize_booking_url(row["booking_url"]),
                 picture=SITE + "/assets/services/" + picture_name,
                 description=description,
+                category_id=row["category_id"],
+                category_name=row["category_name"],
             )
         )
     return offers
@@ -175,6 +218,24 @@ def add(parent: Element, tag: str, text: object | None = None, **attrs: object) 
     if text is not None:
         el.text = str(text)
     return el
+
+
+def categories_from_offers(offers: list[Offer]) -> list[Category]:
+    seen: set[str] = set()
+    categories: list[Category] = []
+    for offer in offers:
+        if offer.category_id in seen:
+            continue
+        seen.add(offer.category_id)
+        categories.append(Category(id=offer.category_id, name=offer.category_name))
+    return categories
+
+
+def yandex_import_order(offers: list[Offer]) -> list[Offer]:
+    # In Yandex Business UI imported YML rows are currently shown newest/last first.
+    # Feed them in reverse site order so the visible order matches the site price list:
+    # Акции → Массаж по зонам → Классика → Лимфодренажный → Расслабляющий → Спортивный.
+    return list(reversed(offers))
 
 
 def write_feed(offers: list[Offer]) -> None:
@@ -189,10 +250,11 @@ def write_feed(offers: list[Offer]) -> None:
     add(currencies, "currency", id="RUR", rate="1")
 
     categories = add(shop, "categories")
-    add(categories, "category", "Массаж", id="1")
+    for category in categories_from_offers(offers):
+        add(categories, "category", category.name, id=category.id)
 
     offers_el = add(shop, "offers")
-    for item in offers:
+    for item in yandex_import_order(offers):
         offer = add(offers_el, "offer", id=item.id, available="true")
         add(offer, "name", item.name)
         add(offer, "url", item.page_url)
@@ -200,7 +262,7 @@ def write_feed(offers: list[Offer]) -> None:
         if item.oldprice:
             add(offer, "oldprice", item.oldprice)
         add(offer, "currencyId", "RUR")
-        add(offer, "categoryId", "1")
+        add(offer, "categoryId", item.category_id)
         add(offer, "picture", item.picture)
         add(offer, "description", item.description)
         add(offer, "sales_notes", f"{item.duration_min} минут — {item.price:,} ₽".replace(",", " "))
