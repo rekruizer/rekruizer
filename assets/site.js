@@ -315,6 +315,90 @@
     });
   }
 
+
+
+  var YANDEX_MAPS_API_KEY = "b945c399-6aeb-44f8-9973-bdd99309f45b";
+
+  function loadYandexMapsApi(callback) {
+    if (window.ymaps && typeof window.ymaps.ready === "function") {
+      callback();
+      return;
+    }
+
+    var existing = document.getElementById("yandex-maps-api");
+    if (existing) {
+      existing.addEventListener("load", callback, { once: true });
+      return;
+    }
+
+    var script = document.createElement("script");
+    script.id = "yandex-maps-api";
+    script.src = "https://api-maps.yandex.ru/2.1/?apikey=" + encodeURIComponent(YANDEX_MAPS_API_KEY) + "&lang=ru_RU";
+    script.async = true;
+    script.addEventListener("load", callback, { once: true });
+    document.head.appendChild(script);
+  }
+
+  function initYandexLocationMap() {
+    var container = document.getElementById("yandex-location-map");
+    if (!container || container.dataset.mapInitialized === "true") return;
+    container.dataset.mapInitialized = "true";
+
+    loadYandexMapsApi(function () {
+      window.ymaps.ready(function () {
+        var coords = [55.749238, 37.419761];
+        var map = new window.ymaps.Map(container, {
+          center: coords,
+          zoom: 13,
+          controls: []
+        }, {
+          suppressMapOpenBlock: true,
+          yandexMapDisablePoiInteractivity: true
+        });
+
+        map.behaviors.enable(["scrollZoom", "drag", "multiTouch"]);
+
+        var placemark = new window.ymaps.Placemark(coords, {
+          hintContent: "Денис Пучков — массаж",
+          balloonContent: "Москва, Рублёвское шоссе 34к2, INDI"
+        }, {
+          preset: "islands#blueDotIcon"
+        });
+
+        map.geoObjects.add(placemark);
+        removeYandexMapPromos(container);
+      });
+    });
+  }
+
+  function removeYandexMapPromos(container) {
+    var hidePromos = function () {
+      var nodes = container.querySelectorAll('a, button, [class*="taxi"], [aria-label*="такси" i], [title*="такси" i]');
+      nodes.forEach(function (node) {
+        var text = (node.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
+        var className = String(node.className || '').toLowerCase();
+        var aria = String(node.getAttribute && (node.getAttribute('aria-label') || '')).toLowerCase();
+        var title = String(node.getAttribute && (node.getAttribute('title') || '')).toLowerCase();
+
+        if (
+          text.indexOf('доехать на такси') !== -1 ||
+          className.indexOf('taxi') !== -1 ||
+          aria.indexOf('такси') !== -1 ||
+          title.indexOf('такси') !== -1
+        ) {
+          node.style.setProperty('display', 'none', 'important');
+        }
+      });
+    };
+
+    hidePromos();
+
+    if (window.MutationObserver) {
+      var observer = new MutationObserver(hidePromos);
+      observer.observe(container, { childList: true, subtree: true });
+    }
+  }
+
   function initCookieNotice() {
     try {
       if (localStorage.getItem(COOKIE_NOTICE_KEY) === "accepted") return;
@@ -349,4 +433,5 @@
   initLectureToc();
   initMuscleSearch();
   initCookieNotice();
+  initYandexLocationMap();
 })();
