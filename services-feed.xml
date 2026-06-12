@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<yml_catalog date="2026-06-09 20:02">
+<yml_catalog date="2026-06-12 21:44">
   <shop>
-    <name>Оздоровительный массаж — Денис Пучков</name>
+    <name>Массаж — Денис Пучков</name>
     <company>Денис Пучков</company>
     <url>https://denisyuce.com/</url>
     <currencies>
@@ -135,7 +135,7 @@
         <currencyId>RUR</currencyId>
         <categoryId>3</categoryId>
         <picture>https://denisyuce.com/assets/services/classic-60.png</picture>
-        <description>Классический оздоровительный массаж для снижения мышечного напряжения, восстановления после нагрузки и ощущения лёгкости в теле.</description>
+        <description>Классический массаж для снижения мышечного напряжения, восстановления после нагрузки и ощущения лёгкости в теле.</description>
         <sales_notes>60 минут — 2 990 ₽</sales_notes>
         <param name="Длительность">60 минут</param>
         <param name="Район">Москва, Крылатское, Молодёжная, Кунцево</param>
@@ -184,7 +184,7 @@
         <currencyId>RUR</currencyId>
         <categoryId>1</categoryId>
         <picture>https://denisyuce.com/assets/services/sale.png</picture>
-        <description>Первый сеанс оздоровительного массажа со скидкой: знакомство с форматом работы, обсуждение запроса и мягкая работа с напряжением в теле.</description>
+        <description>Первый сеанс массажа со скидкой: знакомство с форматом работы, обсуждение запроса и мягкая работа с напряжением в теле.</description>
         <sales_notes>60 минут — 2 390 ₽</sales_notes>
         <param name="Длительность">60 минут</param>
         <param name="Район">Москва, Крылатское, Молодёжная, Кунцево</param>
