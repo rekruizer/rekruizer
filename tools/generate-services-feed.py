@@ -28,17 +28,17 @@ CONTACT = {
 }
 
 IMAGE_BY_SLUG_TIME = {
-    ("first-visit", "60"): "sale.png",
-    ("back-neck", "45"): "back-neck-45.png",
-    ("face", "45"): "face-60.png",
-    ("classic", "60"): "classic-60.png",
-    ("classic", "90"): "classic-90.png",
-    ("lymph", "60"): "lymph-60.png",
-    ("lymph", "90"): "lymph-90.png",
-    ("relax", "60"): "relax-60.png",
-    ("relax", "90"): "relax-90.png",
-    ("sport", "60"): "sport-60.png",
-    ("sport", "90"): "sport-90.png",
+    ("first-visit", "60"): "sale.webp",
+    ("back-neck", "45"): "back-neck-45.webp",
+    ("face", "45"): "face-60.webp",
+    ("classic", "60"): "classic-60.webp",
+    ("classic", "90"): "classic-90.webp",
+    ("lymph", "60"): "lymph-60.webp",
+    ("lymph", "90"): "lymph-90.webp",
+    ("relax", "60"): "relax-60.webp",
+    ("relax", "90"): "relax-90.webp",
+    ("sport", "60"): "sport-60.webp",
+    ("sport", "90"): "sport-90.webp",
 }
 
 DESCRIPTION_BY_SLUG_TIME = {

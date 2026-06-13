@@ -19,7 +19,7 @@
         '  <button class="mobile-menu-toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="mobile-menu">',
         '    <span></span><span></span>',
         '  </button>',
-        '  <div class="mobile-menu" id="mobile-menu" aria-hidden="true">',
+        '  <div class="mobile-menu" id="mobile-menu" aria-hidden="true" inert>',
         '    <div class="mobile-menu__top">',
         '      <a class="brand" href="/">',
         '        <span class="mark">D</span>',
@@ -54,10 +54,17 @@
     var close = menu.querySelector(".mobile-menu__close");
     var links = menu.querySelectorAll("a");
 
+    menu.setAttribute("inert", "");
+
     function setOpen(isOpen) {
       document.body.classList.toggle("mobile-menu-open", isOpen);
       toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
       menu.setAttribute("aria-hidden", isOpen ? "false" : "true");
+      if (isOpen) {
+        menu.removeAttribute("inert");
+      } else {
+        menu.setAttribute("inert", "");
+      }
     }
 
     toggle.addEventListener("click", function () { setOpen(true); });
@@ -343,6 +350,7 @@
     var container = document.getElementById("yandex-location-map");
     if (!container || container.dataset.mapInitialized === "true") return;
     container.dataset.mapInitialized = "true";
+    container.classList.add("is-loading");
 
     loadYandexMapsApi(function () {
       window.ymaps.ready(function () {
@@ -366,9 +374,31 @@
         });
 
         map.geoObjects.add(placemark);
+        container.classList.remove("is-loading");
+        container.classList.add("is-ready");
         removeYandexMapPromos(container);
       });
     });
+  }
+
+  function initLazyYandexLocationMap() {
+    var container = document.getElementById("yandex-location-map");
+    if (!container) return;
+
+    if (!("IntersectionObserver" in window)) {
+      initYandexLocationMap();
+      return;
+    }
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        observer.disconnect();
+        initYandexLocationMap();
+      });
+    }, { rootMargin: "360px 0px" });
+
+    observer.observe(container);
   }
 
   function removeYandexMapPromos(container) {
@@ -433,5 +463,5 @@
   initLectureToc();
   initMuscleSearch();
   initCookieNotice();
-  initYandexLocationMap();
+  initLazyYandexLocationMap();
 })();

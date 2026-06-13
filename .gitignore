@@ -3,3 +3,7 @@
 
 __pycache__/
 *.py[cod]
+
+services-feed.xml
+_site/
+sitemap.xml
