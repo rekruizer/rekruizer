@@ -24,7 +24,7 @@ CONTACT = {
     "region": "Москва, Крылатское, Молодёжная, Кунцево",
     "address": "Москва, Рублёвское шоссе 34к2, INDI",
     "phone": "+7 995 156-80-66",
-    "telegram": "https://t.me/massage_yuce",
+    "telegram": "https://t.me/+79951568066",
 }
 
 IMAGE_BY_SLUG_TIME = {

@@ -37,7 +37,13 @@
         '      </nav>',
         '    </div>',
         '    <div class="mobile-menu__bottom">',
-        '      <p class="mobile-menu__offer">Скидка 20% на первый визит</p>',
+        '      <div class="mobile-menu__contact">',
+        '        <a class="mobile-menu__phone" href="tel:+79951568066">+7 (995) 156-80-66</a>',
+        '        <a class="mobile-menu__address" href="https://yandex.ru/profile/-/CPdhREie" target="_blank" rel="noopener noreferrer" data-goal="yandex_maps_route_click">Москва, Рублёвское шоссе 34к2</a>',
+        '      </div>',
+        '      <span class="mobile-menu__social footer-social" aria-label="Соцсети">',
+        renderSocialLinks(),
+        '      </span>',
         '      <a class="button primary mobile-menu__cta" href="https://dikidi.net/massages" data-goal="online_booking_click">Записаться</a>',
         '    </div>',
         '  </div>',
@@ -77,17 +83,71 @@
     });
   }
 
+  var SOCIAL_LINKS = [
+      {
+        label: "Instagram",
+        href: "https://instagram.com/denisyuce",
+        path: "M13.0281 2.00073C14.1535 2.00259 14.7238 2.00855 15.2166 2.02322L15.4107 2.02956C15.6349 2.03753 15.8561 2.04753 16.1228 2.06003C17.1869 2.1092 17.9128 2.27753 18.5503 2.52503C19.2094 2.7792 19.7661 3.12253 20.3219 3.67837C20.8769 4.2342 21.2203 4.79253 21.4753 5.45003C21.7219 6.0867 21.8903 6.81337 21.9403 7.87753C21.9522 8.1442 21.9618 8.3654 21.9697 8.58964L21.976 8.78373C21.9906 9.27647 21.9973 9.84686 21.9994 10.9723L22.0002 11.7179C22.0003 11.809 22.0003 11.903 22.0003 12L22.0002 12.2821L21.9996 13.0278C21.9977 14.1532 21.9918 14.7236 21.9771 15.2163L21.9707 15.4104C21.9628 15.6347 21.9528 15.8559 21.9403 16.1225C21.8911 17.1867 21.7219 17.9125 21.4753 18.55C21.2211 19.2092 20.8769 19.7659 20.3219 20.3217C19.7661 20.8767 19.2069 21.22 18.5503 21.475C17.9128 21.7217 17.1869 21.89 16.1228 21.94C15.8561 21.9519 15.6349 21.9616 15.4107 21.9694L15.2166 21.9757C14.7238 21.9904 14.1535 21.997 13.0281 21.9992L12.2824 22C12.1913 22 12.0973 22 12.0003 22L11.7182 22L10.9725 21.9993C9.8471 21.9975 9.27672 21.9915 8.78397 21.9768L8.58989 21.9705C8.36564 21.9625 8.14444 21.9525 7.87778 21.94C6.81361 21.8909 6.08861 21.7217 5.45028 21.475C4.79194 21.2209 4.23444 20.8767 3.67861 20.3217C3.12278 19.7659 2.78028 19.2067 2.52528 18.55C2.27778 17.9125 2.11028 17.1867 2.06028 16.1225C2.0484 15.8559 2.03871 15.6347 2.03086 15.4104L2.02457 15.2163C2.00994 14.7236 2.00327 14.1532 2.00111 13.0278L2.00098 10.9723C2.00284 9.84686 2.00879 9.27647 2.02346 8.78373L2.02981 8.58964C2.03778 8.3654 2.04778 8.1442 2.06028 7.87753C2.10944 6.81253 2.27778 6.08753 2.52528 5.45003C2.77944 4.7917 3.12278 4.2342 3.67861 3.67837C4.23444 3.12253 4.79278 2.78003 5.45028 2.52503C6.08778 2.27753 6.81278 2.11003 7.87778 2.06003C8.14444 2.04816 8.36564 2.03847 8.58989 2.03062L8.78397 2.02433C9.27672 2.00969 9.8471 2.00302 10.9725 2.00086L13.0281 2.00073ZM12.0003 7.00003C9.23738 7.00003 7.00028 9.23956 7.00028 12C7.00028 14.7629 9.23981 17 12.0003 17C14.7632 17 17.0003 14.7605 17.0003 12C17.0003 9.23713 14.7607 7.00003 12.0003 7.00003ZM12.0003 9.00003C13.6572 9.00003 15.0003 10.3427 15.0003 12C15.0003 13.6569 13.6576 15 12.0003 15C10.3434 15 9.00028 13.6574 9.00028 12C9.00028 10.3431 10.3429 9.00003 12.0003 9.00003ZM17.2503 5.50003C16.561 5.50003 16.0003 6.05994 16.0003 6.74918C16.0003 7.43843 16.5602 7.9992 17.2503 7.9992C17.9395 7.9992 18.5003 7.4393 18.5003 6.74918C18.5003 6.05994 17.9386 5.49917 17.2503 5.50003Z"
+      },
+      {
+        label: "Telegram",
+        href: "https://t.me/+79951568066",
+        path: "M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM12.3584 9.38246C11.3857 9.78702 9.4418 10.6244 6.5266 11.8945C6.05321 12.0827 5.80524 12.2669 5.78266 12.4469C5.74451 12.7513 6.12561 12.8711 6.64458 13.0343C6.71517 13.0565 6.78832 13.0795 6.8633 13.1039C7.37388 13.2698 8.06071 13.464 8.41776 13.4717C8.74164 13.4787 9.10313 13.3452 9.50222 13.0711C12.226 11.2325 13.632 10.3032 13.7203 10.2832C13.7826 10.269 13.8689 10.2513 13.9273 10.3032C13.9858 10.3552 13.98 10.4536 13.9739 10.48C13.9361 10.641 12.4401 12.0318 11.666 12.7515C11.4351 12.9661 11.2101 13.1853 10.9833 13.4039C10.509 13.8611 10.1533 14.204 11.003 14.764C11.8644 15.3317 12.7323 15.8982 13.5724 16.4971C13.9867 16.7925 14.359 17.0579 14.8188 17.0156C15.0861 16.991 15.3621 16.7397 15.5022 15.9903C15.8335 14.2193 16.4847 10.3821 16.6352 8.80083C16.6484 8.6623 16.6318 8.485 16.6185 8.40717C16.6052 8.32934 16.5773 8.21844 16.4762 8.13635C16.3563 8.03913 16.1714 8.01863 16.0887 8.02009C15.7125 8.02672 15.1355 8.22737 12.3584 9.38246Z"
+      },
+      {
+        label: "WhatsApp",
+        href: "https://wa.me/79951568066",
+        path: "M12.001 2C17.5238 2 22.001 6.47715 22.001 12C22.001 17.5228 17.5238 22 12.001 22C10.1671 22 8.44851 21.5064 6.97086 20.6447L2.00516 22L3.35712 17.0315C2.49494 15.5536 2.00098 13.8345 2.00098 12C2.00098 6.47715 6.47813 2 12.001 2ZM8.59339 7.30019L8.39232 7.30833C8.26293 7.31742 8.13607 7.34902 8.02057 7.40811C7.93392 7.45244 7.85348 7.51651 7.72709 7.63586C7.60774 7.74855 7.53857 7.84697 7.46569 7.94186C7.09599 8.4232 6.89729 9.01405 6.90098 9.62098C6.90299 10.1116 7.03043 10.5884 7.23169 11.0336C7.63982 11.9364 8.31288 12.8908 9.20194 13.7759C9.4155 13.9885 9.62473 14.2034 9.85034 14.402C10.9538 15.3736 12.2688 16.0742 13.6907 16.4482C13.6907 16.4482 14.2507 16.5342 14.2589 16.5347C14.4444 16.5447 14.6296 16.5313 14.8153 16.5218C15.1066 16.5068 15.391 16.428 15.6484 16.2909C15.8139 16.2028 15.8922 16.159 16.0311 16.0714C16.0311 16.0714 16.0737 16.0426 16.1559 15.9814C16.2909 15.8808 16.3743 15.81 16.4866 15.6934C16.5694 15.6074 16.6406 15.5058 16.6956 15.3913C16.7738 15.2281 16.8525 14.9166 16.8838 14.6579C16.9077 14.4603 16.9005 14.3523 16.8979 14.2854C16.8936 14.1778 16.8047 14.0671 16.7073 14.0201L16.1258 13.7587C16.1258 13.7587 15.2563 13.3803 14.7245 13.1377C14.6691 13.1124 14.6085 13.1007 14.5476 13.097C14.4142 13.0888 14.2647 13.1236 14.1696 13.2238C14.1646 13.2218 14.0984 13.279 13.3749 14.1555C13.335 14.2032 13.2415 14.3069 13.0798 14.2972C13.0554 14.2955 13.0311 14.292 13.0074 14.2858C12.9419 14.2685 12.8781 14.2457 12.8157 14.2193C12.692 14.1668 12.6486 14.1469 12.5641 14.1105C11.9868 13.8583 11.457 13.5209 10.9887 13.108C10.8631 12.9974 10.7463 12.8783 10.6259 12.7616C10.2057 12.3543 9.86169 11.9211 9.60577 11.4938C9.5918 11.4705 9.57027 11.4368 9.54708 11.3991C9.50521 11.331 9.45903 11.25 9.44455 11.1944C9.40738 11.0473 9.50599 10.9291 9.50599 10.9291C9.50599 10.9291 9.74939 10.663 9.86248 10.5183C9.97128 10.379 10.0652 10.2428 10.125 10.1457C10.2428 9.95633 10.2801 9.76062 10.2182 9.60963C9.93764 8.92565 9.64818 8.24536 9.34986 7.56894C9.29098 7.43545 9.11585 7.33846 8.95659 7.32007C8.90265 7.31384 8.84875 7.30758 8.79459 7.30402C8.66053 7.29748 8.5262 7.29892 8.39232 7.30833L8.59339 7.30019Z"
+      },
+      {
+        label: "VK",
+        href: "https://vk.com/massage_yuce",
+        path: "M4.26 4.26C3 5.532 3 7.566 3 11.64V12.36C3 16.428 3 18.462 4.26 19.74C5.532 21 7.566 21 11.64 21H12.36C16.428 21 18.462 21 19.74 19.74C21 18.468 21 16.434 21 12.36V11.64C21 7.572 21 5.538 19.74 4.26C18.468 3 16.434 3 12.36 3H11.64C7.572 3 5.538 3 4.26 4.26ZM6.03613 8.47817H8.10013C8.16613 11.9102 9.67813 13.3622 10.8781 13.6622V8.47817H12.8161V11.4362C13.9981 11.3102 15.2461 9.96017 15.6661 8.47217H17.5981C17.4406 9.24243 17.1259 9.97193 16.6737 10.6151C16.2216 11.2582 15.6416 11.8012 14.9701 12.2102C15.7195 12.5831 16.3813 13.1107 16.9118 13.7582C17.4424 14.4056 17.8297 15.1581 18.0481 15.9662H15.9181C15.4621 14.5442 14.3221 13.4402 12.8161 13.2902V15.9662H12.5821H12.5761C8.47213 15.9662 6.13213 13.1582 6.03613 8.47817Z"
+      }
+    ];
+
+
+  function renderSocialLinks() {
+    return SOCIAL_LINKS.map(function (item) {
+      return '    <a href="' + item.href + '" aria-label="' + item.label + '"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="' + item.path + '"></path></svg></a>';
+    }).join("");
+  }
+
   function renderFooter() {
     var mounts = document.querySelectorAll("[data-site-footer]");
     var year = new Date().getFullYear();
+    var socialHtml = renderSocialLinks();
+    var documentLinks = [
+      { label: "Политика конфиденциальности", href: "/documents/privacy/" },
+      { label: "Правила записи", href: "/documents/rules/" }
+    ];
+    var documentsHtml = documentLinks.map(function (item) {
+      return '    <a href="' + item.href + '">' + item.label + '</a>';
+    }).join("");
     mounts.forEach(function (mount) {
       mount.outerHTML = [
         '<footer>',
-        '  <span>© ' + year + ' Денис Пучков</span>',
-        '  <span class="footer-links">',
-        '    <a href="/privacy/">Политика конфиденциальности</a>',
-        '    <span>denisyuce.com</span>',
-        '  </span>',
+        '  <div class="footer-main">',
+        '    <div class="footer-brand">',
+        '      <a class="brand" href="/">',
+        '        <span class="mark">D</span>',
+        '        <span>Денис Пучков</span>',
+        '      </a>',
+        '      <p>Внимательные руки, спокойная голова и массаж, после которого телу легче доверять себе.</p>',
+        '    </div>',
+        '    <div class="footer-contact">',
+        '      <a class="footer-phone" href="tel:+79951568066">+7 (995) 156-80-66</a>',
+        '      <span class="footer-social" aria-label="Соцсети">',
+        socialHtml,
+        '      </span>',
+        '    </div>',
+        '  </div>',
+        '  <div class="footer-bottom">',
+        '    <span>© ' + year + ' Денис Пучков</span>',
+        '    <nav class="footer-docs" aria-label="Документы">',
+        documentsHtml,
+        '    </nav>',
+        '  </div>',
         '</footer>'
       ].join("");
     });
@@ -131,7 +191,7 @@
 
     var href = link.getAttribute("href") || "";
     if (href.indexOf("dikidi.net") !== -1) return "online_booking_click";
-    if (href.indexOf("t.me/massage_yuce") !== -1) return "telegram_click";
+    if (href.indexOf("t.me/+79951568066") !== -1) return "telegram_click";
     if (href.indexOf("wa.me/79951568066") !== -1) return "whatsapp_click";
     if (href.indexOf("vk.com/massage_yuce") !== -1) return "vk_click";
     if (href.indexOf("instagram.com/denisyuce") !== -1) return "instagram_click";
@@ -161,12 +221,13 @@
 
   function initMuscleSearch() {
     var input = document.querySelector("[data-muscle-search]");
-    var directory = document.querySelector(".muscle-directory");
-    if (!input || !directory) return;
+    var catalog = document.querySelector("[data-muscle-catalog]");
+    if (!input || !catalog) return;
 
-    var cards = Array.prototype.slice.call(directory.querySelectorAll(".muscle-list a"));
-    var letters = Array.prototype.slice.call(directory.querySelectorAll(".muscle-letter"));
+    var tabs = Array.prototype.slice.call(catalog.querySelectorAll("[data-muscle-tab]"));
+    var panels = Array.prototype.slice.call(catalog.querySelectorAll("[data-muscle-panel]"));
     var empty = document.querySelector("[data-muscle-empty]");
+    var activePanel = panels.filter(function (panel) { return !panel.hidden; })[0] || panels[0];
 
     function normalize(value) {
       return (value || "").toLowerCase().replace(/ё/g, "е").trim();
@@ -174,6 +235,11 @@
 
     function applyFilter() {
       var query = normalize(input.value);
+      var panel = activePanel;
+      if (!panel) return;
+
+      var cards = Array.prototype.slice.call(panel.querySelectorAll(".muscle-list a"));
+      var groups = Array.prototype.slice.call(panel.querySelectorAll("[data-muscle-group]"));
       var visibleCount = 0;
 
       cards.forEach(function (card) {
@@ -182,15 +248,40 @@
         if (isVisible) visibleCount += 1;
       });
 
-      letters.forEach(function (letter) {
-        var hasVisible = Array.prototype.some.call(letter.querySelectorAll(".muscle-list a"), function (card) {
+      groups.forEach(function (group) {
+        var visibleLinks = Array.prototype.filter.call(group.querySelectorAll(".muscle-list a"), function (card) {
           return !card.hidden;
         });
-        letter.hidden = !hasVisible;
+        var count = group.querySelector(".muscle-group-head span");
+        if (count) count.textContent = String(visibleLinks.length);
+        group.hidden = visibleLinks.length === 0;
       });
 
       if (empty) empty.hidden = visibleCount !== 0;
     }
+
+    function activateMode(mode) {
+      tabs.forEach(function (tab) {
+        var isActive = tab.getAttribute("data-muscle-tab") === mode;
+        tab.classList.toggle("is-active", isActive);
+        tab.setAttribute("aria-selected", isActive ? "true" : "false");
+      });
+
+      panels.forEach(function (panel) {
+        var isActive = panel.getAttribute("data-muscle-panel") === mode;
+        panel.hidden = !isActive;
+        panel.classList.toggle("is-active", isActive);
+        if (isActive) activePanel = panel;
+      });
+
+      applyFilter();
+    }
+
+    catalog.addEventListener("click", function (event) {
+      var tab = event.target.closest && event.target.closest("[data-muscle-tab]");
+      if (!tab || !catalog.contains(tab)) return;
+      activateMode(tab.getAttribute("data-muscle-tab"));
+    });
 
     input.addEventListener("input", applyFilter);
     applyFilter();
@@ -440,7 +531,7 @@
     banner.innerHTML = [
       '<div class="cookie-notice__text">',
       '  Мы используем Яндекс Метрику и cookies, чтобы понимать, как работает сайт и какие материалы полезны.',
-      '  <a href="/privacy/">Политика конфиденциальности</a>',
+      '  <a href="/documents/privacy/">Политика конфиденциальности</a>',
       '</div>',
       '<button class="cookie-notice__button" type="button">Понятно</button>'
     ].join("");

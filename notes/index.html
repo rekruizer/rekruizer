@@ -38,19 +38,15 @@
   <main class="page">
     <div data-site-header></div>
 
-    <section class="hero subpage-hero">
-      <div class="hero-main">
-        <div class="quiz-hero-content">
-          <div>
-            <div class="breadcrumbs"><a href="/">Главная</a></div>
-            <h1>Полезное</h1>
-            <p class="lead">Калькуляторы, конспекты и рабочие материалы по массажу, сервису и практике.</p>
-          </div>
-        </div>
+    <section class="section notes-title">
+      <div class="breadcrumbs"><a href="/">Главная</a></div>
+      <div class="section-head">
+        <h1>Полезное</h1>
       </div>
+      <p class="notes-title-lead">Калькуляторы, конспекты и рабочие материалы по массажу, сервису и практике.</p>
     </section>
 
-    <section class="section">
+    <section class="section notes-content">
       <div class="notes-featured-grid" aria-label="Избранные материалы">
         <a class="notes-featured-card notes-featured-card--muscles" href="/muscles/">
           <span class="notes-featured-icon notes-featured-icon--muscle" aria-hidden="true">
@@ -61,6 +57,23 @@
           <div class="notes-featured-copy">
             <h3>База знаний по мышцам</h3>
             <p>Функции, прикрепления, иннервация и практические заметки для работы с телом.</p>
+          </div>
+          <span class="notes-featured-action">Открыть →</span>
+        </a>
+
+        <a class="notes-featured-card notes-featured-card--quizzes" href="/quizzes/">
+          <span class="notes-featured-icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" role="img" focusable="false">
+              <rect x="12" y="7" width="24" height="34" rx="7"/>
+              <path d="M19 17h10"/>
+              <path d="M19 25h10"/>
+              <path d="M19 33h7"/>
+              <path d="M31 15l2 2 4-5"/>
+            </svg>
+          </span>
+          <div class="notes-featured-copy">
+            <h3>Тесты по анатомии</h3>
+            <p>Проверка знаний по мышцам, костям, нервам и ориентирам в удобном формате.</p>
           </div>
           <span class="notes-featured-action">Открыть →</span>
         </a>
@@ -86,6 +99,14 @@
       </div>
 
       <div class="links quiz-list">
+        <a class="link-card quiz-entry" href="/muscles/about/">
+          <div>
+            <h3>Анатомия мышц</h3>
+            <p>Типы мышечной ткани, строение скелетных мышц, двигательные единицы, нервный контроль и атрофия.</p>
+          </div>
+          <div class="arrow">Открыть →</div>
+        </a>
+
         <a class="link-card quiz-entry" href="/notes/service-and-spa/">
           <div>
             <h3>Сервис и СПА</h3>
