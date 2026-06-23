@@ -517,6 +517,159 @@
     }
   }
 
+  function initReviewsCarousel() {
+    var viewports = document.querySelectorAll("[data-reviews-viewport]");
+    if (!viewports.length) return;
+
+    function renderStars(root) {
+      root.querySelectorAll(".review-stars[data-rating]").forEach(function (stars) {
+        var rating = Math.max(0, Math.min(5, parseInt(stars.getAttribute("data-rating"), 10) || 0));
+        var html = "";
+        for (var i = 1; i <= 5; i += 1) {
+          html += '<span class="review-star' + (i > rating ? " is-empty" : "") + '">★</span>';
+        }
+        stars.innerHTML = html;
+        stars.setAttribute("aria-label", rating + " из 5");
+      });
+    }
+
+    viewports.forEach(function (viewport) {
+      var rail = viewport.querySelector("[data-reviews-rail]");
+      if (!rail || rail.dataset.carouselReady === "true") return;
+      rail.dataset.carouselReady = "true";
+
+      var section = viewport.closest(".reviews-section");
+      var prev = section ? section.querySelector("[data-reviews-prev]") : null;
+      var next = section ? section.querySelector("[data-reviews-next]") : null;
+      var originals = Array.prototype.slice.call(rail.children);
+      var originalCount = originals.length;
+      if (!originalCount) return;
+
+      renderStars(rail);
+
+
+      var beforeClones = document.createDocumentFragment();
+      originals.forEach(function (card) {
+        var clone = card.cloneNode(true);
+        clone.setAttribute("aria-hidden", "true");
+        clone.setAttribute("data-review-clone", "before");
+        beforeClones.appendChild(clone);
+      });
+      rail.insertBefore(beforeClones, rail.firstChild);
+
+      originals.forEach(function (card) {
+        var clone = card.cloneNode(true);
+        clone.setAttribute("aria-hidden", "true");
+        clone.setAttribute("data-review-clone", "after");
+        rail.appendChild(clone);
+      });
+
+      var slides = Array.prototype.slice.call(rail.children);
+      var index = originalCount;
+      var scrollEndTimer = null;
+      var ignoreScroll = false;
+
+      function updateFade() {
+        if (!section) return;
+        section.classList.toggle("has-right-fade", originalCount > 1);
+      }
+
+      function getOriginalsStart() {
+        return slides[originalCount] ? slides[originalCount].offsetLeft : 0;
+      }
+
+      function getOriginalsWidth() {
+        var firstAfter = slides[originalCount * 2];
+        return firstAfter ? firstAfter.offsetLeft - getOriginalsStart() : rail.scrollWidth / 3;
+      }
+
+      function normalizeSlideIndex(value) {
+        if (value < originalCount) return value + originalCount;
+        if (value >= originalCount * 2) return value - originalCount;
+        return value;
+      }
+
+      function nearestSlideIndex() {
+        var current = viewport.scrollLeft;
+        var nearest = index;
+        var minDistance = Infinity;
+        slides.forEach(function (slide, slideIndex) {
+          var distance = Math.abs(slide.offsetLeft - current);
+          if (distance < minDistance) {
+            minDistance = distance;
+            nearest = slideIndex;
+          }
+        });
+        return nearest;
+      }
+
+      function scrollToOffset(offset, animated) {
+        if (viewport.scrollTo) {
+          viewport.scrollTo({ left: offset, behavior: animated ? "smooth" : "auto" });
+        } else {
+          viewport.scrollLeft = offset;
+        }
+      }
+
+      function jumpToOffset(offset) {
+        ignoreScroll = true;
+        scrollToOffset(offset, false);
+        window.setTimeout(function () { ignoreScroll = false; }, 0);
+      }
+
+      function normalizePosition() {
+        var originalsStart = getOriginalsStart();
+        var originalsWidth = getOriginalsWidth();
+        var current = viewport.scrollLeft;
+
+        if (current < originalsStart) {
+          current += originalsWidth;
+          jumpToOffset(current);
+        } else if (current >= originalsStart + originalsWidth) {
+          current -= originalsWidth;
+          jumpToOffset(current);
+        }
+
+        index = normalizeSlideIndex(nearestSlideIndex());
+        updateFade();
+      }
+
+      function moveTo(nextIndex, animated) {
+        index = nextIndex;
+        var target = slides[index];
+        if (!target) return;
+        scrollToOffset(target.offsetLeft, animated);
+        updateFade();
+        if (!animated) normalizePosition();
+      }
+
+      function scheduleNormalize() {
+        if (ignoreScroll) return;
+        window.clearTimeout(scrollEndTimer);
+        scrollEndTimer = window.setTimeout(normalizePosition, 120);
+      }
+
+      function goNext() {
+        moveTo(index + 1, true);
+      }
+
+      function goPrev() {
+        moveTo(index - 1, true);
+      }
+
+      if (prev) prev.addEventListener("click", goPrev);
+      if (next) next.addEventListener("click", goNext);
+      viewport.addEventListener("scroll", scheduleNormalize, { passive: true });
+
+      window.addEventListener("resize", function () {
+        moveTo(normalizeSlideIndex(index), false);
+      });
+
+      moveTo(index, false);
+      window.setTimeout(normalizePosition, 0);
+    });
+  }
+
   function initCookieNotice() {
     try {
       if (localStorage.getItem(COOKIE_NOTICE_KEY) === "accepted") return;
@@ -550,6 +703,7 @@
   normalizeVisibleBreadcrumbs();
   initLectureToc();
   initMuscleSearch();
+  initReviewsCarousel();
   initCookieNotice();
   initLazyYandexLocationMap();
 })();
