@@ -1584,9 +1584,11 @@ footer a:hover {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  justify-content: flex-start;
   margin-bottom: 18px;
   color: var(--muted);
   font-size: var(--font-badge);
+  text-align: left;
 }
 
 .breadcrumbs a {
@@ -2994,6 +2996,82 @@ footer a:hover {
   border-left: 3px solid var(--accent);
   border-radius: 18px;
   background: rgba(212,163,115,.08);
+}
+
+.obsidian-article {
+  --decision-green: #62d788;
+  --decision-yellow: #f0c95a;
+  --decision-orange: #ef9d43;
+  --decision-red: #ee6f6f;
+  --decision-emergency: #ff8a8a;
+}
+
+.obsidian-article > .note-callout:first-child {
+  margin: 0 0 30px;
+}
+
+.obsidian-article h2 + h2 {
+  margin-top: 26px;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.obsidian-article .note-table-wrap {
+  margin: 26px 0;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  overflow: auto;
+}
+
+.obsidian-article .note-table-wrap table {
+  margin: 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 0;
+}
+
+.obsidian-article .note-table-wrap th,
+.obsidian-article .note-table-wrap td {
+  border: 0;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.obsidian-article .note-table-wrap th:last-child,
+.obsidian-article .note-table-wrap td:last-child {
+  border-right: 0;
+}
+
+.obsidian-article .note-table-wrap tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.decision-table td:first-child {
+  width: 70px;
+  font-size: 24px;
+  text-align: center;
+}
+
+.decision-table tr.decision-green td,
+.summary-table tr.decision-green td { background: rgba(98,215,136,.055); }
+.decision-table tr.decision-yellow td,
+.summary-table tr.decision-yellow td { background: rgba(240,201,90,.06); }
+.decision-table tr.decision-orange td,
+.summary-table tr.decision-orange td { background: rgba(239,157,67,.065); }
+.decision-table tr.decision-red td,
+.summary-table tr.decision-red td { background: rgba(238,111,111,.065); }
+.decision-table tr.decision-emergency td,
+.summary-table tr.decision-emergency td { background: rgba(255,138,138,.09); }
+
+.decision-table tr.decision-green td:first-child { color: var(--decision-green); }
+.decision-table tr.decision-yellow td:first-child { color: var(--decision-yellow); }
+.decision-table tr.decision-orange td:first-child { color: var(--decision-orange); }
+.decision-table tr.decision-red td:first-child { color: var(--decision-red); }
+.decision-table tr.decision-emergency td:first-child { color: var(--decision-emergency); }
+
+.patterns-table td:first-child {
+  color: rgba(245,241,234,.92);
+  font-weight: var(--font-weight-bold);
 }
 
 .lecture-toc {
