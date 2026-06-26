@@ -118,6 +118,7 @@
     var year = new Date().getFullYear();
     var socialHtml = renderSocialLinks();
     var documentLinks = [
+      { label: "Противопоказания", href: "/documents/contraindications/" },
       { label: "Политика конфиденциальности", href: "/documents/privacy/" },
       { label: "Правила записи и оказания услуг", href: "/documents/rules/" }
     ];
