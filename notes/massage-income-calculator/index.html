@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Калькулятор дохода специалиста — Денис Пучков</title>
-  <meta name="description" content="Калькулятор дохода специалистов по цене услуги, проценту, графику, загрузке, гарантии и налогам." />
+  <meta name="description" content="Калькулятор дохода специалистов по цене услуги, проценту, графику, загрузке, скидкам, налогам, расходам, отпускным и больничным." />
   <!-- SEO: shared metadata -->
   <link rel="canonical" href="https://denisyuce.com/notes/massage-income-calculator/" />
   <meta name="theme-color" content="#0d0f12" />
@@ -188,7 +188,12 @@
 
     .mini-field {
       display: grid;
+      align-content: start;
       gap: 8px;
+    }
+
+    .mini-field.full {
+      grid-column: 1 / -1;
     }
 
     .payment-control {
@@ -202,12 +207,14 @@
     .service-fields {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: start;
       gap: 12px;
     }
 
     .fixed-fields {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: start;
       gap: 12px;
     }
 
@@ -216,6 +223,7 @@
     }
 
     .nested-grid {
+      align-items: start;
       margin-top: 6px;
     }
 
@@ -224,6 +232,15 @@
       color: var(--muted);
       font-size: 13px;
       line-height: 1.5;
+    }
+
+
+    .help-text .negative-value {
+      color: #ff8f8f;
+    }
+
+    .attraction-hint {
+      margin-top: 10px;
     }
 
     .control label,
@@ -275,6 +292,111 @@
 
     .field-row select::-ms-expand {
       display: none;
+    }
+
+    .discount-input-row {
+      min-height: 47px;
+      gap: 0;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(13,15,18,.45);
+      padding: 4px;
+    }
+
+    .discount-input-row:focus-within {
+      border-color: rgba(212,163,115,.7);
+    }
+
+    .discount-input-row input {
+      border: 0;
+      border-radius: 10px;
+      background: transparent;
+      padding: 8px 9px;
+    }
+
+    .discount-input-row input:focus {
+      border-color: transparent;
+    }
+
+    .discount-type-toggle {
+      align-self: stretch;
+      display: flex;
+      flex: 0 0 70px;
+      margin-left: 4px;
+      border: 1px solid rgba(245,241,234,.12);
+      border-radius: 10px;
+      background: rgba(255,255,255,.045);
+      overflow: hidden;
+    }
+
+    .discount-type-toggle button {
+      flex: 1;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font: inherit;
+      font-size: 14px;
+      font-weight: var(--font-weight-regular);
+      padding: 0;
+    }
+
+    .discount-type-toggle button + button {
+      border-left: 1px solid rgba(245,241,234,.12);
+    }
+
+    .discount-type-toggle button.active {
+      background: rgba(212,163,115,.2);
+      color: var(--text);
+    }
+
+    .discount-type-toggle button:focus-visible {
+      outline: 2px solid rgba(212,163,115,.7);
+      outline-offset: -2px;
+    }
+
+    .benefits-mode-toggle {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+      padding: 5px;
+      border: 1px solid rgba(245,241,234,.12);
+      border-radius: var(--button-radius-lg);
+      background: rgba(13,15,18,.28);
+    }
+
+    .benefits-mode-toggle button {
+      min-height: 38px;
+      border: 0;
+      border-radius: var(--button-radius-md);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font: inherit;
+      font-size: var(--button-font-size-md);
+      font-weight: var(--button-font-weight);
+      padding: 0 12px;
+    }
+
+    .benefits-mode-toggle button.active {
+      background: rgba(212,163,115,.18);
+      color: var(--text);
+    }
+
+    .benefits-mode-panel {
+      margin-top: 14px;
+    }
+
+    .benefits-mode-panel[hidden],
+    .benefit-subpanel[hidden] {
+      display: none;
+    }
+
+    .benefit-subpanel {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(245,241,234,.12);
     }
 
     .unit {
@@ -357,11 +479,51 @@
       background: rgba(255,255,255,.045);
     }
 
-    .toggle-row > input,
-    .toggle-head > input {
-      width: 46px;
-      height: 26px;
-      accent-color: var(--accent);
+    .toggle-row > input[type="checkbox"],
+    .toggle-head > input[type="checkbox"],
+    .nested-toggle > input[type="checkbox"],
+    .nested-toggle > .toggle-head > input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      flex: 0 0 28px;
+      width: 28px;
+      height: 28px;
+      margin: 0;
+      border: 1px solid rgba(245,241,234,.2);
+      border-radius: 8px;
+      background: rgba(13,15,18,.42);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+      cursor: pointer;
+      transition: background .16s ease, border-color .16s ease, box-shadow .16s ease;
+    }
+
+    .toggle-row > input[type="checkbox"]:hover,
+    .toggle-head > input[type="checkbox"]:hover,
+    .nested-toggle > input[type="checkbox"]:hover,
+    .nested-toggle > .toggle-head > input[type="checkbox"]:hover {
+      border-color: rgba(212,163,115,.62);
+      box-shadow: 0 0 0 3px rgba(212,163,115,.08), inset 0 1px 0 rgba(255,255,255,.05);
+    }
+
+    .toggle-row > input[type="checkbox"]:focus-visible,
+    .toggle-head > input[type="checkbox"]:focus-visible,
+    .nested-toggle > input[type="checkbox"]:focus-visible,
+    .nested-toggle > .toggle-head > input[type="checkbox"]:focus-visible {
+      outline: 2px solid rgba(212,163,115,.75);
+      outline-offset: 3px;
+    }
+
+    .toggle-row > input[type="checkbox"]:checked,
+    .toggle-head > input[type="checkbox"]:checked,
+    .nested-toggle > input[type="checkbox"]:checked,
+    .nested-toggle > .toggle-head > input[type="checkbox"]:checked {
+      border-color: rgba(212,163,115,.95);
+      background-color: var(--accent);
+      background-image: url("data:image/svg+xml,%3Csvg width='18' height='18' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 12.5l4.2 4.2L19 7' stroke='%23232721' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 18px 18px;
+      box-shadow: 0 0 0 3px rgba(212,163,115,.12);
     }
 
     .toggle-row.expandable {
@@ -384,6 +546,30 @@
     .expense-panel[hidden],
     .metric[hidden] {
       display: none;
+    }
+
+    .nested-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-top: 8px;
+      padding: 14px;
+      border: 1px solid rgba(245,241,234,.12);
+      border-radius: 16px;
+      background: rgba(13,15,18,.2);
+    }
+
+    .nested-toggle.benefit-expandable {
+      display: block;
+      align-items: normal;
+      justify-content: normal;
+      margin-top: 10px;
+      padding: 14px;
+    }
+
+    .nested-toggle.benefit-expandable .toggle-head {
+      width: 100%;
     }
 
     .result-card {
@@ -478,6 +664,45 @@
       color: var(--muted);
     }
 
+    .annual-benefits-label {
+      margin-top: 10px;
+      color: var(--muted);
+    }
+
+    .annual-benefits-value {
+      margin-top: 2px;
+      color: #78b873;
+      font-size: clamp(18px, 2.4vw, 26px);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      font-weight: var(--font-weight-bold);
+    }
+
+    .result-section {
+      margin-top: 12px;
+    }
+
+    .result-section .metric {
+      display: flex;
+      flex-direction: column;
+      min-height: 98px;
+    }
+
+    .result-section .metric .text-bold {
+      margin-top: auto;
+    }
+
+    .month-breakdown h3,
+    .time-summary h3 {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: inherit;
+      font-weight: var(--font-weight-medium);
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    .month-breakdown,
     .time-summary {
       margin-top: 12px;
       padding: 14px;
@@ -490,13 +715,73 @@
       display: none;
     }
 
-    .time-summary h3 {
-      margin: 0 0 12px;
+    .month-breakdown-grid {
+      display: grid;
+      gap: 7px;
+    }
+
+    .breakdown-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border: 1px solid rgba(245,241,234,.08);
+      border-radius: 14px;
+      background: rgba(13,15,18,.22);
       color: var(--muted);
-      font-size: inherit;
-      font-weight: var(--font-weight-medium);
-      letter-spacing: 0;
-      text-transform: none;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .breakdown-row[hidden] {
+      display: none;
+    }
+
+    .breakdown-value {
+      color: var(--text);
+      font-size: 18px;
+      font-weight: var(--font-weight-bold);
+      letter-spacing: -0.04em;
+      white-space: nowrap;
+    }
+
+    .breakdown-row.negative .breakdown-value {
+      color: #ff8f8f;
+    }
+
+    .breakdown-row.negative.neutral .breakdown-value {
+      color: var(--text);
+    }
+
+    .breakdown-row.total {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 8px;
+      padding: 14px 16px;
+      border: 0;
+      border-radius: 18px;
+      background: rgb(156 207 147 / 10%);
+      color: var(--text);
+      box-shadow: 0 18px 50px rgba(0,0,0,.18);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .breakdown-row.total > span:first-child {
+      color: var(--muted);
+      font-size: 16px;
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .breakdown-row.total .breakdown-value {
+      color: var(--green);
+      font-size: 24px;
+      font-weight: var(--font-weight-bold);
+      line-height: 1;
+      letter-spacing: -0.05em;
     }
 
     .time-summary-grid {
@@ -532,9 +817,8 @@
 
     .result-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 10px;
-      margin-top: 14px;
     }
 
     .metric {
@@ -567,6 +851,7 @@
     .metric.negative.neutral .text-bold {
       color: var(--text);
     }
+
 
     .calc-note {
       margin-top: 14px;
@@ -709,7 +994,7 @@
               <div class="field-row">
                 <select id="payMode">
                   <option value="share" selected>Процент от услуги</option>
-                  <option value="fixed">Фикс за час</option>
+                  <option value="fixed">Фикс за услугу</option>
                 </select>
               </div>
               <div class="service-fields" id="serviceFields">
@@ -720,41 +1005,25 @@
                     <span class="unit">₽</span>
                   </div>
                 </div>
-                <div class="mini-field" id="durationBlock">
-                  <label for="duration">Длительность услуги</label>
-                  <div class="field-row simple-duration">
-                    <select id="duration">
-                      <option value="30">30 минут</option>
-                      <option value="45">45 минут</option>
-                      <option value="60" selected>60 минут</option>
-                      <option value="90">90 минут</option>
-                      <option value="120">120 минут</option>
-                    </select>
+                <div class="mini-field" id="shareBlock">
+                  <label for="share">Доля от услуги</label>
+                  <div class="field-row" id="shareRow">
+                    <input id="share" type="number" min="0" max="100" step="1" value="40">
+                    <span class="unit">%</span>
                   </div>
-                  <div class="field-row advanced-duration">
-                    <input id="durationCustom" type="number" min="1" max="300" step="5" value="60">
-                    <span class="unit">мин</span>
+                  <div class="chips" data-target="share" id="shareChips">
+                    <button class="chip" type="button" data-value="35">35%</button>
+                    <button class="chip" type="button" data-value="40" data-default="true">40%</button>
+                    <button class="chip" type="button" data-value="50">50%</button>
                   </div>
-                </div>
-              </div>
-              <div class="mini-field" id="shareBlock">
-                <label for="share">Доля от услуги</label>
-                <div class="field-row" id="shareRow">
-                  <input id="share" type="number" min="0" max="100" step="1" value="40">
-                  <span class="unit">%</span>
-                </div>
-                <div class="chips" data-target="share" id="shareChips">
-                  <button class="chip" type="button" data-value="35">35%</button>
-                  <button class="chip" type="button" data-value="40" data-default="true">40%</button>
-                  <button class="chip" type="button" data-value="50">50%</button>
                 </div>
               </div>
               <div class="fixed-fields" id="fixedFields">
-                <div class="mini-field" id="fixedRateBlock">
-                  <label for="fixedRate">Фиксированная ставка за час</label>
+                <div class="mini-field full" id="fixedRateBlock">
+                  <label for="fixedRate">Фикс за услугу</label>
                   <div class="field-row" id="fixedRateRow">
                     <input id="fixedRate" type="number" min="0" step="100" value="1400">
-                    <span class="unit">₽/ч</span>
+                    <span class="unit">₽</span>
                   </div>
                 </div>
               </div>
@@ -796,25 +1065,41 @@
               </div>
             </div>
 
-            <div class="control wide">
-              <label for="hours">Ср.Часов услуг в смену</label>
-              <div class="field-row">
-                <input id="hours" type="number" min="0" max="14" step="0.5" value="4">
-                <span class="unit">ч</span>
-              </div>
-              <div class="chips" data-target="hours">
-                <button class="chip" type="button" data-value="4">4 ч</button>
-                <button class="chip" type="button" data-value="6">6 ч</button>
-                <button class="chip" type="button" data-value="8">8 ч</button>
-                <button class="chip" type="button" data-value="10">10 ч</button>
-              </div>
-              <p class="calc-muted" style="margin:0">Это именно часы услуг в смену. Количество процедур считается отдельно по длительности услуги.</p>
-            </div>
-
-            <div class="control wide advanced-only">
-              <label>Время в салоне</label>
+            <div class="control wide time-control">
+              <label>Время и загрузка</label>
               <div class="control-grid nested-grid">
                 <div class="mini-field">
+                  <label for="services">Ср. услуг в смену</label>
+                  <div class="field-row">
+                    <input id="services" type="number" min="0" max="40" step="1" value="4">
+                    <span class="unit">услуг</span>
+                  </div>
+                  <div class="chips" data-target="services">
+                    <button class="chip" type="button" data-value="2">2</button>
+                    <button class="chip" type="button" data-value="4" data-default="true">4</button>
+                    <button class="chip" type="button" data-value="6">6</button>
+                    <button class="chip" type="button" data-value="8">8</button>
+                  </div>
+                </div>
+
+                <div class="mini-field" id="durationBlock">
+                  <label for="duration">Длительность</label>
+                  <div class="field-row simple-duration">
+                    <select id="duration">
+                      <option value="30">30 минут</option>
+                      <option value="45">45 минут</option>
+                      <option value="60" selected>60 минут</option>
+                      <option value="90">90 минут</option>
+                      <option value="120">120 минут</option>
+                    </select>
+                  </div>
+                  <div class="field-row advanced-duration">
+                    <input id="durationCustom" type="number" min="1" max="300" step="5" value="60">
+                    <span class="unit">мин</span>
+                  </div>
+                </div>
+
+                <div class="mini-field advanced-only">
                   <label for="presenceMode">Присутствие</label>
                   <div class="field-row">
                     <select id="presenceMode">
@@ -823,29 +1108,31 @@
                     </select>
                   </div>
                 </div>
-                <div class="mini-field" id="shiftDurationField">
-                  <label for="shiftDuration">Длительность смены</label>
+
+                <div class="mini-field advanced-only" id="shiftDurationField">
+                  <label for="shiftDuration">Смена</label>
                   <div class="field-row">
                     <input id="shiftDuration" type="number" min="1" max="24" step="0.5" value="12">
                     <span class="unit">ч</span>
                   </div>
                 </div>
               </div>
-              <p class="help-text">Оплачиваемые часы услуг и реальное время в салоне могут сильно отличаться. Это влияет на доход за час вашего времени.</p>
+              <p class="help-text" id="timeHint">Загрузка = ср. услуг в смену × длительность / время в салоне.</p>
             </div>
 
-            <div class="control wide">
-              <label for="guarantee">Гарантия за смену</label>
-              <div class="field-row">
-                <input id="guarantee" type="number" min="0" step="500" value="4000">
-                <span class="unit">₽</span>
+          </div>
+
+          <div class="toggle-row expandable advanced-only">
+            <div class="toggle-head">
+              <div>
+                <div class="toggle-label">Привлечение и скидки</div>
+                <div class="calc-muted">Скидки, абонементы и условие, за чей счёт скидка.</div>
               </div>
-              <p class="help-text">Это сумма, которую вы гарантированно получите за выход. Часто салоны предлагают такое условие.</p>
+              <input id="attractionEnabled" type="checkbox">
             </div>
 
-            <div class="control wide advanced-only">
-              <label>Привлечение и скидки</label>
-              <p class="help-text">Скидки на первый визит и абонементы уменьшают средний чек не у всех клиентов, а только у части потока. Здесь считаем среднюю скидку по месяцу.</p>
+            <div class="expense-panel" id="attractionPanel" hidden>
+              <p class="calc-muted" style="margin:0 0 12px">Доля — это часть всех услуг за месяц, а не доля клиентов внутри категории. Одна услуга должна попадать только в одну строку скидки.</p>
               <div class="control-grid nested-grid">
                 <div class="mini-field">
                   <label for="firstVisitShare">Доля первых визитов</label>
@@ -855,10 +1142,14 @@
                   </div>
                 </div>
                 <div class="mini-field">
-                  <label for="firstVisitDiscount">Скидка первого визита</label>
-                  <div class="field-row">
+                  <label for="firstVisitDiscount">Размер скидки первого визита</label>
+                  <div class="field-row discount-input-row">
                     <input id="firstVisitDiscount" type="number" min="0" max="100" step="1" value="0">
-                    <span class="unit">%</span>
+                    <input id="firstVisitDiscountType" type="hidden" value="percent">
+                    <div class="discount-type-toggle" role="group" aria-label="Тип скидки первого визита" data-discount-type-target="firstVisitDiscountType">
+                      <button class="active" type="button" data-value="percent" aria-pressed="true">%</button>
+                      <button type="button" data-value="amount" aria-pressed="false">₽</button>
+                    </div>
                   </div>
                 </div>
                 <div class="mini-field">
@@ -869,39 +1160,185 @@
                   </div>
                 </div>
                 <div class="mini-field">
-                  <label for="packageDiscount">Скидка абонемента</label>
-                  <div class="field-row">
+                  <label for="packageDiscount">Размер скидки абонемента</label>
+                  <div class="field-row discount-input-row">
                     <input id="packageDiscount" type="number" min="0" max="100" step="1" value="0">
+                    <input id="packageDiscountType" type="hidden" value="percent">
+                    <div class="discount-type-toggle" role="group" aria-label="Тип скидки абонемента" data-discount-type-target="packageDiscountType">
+                      <button class="active" type="button" data-value="percent" aria-pressed="true">%</button>
+                      <button type="button" data-value="amount" aria-pressed="false">₽</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="mini-field">
+                  <label for="otherDiscountShare">Прочие скидки / акции</label>
+                  <div class="field-row">
+                    <input id="otherDiscountShare" type="number" min="0" max="100" step="1" value="0">
                     <span class="unit">%</span>
                   </div>
                 </div>
                 <div class="mini-field">
-                  <label for="discount">Прочая средняя скидка</label>
-                  <div class="field-row">
+                  <label for="discount">Размер</label>
+                  <div class="field-row discount-input-row">
                     <input id="discount" type="number" min="0" max="100" step="1" value="0">
-                    <span class="unit">%</span>
+                    <input id="otherDiscountType" type="hidden" value="percent">
+                    <div class="discount-type-toggle" role="group" aria-label="Тип прочей скидки" data-discount-type-target="otherDiscountType">
+                      <button class="active" type="button" data-value="percent" aria-pressed="true">%</button>
+                      <button type="button" data-value="amount" aria-pressed="false">₽</button>
+                    </div>
                   </div>
                 </div>
               </div>
-              <p class="help-text" id="attractionHint">Средняя скидка по потоку: 0%</p>
-            </div>
-
-            <div class="control wide advanced-only">
-              <label for="vat">НДС в цене услуги</label>
-              <div class="field-row">
-                <input id="vat" type="number" min="0" max="100" step="1" value="0">
-                <span class="unit">%</span>
-              </div> 
-              <p class="calc-muted" style="margin:0"> Некоторые салоны предлагают % с расчета после НДС, что серьезно уменьшает ваш потенциальный заработок. <br> По умолчанию: 0 </p>
+              <p class="help-text attraction-hint" id="attractionHint">Скидка в среднем: <span class="negative-value">−0 ₽</span> с услуги.</p>
+              <div class="nested-toggle">
+                <div>
+                  <div class="toggle-label">Скидка за счёт салона</div>
+                  <div class="calc-muted">Если включено, скидки не уменьшают твою выплату.</div>
+                </div>
+                <input id="salonDiscount" type="checkbox">
+              </div>
             </div>
           </div>
 
-          <div class="toggle-row advanced-only">
-            <div>
-              <div class="toggle-label">Скидка за счёт салона</div>
-              <div class="calc-muted">Если включено, твой процент считается от полной цены услуги.</div>
+          <div class="toggle-row expandable">
+            <div class="toggle-head">
+              <div>
+                <div class="toggle-label">Гарантия за смену</div>
+                <div class="calc-muted">Минимальная сумма за выход, если салон её обещает.</div>
+              </div>
+              <input id="guaranteeEnabled" type="checkbox">
             </div>
-            <input id="salonDiscount" type="checkbox" checked>
+
+            <div class="expense-panel" id="guaranteePanel" hidden>
+              <div class="control-grid nested-grid">
+                <div class="mini-field full">
+                  <label for="guarantee">Сумма гарантии за смену</label>
+                  <div class="field-row">
+                    <input id="guarantee" type="number" min="0" step="500" value="4000">
+                    <span class="unit">₽</span>
+                  </div>
+                </div>
+              </div>
+              <p class="calc-muted" style="margin:10px 0 0">Если начисление по проценту или ставке ниже гарантии, в расчёте берётся гарантия.</p>
+            </div>
+          </div>
+
+          <div class="toggle-row expandable advanced-only">
+            <div class="toggle-head">
+              <div>
+                <div class="toggle-label">Отпускные и больничные</div>
+                <div class="calc-muted">Показывает денежную ценность оплачиваемого отдыха и больничного для сравнения вариантов.</div>
+              </div>
+              <input id="laborBenefitsEnabled" type="checkbox">
+            </div>
+
+            <div class="expense-panel" id="laborBenefitsPanel" hidden>
+              <input id="laborBenefitsMode" type="hidden" value="labor">
+              <div class="benefits-mode-toggle" role="group" aria-label="Условия выплат">
+                <button class="active" type="button" data-value="labor" aria-pressed="true">По ТК</button>
+                <button type="button" data-value="other" aria-pressed="false">Другое</button>
+              </div>
+
+              <div class="benefits-mode-panel" id="laborBenefitsLaborPanel">
+                <div class="control-grid nested-grid">
+                  <div class="mini-field">
+                    <label for="vacationDays">Оплачиваемый отпуск в год</label>
+                    <div class="field-row">
+                      <input id="vacationDays" type="number" min="0" max="60" step="1" value="28">
+                      <span class="unit">дней</span>
+                    </div>
+                  </div>
+                  <div class="mini-field">
+                    <label for="sickDays">Больничных дней в год</label>
+                    <div class="field-row">
+                      <input id="sickDays" type="number" min="0" max="120" step="1" value="7">
+                      <span class="unit">дней</span>
+                    </div>
+                  </div>
+                  <div class="mini-field full">
+                    <label for="sickPayRate">Стаж для больничного</label>
+                    <div class="field-row">
+                      <select id="sickPayRate">
+                        <option value="1" selected>8+ лет — 100%</option>
+                        <option value="0.8">5–8 лет — 80%</option>
+                        <option value="0.6">до 5 лет — 60%</option>
+                      </select>
+                    </div>
+                    <p class="help-text">Страховой стаж — официальный стаж работы по ТК/со взносами.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="benefits-mode-panel" id="laborBenefitsOtherPanel" hidden>
+                <div class="nested-toggle benefit-expandable">
+                  <div class="toggle-head">
+                    <div>
+                      <div class="toggle-label">Оплачиваемый отпуск</div>
+                      <div class="calc-muted">Если в условиях есть отпускные не по ТК.</div>
+                    </div>
+                    <input id="otherVacationEnabled" type="checkbox" checked>
+                  </div>
+
+                  <div class="benefit-subpanel" id="otherVacationPanel">
+                    <div class="control-grid nested-grid">
+                      <div class="mini-field">
+                        <label for="otherVacationDays">Дней отпуска в год</label>
+                        <div class="field-row">
+                          <input id="otherVacationDays" type="number" min="0" max="60" step="1" value="28">
+                          <span class="unit">дней</span>
+                        </div>
+                      </div>
+                      <div class="mini-field">
+                        <label for="otherVacationPay">Оплата отпуска за день</label>
+                        <div class="field-row discount-input-row">
+                          <input id="otherVacationPay" type="number" min="0" max="100" step="1" value="100">
+                          <input id="otherVacationPayType" type="hidden" value="percent">
+                          <div class="discount-type-toggle" role="group" aria-label="Тип оплаты отпуска" data-discount-type-target="otherVacationPayType">
+                            <button class="active" type="button" data-value="percent" aria-pressed="true">%</button>
+                            <button type="button" data-value="amount" aria-pressed="false">₽</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="nested-toggle benefit-expandable">
+                  <div class="toggle-head">
+                    <div>
+                      <div class="toggle-label">Оплачиваемый больничный</div>
+                      <div class="calc-muted">Если салон компенсирует дни болезни.</div>
+                    </div>
+                    <input id="otherSickEnabled" type="checkbox" checked>
+                  </div>
+
+                  <div class="benefit-subpanel" id="otherSickPanel">
+                    <div class="control-grid nested-grid">
+                      <div class="mini-field">
+                        <label for="otherSickDays">Больничных дней в год</label>
+                        <div class="field-row">
+                          <input id="otherSickDays" type="number" min="0" max="120" step="1" value="7">
+                          <span class="unit">дней</span>
+                        </div>
+                      </div>
+                      <div class="mini-field">
+                        <label for="otherSickPay">Оплата больничного за день</label>
+                        <div class="field-row discount-input-row">
+                          <input id="otherSickPay" type="number" min="0" max="100" step="1" value="100">
+                          <input id="otherSickPayType" type="hidden" value="percent">
+                          <div class="discount-type-toggle" role="group" aria-label="Тип оплаты больничного" data-discount-type-target="otherSickPayType">
+                            <button class="active" type="button" data-value="percent" aria-pressed="true">%</button>
+                            <button type="button" data-value="amount" aria-pressed="false">₽</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <p class="calc-muted" style="margin:10px 0 0">Это не вычитает дни из дохода, а показывает денежную ценность оплачиваемого отпуска и больничного. Для ТК используется упрощённая оценка по среднему доходу.</p>
+            </div>
           </div>
 
           <div class="toggle-row expandable advanced-only">
@@ -947,17 +1384,6 @@
         <aside class="calc-card result-card">
           <h2>Результат</h2>
 
-          <div class="result-grid">
-            <div class="metric"><span>Ставка за час</span><span id="hourRate" class="text-bold">0 ₽</span></div>
-            <div class="metric"><span>Сеансов в смену</span><span id="sessions" class="text-bold">0</span></div>
-            <div class="metric"><span>Начисление за смену</span><span id="shiftGross" class="text-bold">0 ₽</span></div>
-            <div class="metric"><span>После налогов за смену</span><span id="shiftNet" class="text-bold">0 ₽</span></div>
-            <div class="metric"><span>До налогов в месяц</span><span id="monthlyGross" class="text-bold">0 ₽</span></div>
-            <div class="metric negative neutral" id="monthlyTaxMetric"><span>Налогов в месяц</span><span id="monthlyTax" class="text-bold">0 ₽</span></div>
-            <div class="metric" id="monthlyBeforeExpensesMetric" hidden><span>После налогов до расходов</span><span id="monthlyBeforeExpenses" class="text-bold">0 ₽</span></div>
-            <div class="metric negative" id="monthlyExpensesMetric" hidden><span>Расходы в месяц</span><span id="monthlyExpenses" class="text-bold">0 ₽</span></div>
-          </div>
-
           <div class="hero-result">
             <div class="hero-head">
               <span class="calc-muted" id="monthlyNetLabel">Итого в месяц после налогов</span>
@@ -975,9 +1401,32 @@
             </div>
             <div class="annual-note" id="annualNote"></div>
           </div>
+
+          <div class="result-section">
+            <div class="result-grid">
+              <div class="metric"><span>Доход за услугу</span><span id="incomePerSession" class="text-bold">0 ₽</span></div>
+              <div class="metric"><span>Начисление за смену</span><span id="shiftGross" class="text-bold">0 ₽</span></div>
+              <div class="metric"><span>После налогов за смену</span><span id="shiftNet" class="text-bold">0 ₽</span></div>
+            </div>
+          </div>
+
+          <div class="month-breakdown">
+            <h3>Разбор месяца</h3>
+            <div class="month-breakdown-grid">
+              <div class="breakdown-row"><span>Начислено</span><span id="monthlyGross" class="breakdown-value">0 ₽</span></div>
+              <div class="breakdown-row negative neutral" id="monthlyTaxMetric"><span>Налоги</span><span id="monthlyTax" class="breakdown-value">0 ₽</span></div>
+              <div class="breakdown-row" id="monthlyBeforeExpensesMetric" hidden><span>После налогов до расходов</span><span id="monthlyBeforeExpenses" class="breakdown-value">0 ₽</span></div>
+              <div class="breakdown-row negative" id="monthlyExpensesMetric" hidden><span>Расходы</span><span id="monthlyExpenses" class="breakdown-value">0 ₽</span></div>
+              <div class="breakdown-row total"><span>Итог</span><span id="breakdownMonthlyNet" class="breakdown-value">0 ₽</span></div>
+            </div>
+          </div>
           <div class="time-summary" id="timeSummary" hidden>
             <h3>Время и загрузка</h3>
             <div class="time-summary-grid">
+              <div class="time-summary-item">
+                <span>Всего услуг</span>
+                <span id="summaryTotalServices" class="text-bold">0</span>
+              </div>
               <div class="time-summary-item">
                 <span>Часов услуг в месяц</span>
                 <span id="summaryMassageHours" class="text-bold">0 ч</span>
@@ -985,6 +1434,10 @@
               <div class="time-summary-item">
                 <span>В салоне в месяц</span>
                 <span id="salonHours" class="text-bold">0 ч</span>
+              </div>
+              <div class="time-summary-item">
+                <span>Доход/час услуги</span>
+                <span id="hourRate" class="text-bold">0 ₽</span>
               </div>
               <div class="time-summary-item">
                 <span>Доход/час в салоне</span>
@@ -1033,24 +1486,50 @@
       selfClientRow: document.getElementById("selfClientRow"),
       taxHint: document.getElementById("taxHint"),
       days: document.getElementById("days"),
-      hours: document.getElementById("hours"),
+      services: document.getElementById("services"),
       shiftDuration: document.getElementById("shiftDuration"),
       shiftDurationField: document.getElementById("shiftDurationField"),
       presenceMode: document.getElementById("presenceMode"),
+      guaranteeEnabled: document.getElementById("guaranteeEnabled"),
+      guaranteePanel: document.getElementById("guaranteePanel"),
       guarantee: document.getElementById("guarantee"),
+      attractionEnabled: document.getElementById("attractionEnabled"),
+      attractionPanel: document.getElementById("attractionPanel"),
       discount: document.getElementById("discount"),
+      otherDiscountShare: document.getElementById("otherDiscountShare"),
+      otherDiscountType: document.getElementById("otherDiscountType"),
       firstVisitShare: document.getElementById("firstVisitShare"),
       firstVisitDiscount: document.getElementById("firstVisitDiscount"),
+      firstVisitDiscountType: document.getElementById("firstVisitDiscountType"),
       packageShare: document.getElementById("packageShare"),
       packageDiscount: document.getElementById("packageDiscount"),
+      packageDiscountType: document.getElementById("packageDiscountType"),
       attractionHint: document.getElementById("attractionHint"),
-      vat: document.getElementById("vat"),
       salonDiscount: document.getElementById("salonDiscount"),
       expensesEnabled: document.getElementById("expensesEnabled"),
       expensesPanel: document.getElementById("expensesPanel"),
       expenseMonthly: document.getElementById("expenseMonthly"),
       expenseShift: document.getElementById("expenseShift"),
       expenseSession: document.getElementById("expenseSession"),
+      laborBenefitsEnabled: document.getElementById("laborBenefitsEnabled"),
+      laborBenefitsPanel: document.getElementById("laborBenefitsPanel"),
+      laborBenefitsMode: document.getElementById("laborBenefitsMode"),
+      laborBenefitsLaborPanel: document.getElementById("laborBenefitsLaborPanel"),
+      laborBenefitsOtherPanel: document.getElementById("laborBenefitsOtherPanel"),
+      vacationDays: document.getElementById("vacationDays"),
+      sickDays: document.getElementById("sickDays"),
+      sickPayRate: document.getElementById("sickPayRate"),
+      otherVacationEnabled: document.getElementById("otherVacationEnabled"),
+      otherVacationPanel: document.getElementById("otherVacationPanel"),
+      otherVacationDays: document.getElementById("otherVacationDays"),
+      otherVacationPay: document.getElementById("otherVacationPay"),
+      otherVacationPayType: document.getElementById("otherVacationPayType"),
+      otherSickEnabled: document.getElementById("otherSickEnabled"),
+      otherSickPanel: document.getElementById("otherSickPanel"),
+      otherSickDays: document.getElementById("otherSickDays"),
+      otherSickPay: document.getElementById("otherSickPay"),
+      otherSickPayType: document.getElementById("otherSickPayType"),
+      timeHint: document.getElementById("timeHint"),
       timeSummary: document.getElementById("timeSummary"),
       resetCalculator: document.getElementById("resetCalculator"),
       mobileResultBar: document.getElementById("mobileResultBar"),
@@ -1058,7 +1537,7 @@
     };
 
     var usdRubRate = null;
-    var storageKey = "denis-income-calculator-settings-v1";
+    var storageKey = "denis-income-calculator-settings-v5";
     var storageFields = [
       "price",
       "duration",
@@ -1069,21 +1548,34 @@
       "selfClient",
       "tax",
       "days",
-      "hours",
+      "services",
       "shiftDuration",
       "presenceMode",
       "guarantee",
       "discount",
+      "otherDiscountShare",
+      "otherDiscountType",
       "firstVisitShare",
       "firstVisitDiscount",
+      "firstVisitDiscountType",
       "packageShare",
       "packageDiscount",
-      "vat",
+      "packageDiscountType",
       "expenseMonthly",
       "expenseShift",
-      "expenseSession"
+      "expenseSession",
+      "laborBenefitsMode",
+      "vacationDays",
+      "sickDays",
+      "sickPayRate",
+      "otherVacationDays",
+      "otherVacationPay",
+      "otherVacationPayType",
+      "otherSickDays",
+      "otherSickPay",
+      "otherSickPayType"
     ];
-    var storageChecks = ["salonDiscount", "expensesEnabled"];
+    var storageChecks = ["salonDiscount", "attractionEnabled", "guaranteeEnabled", "expensesEnabled", "laborBenefitsEnabled", "otherVacationEnabled", "otherSickEnabled"];
     var defaultValues = {
       mode: "simple",
       taxMode: "self",
@@ -1097,23 +1589,41 @@
         selfClient: "4",
         tax: "4",
         days: "15",
-        hours: "4",
+        services: "4",
         shiftDuration: "12",
         presenceMode: "full",
         guarantee: "4000",
         discount: "0",
+        otherDiscountShare: "0",
+        otherDiscountType: "percent",
         firstVisitShare: "0",
         firstVisitDiscount: "0",
+        firstVisitDiscountType: "percent",
         packageShare: "0",
         packageDiscount: "0",
-        vat: "0",
+        packageDiscountType: "percent",
         expenseMonthly: "0",
         expenseShift: "0",
-        expenseSession: "0"
+        expenseSession: "0",
+        laborBenefitsMode: "labor",
+        vacationDays: "28",
+        sickDays: "7",
+        sickPayRate: "1",
+        otherVacationDays: "28",
+        otherVacationPay: "100",
+        otherVacationPayType: "percent",
+        otherSickDays: "7",
+        otherSickPay: "100",
+        otherSickPayType: "percent"
       },
       checks: {
-        salonDiscount: true,
-        expensesEnabled: false
+        salonDiscount: false,
+        attractionEnabled: false,
+        guaranteeEnabled: false,
+        expensesEnabled: false,
+        laborBenefitsEnabled: false,
+        otherVacationEnabled: true,
+        otherSickEnabled: true
       }
     };
 
@@ -1177,15 +1687,10 @@
 
     function syncPayModeControls() {
       var fixed = el.payMode.value === "fixed";
+      el.serviceFields.style.display = fixed ? "none" : "grid";
       el.priceBlock.style.display = fixed ? "none" : "grid";
       el.shareBlock.style.display = fixed ? "none" : "grid";
       el.fixedFields.style.display = fixed ? "grid" : "none";
-      if (fixed && el.durationBlock.parentElement !== el.fixedFields) {
-        el.fixedFields.appendChild(el.durationBlock);
-      }
-      if (!fixed && el.durationBlock.parentElement !== el.serviceFields) {
-        el.serviceFields.appendChild(el.durationBlock);
-      }
     }
 
     function isAdvancedMode() {
@@ -1200,6 +1705,56 @@
 
     function syncPresenceControls() {
       el.shiftDurationField.hidden = el.presenceMode.value !== "full";
+    }
+
+    function syncGuaranteeControls() {
+      el.guaranteePanel.hidden = !el.guaranteeEnabled.checked;
+    }
+
+    function syncAttractionControls() {
+      el.attractionPanel.hidden = !el.attractionEnabled.checked;
+    }
+
+    function syncDiscountAmountControls() {
+      [
+        ["firstVisitDiscountType", "firstVisitDiscount"],
+        ["packageDiscountType", "packageDiscount"],
+        ["otherDiscountType", "discount"],
+        ["otherVacationPayType", "otherVacationPay"],
+        ["otherSickPayType", "otherSickPay"]
+      ].forEach(function(keys) {
+        var type = el[keys[0]].value;
+        var input = el[keys[1]];
+        var fixedAmount = type === "amount";
+        input.max = fixedAmount ? "" : "100";
+        input.step = fixedAmount ? "100" : "1";
+        document.querySelectorAll("[data-discount-type-target='" + keys[0] + "'] button").forEach(function(button) {
+          var active = button.dataset.value === type;
+          button.classList.toggle("active", active);
+          button.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+      });
+    }
+
+    function syncLaborBenefitsControls() {
+      var mode = el.laborBenefitsMode.value === "other" ? "other" : "labor";
+      el.laborBenefitsMode.value = mode;
+      el.laborBenefitsLaborPanel.hidden = mode !== "labor";
+      el.laborBenefitsOtherPanel.hidden = mode !== "other";
+      el.otherVacationPanel.hidden = !el.otherVacationEnabled.checked;
+      el.otherSickPanel.hidden = !el.otherSickEnabled.checked;
+      document.querySelectorAll(".benefits-mode-toggle button").forEach(function(button) {
+        var active = button.dataset.value === mode;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+    }
+
+    function discountPercentFromInput(typeInput, valueInput, price) {
+      if (typeInput.value === "amount") {
+        return price > 0 ? Math.min(100, Math.max(0, num(valueInput)) / price * 100) : 0;
+      }
+      return percent(valueInput);
     }
 
     function canUseLocalStorage() {
@@ -1328,52 +1883,118 @@
       render();
     }
 
-    function attractionDiscountPercent() {
-      var firstVisitEffect = percent(el.firstVisitShare) * percent(el.firstVisitDiscount) / 100;
-      var packageEffect = percent(el.packageShare) * percent(el.packageDiscount) / 100;
-      var otherEffect = percent(el.discount);
+    function discountShareInputs() {
+      return [el.firstVisitShare, el.packageShare, el.otherDiscountShare];
+    }
+
+    function normalizeDiscountShares(changedInput) {
+      var inputs = discountShareInputs();
+      inputs.forEach(function(input) {
+        percent(input);
+      });
+
+      var total = inputs.reduce(function(sum, input) {
+        return sum + num(input);
+      }, 0);
+      if (total <= 100) return;
+
+      var overflow = total - 100;
+      var reducers = changedInput
+        ? inputs.filter(function(input) { return input !== changedInput; }).reverse()
+        : inputs.slice(1).reverse();
+
+      reducers.forEach(function(input) {
+        if (overflow <= 0) return;
+        var value = num(input);
+        var reduction = Math.min(value, overflow);
+        input.value = String(Math.round((value - reduction) * 10) / 10);
+        overflow -= reduction;
+      });
+
+      if (overflow > 0 && changedInput) {
+        changedInput.value = String(Math.round(Math.max(0, num(changedInput) - overflow) * 10) / 10);
+      }
+    }
+
+    function attractionDiscountShareTotal() {
+      normalizeDiscountShares();
+      return percent(el.firstVisitShare) + percent(el.packageShare) + percent(el.otherDiscountShare);
+    }
+
+    function attractionDiscountPercent(price) {
+      var firstVisitDiscount = discountPercentFromInput(el.firstVisitDiscountType, el.firstVisitDiscount, price);
+      var packageDiscount = discountPercentFromInput(el.packageDiscountType, el.packageDiscount, price);
+      var otherDiscount = discountPercentFromInput(el.otherDiscountType, el.discount, price);
+      var firstVisitEffect = percent(el.firstVisitShare) * firstVisitDiscount / 100;
+      var packageEffect = percent(el.packageShare) * packageDiscount / 100;
+      var otherEffect = percent(el.otherDiscountShare) * otherDiscount / 100;
       return Math.min(100, firstVisitEffect + packageEffect + otherEffect);
     }
 
-    function currentSettings(overrideHours) {
+    function currentSettings(overrideServices) {
       syncPayModeControls();
       syncTaxControls();
       syncModeControls();
       syncPresenceControls();
+      syncGuaranteeControls();
+      syncAttractionControls();
+      syncDiscountAmountControls();
+      syncLaborBenefitsControls();
       var advancedMode = isAdvancedMode();
+      var price = Math.max(0, num(el.price));
+      var payMode = el.payMode.value;
+      var fixedRate = Math.max(0, num(el.fixedRate));
+      var discountBase = payMode === "fixed" ? fixedRate : price;
+      var attractionActive = advancedMode && el.attractionEnabled.checked;
+      if (attractionActive) normalizeDiscountShares();
       return {
         advancedMode: advancedMode,
-        price: Math.max(0, num(el.price)),
+        price: price,
         duration: Math.max(1, advancedMode ? num(el.durationCustom) : num(el.duration)),
-        payMode: el.payMode.value,
-        fixedRate: Math.max(0, num(el.fixedRate)),
+        payMode: payMode,
+        fixedRate: fixedRate,
         share: percent(el.share) / 100,
         tax: taxRateFromMode() / 100,
         days: Math.max(0, num(el.days)),
-        hours: Math.max(0, overrideHours == null ? num(el.hours) : overrideHours),
+        services: Math.max(0, overrideServices == null ? num(el.services) : overrideServices),
         shiftDuration: Math.max(1, num(el.shiftDuration)),
         presenceMode: el.presenceMode.value,
-        guarantee: Math.max(0, num(el.guarantee)),
-        discount: advancedMode ? attractionDiscountPercent() / 100 : 0,
-        vat: advancedMode ? percent(el.vat) / 100 : 0,
-        salonDiscount: advancedMode && el.salonDiscount.checked,
+        guarantee: el.guaranteeEnabled.checked ? Math.max(0, num(el.guarantee)) : 0,
+        discount: attractionActive ? attractionDiscountPercent(discountBase) / 100 : 0,
+        discountShareTotal: attractionActive ? attractionDiscountShareTotal() : 0,
+        salonDiscount: attractionActive && el.salonDiscount.checked,
         expensesEnabled: advancedMode && el.expensesEnabled.checked,
         expenseMonthly: Math.max(0, num(el.expenseMonthly)),
         expenseShift: Math.max(0, num(el.expenseShift)),
-        expenseSession: Math.max(0, num(el.expenseSession))
+        expenseSession: Math.max(0, num(el.expenseSession)),
+        laborBenefitsEnabled: advancedMode && el.laborBenefitsEnabled.checked,
+        laborBenefitsMode: el.laborBenefitsMode.value === "other" ? "other" : "labor",
+        vacationDays: Math.max(0, num(el.vacationDays)),
+        sickDays: Math.max(0, num(el.sickDays)),
+        sickPayRate: Math.max(0, num(el.sickPayRate)),
+        otherVacationEnabled: el.otherVacationEnabled.checked,
+        otherVacationDays: Math.max(0, num(el.otherVacationDays)),
+        otherVacationPay: Math.max(0, num(el.otherVacationPay)),
+        otherVacationPayType: el.otherVacationPayType.value === "amount" ? "amount" : "percent",
+        otherSickEnabled: el.otherSickEnabled.checked,
+        otherSickDays: Math.max(0, num(el.otherSickDays)),
+        otherSickPay: Math.max(0, num(el.otherSickPay)),
+        otherSickPayType: el.otherSickPayType.value === "amount" ? "amount" : "percent"
       };
     }
 
     function calculate(settings) {
       var paidPrice = settings.price * (1 - settings.discount);
       var commissionPrice = settings.salonDiscount ? settings.price : paidPrice;
-      var baseWithoutVat = settings.vat > 0 ? commissionPrice / (1 + settings.vat) : commissionPrice;
+      var commissionBase = commissionPrice;
       var sessionHours = settings.duration / 60;
-      var sessions = sessionHours > 0 ? settings.hours / sessionHours : 0;
-      var percentHourRate = sessionHours > 0 ? (baseWithoutVat * settings.share) / sessionHours : 0;
-      var hourRate = settings.payMode === "fixed" ? settings.fixedRate : percentHourRate;
-      var incomePerSession = hourRate * sessionHours;
-      var commissionShift = hourRate * settings.hours;
+      var sessions = settings.services;
+      var fixedIncomePerSession = settings.salonDiscount ? settings.fixedRate : settings.fixedRate * (1 - settings.discount);
+      fixedIncomePerSession = Math.max(0, fixedIncomePerSession);
+      var incomePerSession = settings.payMode === "fixed" ? fixedIncomePerSession : commissionBase * settings.share;
+      var hourRate = sessionHours > 0 ? incomePerSession / sessionHours : 0;
+      var serviceHoursPerShift = sessions * sessionHours;
+      var commissionShift = incomePerSession * sessions;
       var guaranteeUsed = settings.guarantee > commissionShift;
       var shiftGross = Math.max(commissionShift, settings.guarantee);
       var shiftTax = shiftGross * settings.tax;
@@ -1385,16 +2006,40 @@
         ? settings.expenseMonthly + (settings.expenseShift * settings.days) + (settings.expenseSession * sessions * settings.days)
         : 0;
       var finalMonthlyNet = monthlyNet - monthlyExpenses;
-      var massageHours = settings.hours * settings.days;
-      var salonHoursPerShift = settings.presenceMode === "full" ? Math.max(settings.shiftDuration, settings.hours) : settings.hours;
+      var averageVacationDayNet = monthlyNet > 0 ? monthlyNet / 29.3 : 0;
+      var averageSickDayNet = monthlyNet > 0 ? monthlyNet * 24 / 730 : 0;
+      var vacationPayAnnual = 0;
+      var sickPayAnnual = 0;
+      if (settings.laborBenefitsEnabled && settings.laborBenefitsMode === "labor") {
+        vacationPayAnnual = averageVacationDayNet * settings.vacationDays;
+        sickPayAnnual = averageSickDayNet * settings.sickDays * settings.sickPayRate;
+      }
+      if (settings.laborBenefitsEnabled && settings.laborBenefitsMode === "other") {
+        if (settings.otherVacationEnabled) {
+          vacationPayAnnual = settings.otherVacationPayType === "amount"
+            ? settings.otherVacationPay * settings.otherVacationDays
+            : averageVacationDayNet * settings.otherVacationDays * Math.min(100, settings.otherVacationPay) / 100;
+        }
+        if (settings.otherSickEnabled) {
+          sickPayAnnual = settings.otherSickPayType === "amount"
+            ? settings.otherSickPay * settings.otherSickDays
+            : averageSickDayNet * settings.otherSickDays * Math.min(100, settings.otherSickPay) / 100;
+        }
+      }
+      var laborBenefitsMonthly = (vacationPayAnnual + sickPayAnnual) / 12;
+      var laborBenefitsTotalMonthly = finalMonthlyNet + laborBenefitsMonthly;
+      var massageHoursPerShift = serviceHoursPerShift;
+      var totalServices = sessions * settings.days;
+      var massageHours = massageHoursPerShift * settings.days;
+      var salonHoursPerShift = settings.presenceMode === "full" ? Math.max(settings.shiftDuration, massageHoursPerShift) : massageHoursPerShift;
       var salonHours = salonHoursPerShift * settings.days;
-      var salonLoad = settings.presenceMode === "full" && settings.shiftDuration > 0 ? settings.hours / settings.shiftDuration * 100 : 0;
+      var salonLoad = settings.presenceMode === "full" && settings.shiftDuration > 0 ? massageHoursPerShift / settings.shiftDuration * 100 : 0;
       var salonHourRate = salonHours > 0 ? finalMonthlyNet / salonHours : 0;
-      var breakEvenHours = hourRate > 0 ? settings.guarantee / hourRate : 0;
+      var breakEvenServices = incomePerSession > 0 ? settings.guarantee / incomePerSession : 0;
       return {
         paidPrice: paidPrice,
         commissionPrice: commissionPrice,
-        baseWithoutVat: baseWithoutVat,
+        commissionBase: commissionBase,
         sessions: sessions,
         incomePerSession: incomePerSession,
         hourRate: hourRate,
@@ -1408,11 +2053,17 @@
         monthlyNet: monthlyNet,
         monthlyExpenses: monthlyExpenses,
         finalMonthlyNet: finalMonthlyNet,
+        vacationPayAnnual: vacationPayAnnual,
+        sickPayAnnual: sickPayAnnual,
+        laborBenefitsMonthly: laborBenefitsMonthly,
+        laborBenefitsTotalMonthly: laborBenefitsTotalMonthly,
+        totalServices: totalServices,
+        massageHoursPerShift: massageHoursPerShift,
         massageHours: massageHours,
         salonHours: salonHours,
         salonLoad: salonLoad,
         salonHourRate: salonHourRate,
-        breakEvenHours: breakEvenHours
+        breakEvenServices: breakEvenServices
       };
     }
 
@@ -1441,9 +2092,13 @@
     function render() {
       var settings = currentSettings();
       var result = calculate(settings);
+      el.guaranteePanel.hidden = !el.guaranteeEnabled.checked;
+      el.attractionPanel.hidden = !el.attractionEnabled.checked;
       el.expensesPanel.hidden = !settings.expensesEnabled;
+      el.laborBenefitsPanel.hidden = !settings.laborBenefitsEnabled;
       document.getElementById("monthlyNetLabel").textContent = settings.expensesEnabled ? "Итого в месяц после налогов и расходов" : "Итого в месяц после налогов";
       document.getElementById("monthlyNet").textContent = money(result.finalMonthlyNet);
+      document.getElementById("breakdownMonthlyNet").textContent = money(result.finalMonthlyNet);
       el.mobileResultNet.textContent = money(result.finalMonthlyNet);
       var usdEstimate = document.getElementById("usdEstimate");
       if (usdRubRate) {
@@ -1455,17 +2110,28 @@
       }
       document.getElementById("shiftGross").textContent = money(result.shiftGross);
       document.getElementById("shiftNet").textContent = money(result.shiftNet);
+      document.getElementById("incomePerSession").textContent = money(result.incomePerSession);
       document.getElementById("hourRate").textContent = money(result.hourRate);
-      document.getElementById("sessions").textContent = one(result.sessions);
-      document.getElementById("monthlyHours").textContent = "за " + one(result.massageHours) + " часов";
+      document.getElementById("monthlyHours").textContent = "за " + one(result.massageHours) + " ч услуг";
       document.getElementById("monthlyGross").textContent = money(result.monthlyGross);
       document.getElementById("monthlyTax").textContent = negativeMoney(result.monthlyTax);
       syncNegativeMetric("monthlyTaxMetric", result.monthlyTax);
+      document.getElementById("summaryTotalServices").textContent = one(result.totalServices);
       document.getElementById("summaryMassageHours").textContent = one(result.massageHours) + " ч";
       document.getElementById("salonHours").textContent = one(result.salonHours) + " ч";
       document.getElementById("salonHourRate").textContent = money(result.salonHourRate);
       document.getElementById("salonLoad").textContent = Math.round(result.salonLoad).toLocaleString("ru-RU") + "%";
       document.getElementById("salonLoadItem").hidden = settings.presenceMode !== "full";
+      if (el.timeHint) {
+        var timeHint = "Ср. " + one(settings.services) + " услуг × " + one(settings.duration) + " мин = " + one(result.massageHoursPerShift) + " ч услуг за смену.";
+        if (settings.advancedMode && settings.presenceMode === "full") {
+          timeHint += " Загрузка: " + Math.round(result.salonLoad).toLocaleString("ru-RU") + "% от " + one(settings.shiftDuration) + " ч в салоне.";
+        }
+        if (settings.advancedMode && settings.presenceMode === "appointments") {
+          timeHint += " В режиме записей время в салоне приравниваем к времени услуг.";
+        }
+        el.timeHint.textContent = timeHint;
+      }
       el.timeSummary.hidden = !settings.advancedMode;
       document.getElementById("monthlyExpenses").textContent = negativeMoney(result.monthlyExpenses);
       syncNegativeMetric("monthlyExpensesMetric", result.monthlyExpenses);
@@ -1473,12 +2139,24 @@
       document.getElementById("monthlyExpensesMetric").hidden = !settings.expensesEnabled;
       document.getElementById("monthlyBeforeExpensesMetric").hidden = !settings.expensesEnabled;
       if (el.attractionHint) {
-        el.attractionHint.textContent = "Средняя скидка по потоку: " + Math.round(settings.discount * 100).toLocaleString("ru-RU") + "%";
+        var discountBase = settings.payMode === "fixed" ? settings.fixedRate : settings.price;
+        var averageDiscountAmount = discountBase * settings.discount;
+        var averagePayoutReduction = settings.payMode === "fixed" ? averageDiscountAmount : averageDiscountAmount * settings.share;
+        var payoutBeforeDiscount = settings.payMode === "fixed" ? settings.fixedRate : settings.price * settings.share;
+        var payoutReductionPercent = payoutBeforeDiscount > 0 ? averagePayoutReduction / payoutBeforeDiscount * 100 : 0;
+        var discountText = 'Скидка в среднем: <span class="negative-value">−' + money(averagePayoutReduction) + ' (' + one(payoutReductionPercent) + '%)</span> с услуги. После скидок: ' + money(result.incomePerSession) + '.';
+        if (settings.salonDiscount) {
+          discountText = "Скидки не уменьшают выплату — их покрывает салон.";
+        }
+        el.attractionHint.innerHTML = discountText;
       }
       var annualNet = result.finalMonthlyNet * 12;
       var annualGross = result.monthlyGross * 12;
       var annualLabel = settings.expensesEnabled ? "За год после налогов и расходов:" : "За год после налогов:";
       var annualText = "<span>" + annualLabel + "</span><span class=\"annual-value\">" + money(annualNet) + "</span>";
+      if (settings.laborBenefitsEnabled) {
+        annualText += "<span class=\"annual-benefits-label\">За год отпускные / больничные:</span><span class=\"annual-benefits-value\">+" + money(result.vacationPayAnnual) + " / +" + money(result.sickPayAnnual) + "</span>";
+      }
       if (selectedTaxMode() === "self") {
         var npdLimit = 2400000;
         var limitPct = Math.round(annualGross / npdLimit * 100);
@@ -1488,8 +2166,8 @@
 
       var guaranteeNote = document.getElementById("guaranteeNote");
       if (settings.guarantee > 0 && result.guaranteeUsed) {
-        var modeText = settings.payMode === "fixed" ? "по фиксированной ставке" : "по проценту";
-        guaranteeNote.textContent = "Сейчас срабатывает гарантия: " + modeText + " выходит " + money(result.commissionShift) + " за смену, поэтому начисляется " + money(settings.guarantee) + ". Чтобы выйти выше гарантии, нужно примерно " + one(result.breakEvenHours) + " ч услуг в смену.";
+        var modeText = settings.payMode === "fixed" ? "по фиксу за услугу" : "по проценту";
+        guaranteeNote.textContent = "Сейчас срабатывает гарантия: " + modeText + " выходит " + money(result.commissionShift) + " за смену, поэтому начисляется " + money(settings.guarantee) + ". Чтобы выйти выше гарантии, нужно примерно " + one(result.breakEvenServices) + " услуг в смену.";
         guaranteeNote.style.display = "block";
       } else {
         guaranteeNote.textContent = "";
@@ -1500,6 +2178,15 @@
       saveSettings();
       syncResetButton();
     }
+
+    [el.firstVisitShare, el.packageShare, el.otherDiscountShare].forEach(function(input) {
+      input.addEventListener("input", function() {
+        normalizeDiscountShares(input);
+      });
+      input.addEventListener("change", function() {
+        normalizeDiscountShares(input);
+      });
+    });
 
     document.querySelectorAll("input, select").forEach(function(input) {
       input.addEventListener("input", render);
@@ -1518,6 +2205,21 @@
         });
         chip.dataset.selected = "true";
         el[target].value = chip.dataset.value;
+        render();
+      });
+    });
+
+    document.querySelectorAll(".discount-type-toggle button").forEach(function(button) {
+      button.addEventListener("click", function() {
+        var target = button.parentElement.dataset.discountTypeTarget;
+        if (el[target]) el[target].value = button.dataset.value;
+        render();
+      });
+    });
+
+    document.querySelectorAll(".benefits-mode-toggle button").forEach(function(button) {
+      button.addEventListener("click", function() {
+        el.laborBenefitsMode.value = button.dataset.value;
         render();
       });
     });
