@@ -592,8 +592,9 @@
     function loadRemoteReviews(rail) {
       if (!window.fetch) return Promise.resolve(false);
 
-      return window.fetch("/api/reviews?limit=30", {
-        headers: { Accept: "application/json" }
+      return window.fetch("/assets/data/reviews.json", {
+        headers: { Accept: "application/json" },
+        cache: "no-cache"
       })
         .then(function (response) {
           if (!response.ok) throw new Error("Не удалось загрузить отзывы");
