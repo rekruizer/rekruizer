@@ -39,7 +39,7 @@
         '    <div class="mobile-menu__bottom">',
         '      <div class="mobile-menu__contact">',
         '        <a class="mobile-menu__phone" href="tel:+79951568066">+7 (995) 156-80-66</a>',
-        '        <a class="mobile-menu__address" href="https://yandex.ru/profile/-/CPdhREie" target="_blank" rel="noopener noreferrer" data-goal="yandex_maps_route_click">Москва, Рублёвское шоссе 34к2</a>',
+        '        <a class="mobile-menu__address" href="https://yandex.ru/maps/org/159539374930" target="_blank" rel="noopener noreferrer" data-goal="yandex_maps_route_click">Москва, Рублёвское шоссе 34к2</a>',
         '      </div>',
         '      <span class="mobile-menu__social footer-social" aria-label="Соцсети">',
         renderSocialLinks(),
@@ -522,6 +522,108 @@
     var viewports = document.querySelectorAll("[data-reviews-viewport]");
     if (!viewports.length) return;
 
+    function formatReviewDate(value) {
+      if (!value) return "";
+
+      var normalized = String(value).slice(0, 10);
+      var date = new Date(normalized + "T00:00:00Z");
+      if (Number.isNaN(date.getTime())) return "";
+
+      try {
+        return new Intl.DateTimeFormat("ru-RU", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+          timeZone: "UTC"
+        }).format(date);
+      } catch (error) {
+        return normalized;
+      }
+    }
+
+    function createReviewCard(review) {
+      var card = document.createElement("article");
+      card.className = "review-card";
+      card.setAttribute("data-review-api", String(review.source || ""));
+
+      var top = document.createElement("div");
+      top.className = "review-top";
+
+      var identity = document.createElement("div");
+      var author = document.createElement("h3");
+      author.textContent = review.authorName || "Клиент";
+
+      var stars = document.createElement("div");
+      var rating = Math.max(0, Math.min(5, parseInt(review.rating, 10) || 0));
+      stars.className = "review-stars";
+      stars.setAttribute("data-rating", String(rating));
+      stars.setAttribute("aria-label", rating + " из 5");
+
+      identity.appendChild(author);
+      identity.appendChild(stars);
+      top.appendChild(identity);
+
+      var formattedDate = formatReviewDate(review.reviewDate);
+      if (formattedDate) {
+        var time = document.createElement("time");
+        time.dateTime = String(review.reviewDate).slice(0, 10);
+        time.textContent = formattedDate;
+        top.appendChild(time);
+      }
+
+      var text = document.createElement("p");
+      text.textContent = review.text || "";
+
+      var source = document.createElement("span");
+      source.className = "review-source";
+      source.textContent = {
+        yandex: "Яндекс",
+        avito: "Avito",
+        "2gis": "2GIS",
+        google: "Google"
+      }[review.source] || review.source || "Отзыв";
+
+      card.appendChild(top);
+      card.appendChild(text);
+      card.appendChild(source);
+      return card;
+    }
+
+    function loadRemoteReviews(rail) {
+      if (!window.fetch) return Promise.resolve(false);
+
+      return window.fetch("/api/reviews?limit=30", {
+        headers: { Accept: "application/json" }
+      })
+        .then(function (response) {
+          if (!response.ok) throw new Error("Не удалось загрузить отзывы");
+          return response.json();
+        })
+        .then(function (payload) {
+          var reviews = payload && Array.isArray(payload.reviews)
+            ? payload.reviews.filter(function (review) {
+                return review && review.text && Number(review.rating) >= 4;
+              })
+            : [];
+
+          if (!reviews.length) return false;
+
+          rail.querySelectorAll("[data-review-api-fallback]").forEach(function (card) {
+            card.remove();
+          });
+
+          reviews.forEach(function (review) {
+            rail.appendChild(createReviewCard(review));
+          });
+
+          return true;
+        })
+        .catch(function () {
+          // Если API временно недоступен, посетитель увидит статические отзывы.
+          return false;
+        });
+    }
+
     function renderStars(root) {
       root.querySelectorAll(".review-stars[data-rating]").forEach(function (stars) {
         var rating = Math.max(0, Math.min(5, parseInt(stars.getAttribute("data-rating"), 10) || 0));
@@ -537,137 +639,140 @@
     viewports.forEach(function (viewport) {
       var rail = viewport.querySelector("[data-reviews-rail]");
       if (!rail || rail.dataset.carouselReady === "true") return;
-      rail.dataset.carouselReady = "true";
+      rail.dataset.carouselReady = "loading";
 
-      var section = viewport.closest(".reviews-section");
-      var prev = section ? section.querySelector("[data-reviews-prev]") : null;
-      var next = section ? section.querySelector("[data-reviews-next]") : null;
-      var originals = Array.prototype.slice.call(rail.children);
-      var originalCount = originals.length;
-      if (!originalCount) return;
+      loadRemoteReviews(rail).then(function () {
+        rail.dataset.carouselReady = "true";
 
-      renderStars(rail);
+        var section = viewport.closest(".reviews-section");
+        var prev = section ? section.querySelector("[data-reviews-prev]") : null;
+        var next = section ? section.querySelector("[data-reviews-next]") : null;
+        var originals = Array.prototype.slice.call(rail.children);
+        var originalCount = originals.length;
+        if (!originalCount) return;
 
+        renderStars(rail);
 
-      var beforeClones = document.createDocumentFragment();
-      originals.forEach(function (card) {
-        var clone = card.cloneNode(true);
-        clone.setAttribute("aria-hidden", "true");
-        clone.setAttribute("data-review-clone", "before");
-        beforeClones.appendChild(clone);
-      });
-      rail.insertBefore(beforeClones, rail.firstChild);
-
-      originals.forEach(function (card) {
-        var clone = card.cloneNode(true);
-        clone.setAttribute("aria-hidden", "true");
-        clone.setAttribute("data-review-clone", "after");
-        rail.appendChild(clone);
-      });
-
-      var slides = Array.prototype.slice.call(rail.children);
-      var index = originalCount;
-      var scrollEndTimer = null;
-      var ignoreScroll = false;
-
-      function updateFade() {
-        if (!section) return;
-        section.classList.toggle("has-right-fade", originalCount > 1);
-      }
-
-      function getOriginalsStart() {
-        return slides[originalCount] ? slides[originalCount].offsetLeft : 0;
-      }
-
-      function getOriginalsWidth() {
-        var firstAfter = slides[originalCount * 2];
-        return firstAfter ? firstAfter.offsetLeft - getOriginalsStart() : rail.scrollWidth / 3;
-      }
-
-      function normalizeSlideIndex(value) {
-        if (value < originalCount) return value + originalCount;
-        if (value >= originalCount * 2) return value - originalCount;
-        return value;
-      }
-
-      function nearestSlideIndex() {
-        var current = viewport.scrollLeft;
-        var nearest = index;
-        var minDistance = Infinity;
-        slides.forEach(function (slide, slideIndex) {
-          var distance = Math.abs(slide.offsetLeft - current);
-          if (distance < minDistance) {
-            minDistance = distance;
-            nearest = slideIndex;
-          }
+        var beforeClones = document.createDocumentFragment();
+        originals.forEach(function (card) {
+          var clone = card.cloneNode(true);
+          clone.setAttribute("aria-hidden", "true");
+          clone.setAttribute("data-review-clone", "before");
+          beforeClones.appendChild(clone);
         });
-        return nearest;
-      }
+        rail.insertBefore(beforeClones, rail.firstChild);
 
-      function scrollToOffset(offset, animated) {
-        if (viewport.scrollTo) {
-          viewport.scrollTo({ left: offset, behavior: animated ? "smooth" : "auto" });
-        } else {
-          viewport.scrollLeft = offset;
-        }
-      }
+        originals.forEach(function (card) {
+          var clone = card.cloneNode(true);
+          clone.setAttribute("aria-hidden", "true");
+          clone.setAttribute("data-review-clone", "after");
+          rail.appendChild(clone);
+        });
 
-      function jumpToOffset(offset) {
-        ignoreScroll = true;
-        scrollToOffset(offset, false);
-        window.setTimeout(function () { ignoreScroll = false; }, 0);
-      }
+        var slides = Array.prototype.slice.call(rail.children);
+        var index = originalCount;
+        var scrollEndTimer = null;
+        var ignoreScroll = false;
 
-      function normalizePosition() {
-        var originalsStart = getOriginalsStart();
-        var originalsWidth = getOriginalsWidth();
-        var current = viewport.scrollLeft;
-
-        if (current < originalsStart) {
-          current += originalsWidth;
-          jumpToOffset(current);
-        } else if (current >= originalsStart + originalsWidth) {
-          current -= originalsWidth;
-          jumpToOffset(current);
+        function updateFade() {
+          if (!section) return;
+          section.classList.toggle("has-right-fade", originalCount > 1);
         }
 
-        index = normalizeSlideIndex(nearestSlideIndex());
-        updateFade();
-      }
+        function getOriginalsStart() {
+          return slides[originalCount] ? slides[originalCount].offsetLeft : 0;
+        }
 
-      function moveTo(nextIndex, animated) {
-        index = nextIndex;
-        var target = slides[index];
-        if (!target) return;
-        scrollToOffset(target.offsetLeft, animated);
-        updateFade();
-        if (!animated) normalizePosition();
-      }
+        function getOriginalsWidth() {
+          var firstAfter = slides[originalCount * 2];
+          return firstAfter ? firstAfter.offsetLeft - getOriginalsStart() : rail.scrollWidth / 3;
+        }
 
-      function scheduleNormalize() {
-        if (ignoreScroll) return;
-        window.clearTimeout(scrollEndTimer);
-        scrollEndTimer = window.setTimeout(normalizePosition, 120);
-      }
+        function normalizeSlideIndex(value) {
+          if (value < originalCount) return value + originalCount;
+          if (value >= originalCount * 2) return value - originalCount;
+          return value;
+        }
 
-      function goNext() {
-        moveTo(index + 1, true);
-      }
+        function nearestSlideIndex() {
+          var current = viewport.scrollLeft;
+          var nearest = index;
+          var minDistance = Infinity;
+          slides.forEach(function (slide, slideIndex) {
+            var distance = Math.abs(slide.offsetLeft - current);
+            if (distance < minDistance) {
+              minDistance = distance;
+              nearest = slideIndex;
+            }
+          });
+          return nearest;
+        }
 
-      function goPrev() {
-        moveTo(index - 1, true);
-      }
+        function scrollToOffset(offset, animated) {
+          if (viewport.scrollTo) {
+            viewport.scrollTo({ left: offset, behavior: animated ? "smooth" : "auto" });
+          } else {
+            viewport.scrollLeft = offset;
+          }
+        }
 
-      if (prev) prev.addEventListener("click", goPrev);
-      if (next) next.addEventListener("click", goNext);
-      viewport.addEventListener("scroll", scheduleNormalize, { passive: true });
+        function jumpToOffset(offset) {
+          ignoreScroll = true;
+          scrollToOffset(offset, false);
+          window.setTimeout(function () { ignoreScroll = false; }, 0);
+        }
 
-      window.addEventListener("resize", function () {
-        moveTo(normalizeSlideIndex(index), false);
+        function normalizePosition() {
+          var originalsStart = getOriginalsStart();
+          var originalsWidth = getOriginalsWidth();
+          var current = viewport.scrollLeft;
+
+          if (current < originalsStart) {
+            current += originalsWidth;
+            jumpToOffset(current);
+          } else if (current >= originalsStart + originalsWidth) {
+            current -= originalsWidth;
+            jumpToOffset(current);
+          }
+
+          index = normalizeSlideIndex(nearestSlideIndex());
+          updateFade();
+        }
+
+        function moveTo(nextIndex, animated) {
+          index = nextIndex;
+          var target = slides[index];
+          if (!target) return;
+          scrollToOffset(target.offsetLeft, animated);
+          updateFade();
+          if (!animated) normalizePosition();
+        }
+
+        function scheduleNormalize() {
+          if (ignoreScroll) return;
+          window.clearTimeout(scrollEndTimer);
+          scrollEndTimer = window.setTimeout(normalizePosition, 120);
+        }
+
+        function goNext() {
+          moveTo(index + 1, true);
+        }
+
+        function goPrev() {
+          moveTo(index - 1, true);
+        }
+
+        if (prev) prev.addEventListener("click", goPrev);
+        if (next) next.addEventListener("click", goNext);
+        viewport.addEventListener("scroll", scheduleNormalize, { passive: true });
+
+        window.addEventListener("resize", function () {
+          moveTo(normalizeSlideIndex(index), false);
+        });
+
+        moveTo(index, false);
+        window.setTimeout(normalizePosition, 0);
       });
-
-      moveTo(index, false);
-      window.setTimeout(normalizePosition, 0);
     });
   }
 
