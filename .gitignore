@@ -7,3 +7,5 @@ __pycache__/
 services-feed.xml
 _site/
 sitemap.xml
+AGENTS.md
+.codex/config.toml

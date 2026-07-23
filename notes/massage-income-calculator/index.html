@@ -811,6 +811,143 @@
       display: none;
     }
 
+    .day-visual {
+      margin-top: 14px;
+      padding: 14px;
+      border: 1px solid rgba(245,241,234,.12);
+      border-radius: 18px;
+      background: rgba(13,15,18,.22);
+    }
+
+    .day-visual-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .day-visual-title {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .day-visual-total {
+      color: var(--text);
+      font-size: 18px;
+      font-weight: var(--font-weight-bold);
+      line-height: 1;
+      letter-spacing: -0.04em;
+      white-space: nowrap;
+    }
+
+    .day-bar {
+      display: flex;
+      min-height: 42px;
+      overflow: hidden;
+      border: 1px solid rgba(245,241,234,.12);
+      border-radius: 12px;
+      background: rgba(255,255,255,.045);
+    }
+
+    .day-segment {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 22px;
+      padding: 0 8px;
+      border: 0;
+      border-right: 1px solid rgba(13,15,18,.35);
+      color: rgba(245,241,234,.86);
+      font: inherit;
+      font-size: 11px;
+      overflow: hidden;
+      font-weight: var(--font-weight-semibold);
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+
+    .day-segment span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .day-segment:last-child {
+      border-right: 0;
+    }
+
+    .day-segment[hidden] {
+      display: none;
+    }
+
+    .day-segment.draggable {
+      cursor: ew-resize;
+      touch-action: none;
+    }
+
+    .day-segment.draggable::after {
+      content: "";
+      position: absolute;
+      right: 4px;
+      top: 12px;
+      bottom: 12px;
+      width: 2px;
+      border-radius: 999px;
+      background: rgba(245,241,234,.48);
+      box-shadow: 4px 0 0 rgba(245,241,234,.28);
+    }
+
+    .day-segment.service { background: rgba(156,207,147,.45); }
+    .day-segment.break { background: rgba(212,163,115,.46); }
+    .day-segment.commute { background: rgba(122,162,247,.42); }
+    .day-segment.prep { background: rgba(190,149,255,.38); }
+    .day-segment.free { background: rgba(245,241,234,.10); color: var(--muted); }
+    .day-segment.over { background: rgba(255,143,143,.45); color: var(--text); }
+
+    .day-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .day-legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .day-legend span[hidden] {
+      display: none;
+    }
+
+    .day-legend span::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(245,241,234,.25);
+    }
+
+    .day-legend .service::before { background: rgba(156,207,147,.8); }
+    .day-legend .break::before { background: rgba(212,163,115,.85); }
+    .day-legend .commute::before { background: rgba(122,162,247,.8); }
+    .day-legend .prep::before { background: rgba(190,149,255,.78); }
+    .day-legend .free::before { background: rgba(245,241,234,.35); }
+    .day-legend .over::before { background: rgba(255,143,143,.85); }
+
+    .day-visual-hint {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
     .calc-shell[data-mode="advanced"] .hero-result .hours-badge {
       display: none;
     }
@@ -854,14 +991,28 @@
 
 
     .calc-note {
+      position: relative;
       margin-top: 14px;
-      padding: 14px;
-      border-left: 3px solid var(--accent);
-      border-radius: 0 16px 16px 0;
+      padding: 14px 14px 14px 18px;
+      border: 1px solid rgba(245,241,234,.12);
+      border-radius: 18px;
       background: rgba(255,255,255,.045);
       color: var(--muted);
       line-height: 1.6;
       font-size: 14px;
+    }
+
+    .calc-note::before {
+      content: "";
+      position: absolute;
+      left: -1px;
+      top: -1px;
+      bottom: -1px;
+      width: 9px;
+      border: 1px solid var(--accent);
+      border-right: 0;
+      border-radius: 16px 0 0 16px;
+      pointer-events: none;
     }
 
     .mobile-result-bar {
@@ -898,6 +1049,19 @@
       .service-fields,
       .fixed-fields {
         grid-template-columns: 1fr;
+      }
+
+      .day-visual-head {
+        display: block;
+      }
+
+      .day-visual-total {
+        display: block;
+        margin-top: 4px;
+      }
+
+      .day-segment span {
+        font-size: 10px;
       }
 
       .hero-head {
@@ -1114,6 +1278,36 @@
                   <div class="field-row">
                     <input id="shiftDuration" type="number" min="1" max="24" step="0.5" value="12">
                     <span class="unit">ч</span>
+                  </div>
+                </div>
+
+                <div class="mini-field advanced-only">
+                  <label for="sessionBreak">Отдых между сеансами</label>
+                  <div class="field-row">
+                    <input id="sessionBreak" type="number" min="0" max="180" step="5" value="15">
+                    <span class="unit">мин</span>
+                  </div>
+                  <div class="chips" data-target="sessionBreak">
+                    <button class="chip" type="button" data-value="0">0</button>
+                    <button class="chip" type="button" data-value="10">10</button>
+                    <button class="chip" type="button" data-value="15" data-default="true">15</button>
+                    <button class="chip" type="button" data-value="30">30</button>
+                  </div>
+                </div>
+
+                <div class="mini-field advanced-only">
+                  <label for="commuteTime">Дорога</label>
+                  <div class="field-row">
+                    <input id="commuteTime" type="number" min="0" max="360" step="5" value="0">
+                    <span class="unit">мин</span>
+                  </div>
+                </div>
+
+                <div class="mini-field advanced-only">
+                  <label for="prepTime">Сборы</label>
+                  <div class="field-row">
+                    <input id="prepTime" type="number" min="0" max="240" step="5" value="0">
+                    <span class="unit">мин</span>
                   </div>
                 </div>
               </div>
@@ -1401,6 +1595,7 @@
             </div>
             <div class="annual-note" id="annualNote"></div>
           </div>
+          <div class="calc-note" id="guaranteeNote"></div>
 
           <div class="result-section">
             <div class="result-grid">
@@ -1443,13 +1638,44 @@
                 <span>Доход/час в салоне</span>
                 <span id="salonHourRate" class="text-bold">0 ₽</span>
               </div>
+              <div class="time-summary-item">
+                <span>Всего времени в месяц</span>
+                <span id="summaryTotalDayHours" class="text-bold">0 ч</span>
+              </div>
+              <div class="time-summary-item">
+                <span>Доход/час всего дня</span>
+                <span id="dayHourRate" class="text-bold">0 ₽</span>
+              </div>
               <div class="time-summary-item" id="salonLoadItem">
                 <span>Загрузка смены</span>
                 <span id="salonLoad" class="text-bold">0%</span>
               </div>
             </div>
+
+            <div class="day-visual" id="dayVisual">
+              <div class="day-visual-head">
+                <span class="day-visual-title">Один рабочий день</span>
+                <span class="day-visual-total" id="dayTotal">0 ч</span>
+              </div>
+              <div class="day-bar" id="dayBar" aria-label="Визуализация рабочего дня">
+                <button class="day-segment prep draggable" type="button" id="daySegmentPrep" data-time-field="prepTime"><span></span></button>
+                <button class="day-segment commute draggable" type="button" id="daySegmentCommute" data-time-field="commuteTime"><span></span></button>
+                <div class="day-segment service" id="daySegmentService"><span></span></div>
+                <button class="day-segment break draggable" type="button" id="daySegmentBreak" data-time-field="sessionBreak"><span></span></button>
+                <div class="day-segment free" id="daySegmentFree"><span></span></div>
+                <div class="day-segment over" id="daySegmentOver"><span></span></div>
+              </div>
+              <div class="day-legend" id="dayLegend">
+                <span class="service">услуги</span>
+                <span class="break">отдых</span>
+                <span class="commute">дорога</span>
+                <span class="prep">сборы</span>
+                <span class="free" id="dayLegendFree">свободно</span>
+                <span class="over" id="dayLegendOver">перерасход</span>
+              </div>
+              <div class="day-visual-hint" id="dayVisualHint">Потяни цветные части, чтобы быстро изменить дорогу, сборы или отдых.</div>
+            </div>
           </div>
-          <div class="calc-note" id="guaranteeNote"></div>
         </aside>
       </div>
     </section>
@@ -1489,6 +1715,9 @@
       services: document.getElementById("services"),
       shiftDuration: document.getElementById("shiftDuration"),
       shiftDurationField: document.getElementById("shiftDurationField"),
+      sessionBreak: document.getElementById("sessionBreak"),
+      commuteTime: document.getElementById("commuteTime"),
+      prepTime: document.getElementById("prepTime"),
       presenceMode: document.getElementById("presenceMode"),
       guaranteeEnabled: document.getElementById("guaranteeEnabled"),
       guaranteePanel: document.getElementById("guaranteePanel"),
@@ -1550,6 +1779,9 @@
       "days",
       "services",
       "shiftDuration",
+      "sessionBreak",
+      "commuteTime",
+      "prepTime",
       "presenceMode",
       "guarantee",
       "discount",
@@ -1591,6 +1823,9 @@
         days: "15",
         services: "4",
         shiftDuration: "12",
+        sessionBreak: "15",
+        commuteTime: "0",
+        prepTime: "0",
         presenceMode: "full",
         guarantee: "4000",
         discount: "0",
@@ -1657,6 +1892,29 @@
 
     function one(value) {
       return (Math.round(value * 10) / 10).toLocaleString("ru-RU");
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function formatMinutes(minutes) {
+      var rounded = Math.max(0, Math.round(minutes));
+      var hours = Math.floor(rounded / 60);
+      var mins = rounded % 60;
+      if (hours > 0 && mins > 0) return hours + " ч " + mins + " мин";
+      if (hours > 0) return hours + " ч";
+      return mins + " мин";
+    }
+
+    function setNumericValue(input, value) {
+      if (!input) return;
+      var min = input.min === "" ? -Infinity : parseFloat(input.min);
+      var max = input.max === "" ? Infinity : parseFloat(input.max);
+      var step = input.step === "" || input.step === "any" ? 1 : parseFloat(input.step);
+      var next = clamp(value, Number.isFinite(min) ? min : -Infinity, Number.isFinite(max) ? max : Infinity);
+      if (Number.isFinite(step) && step > 0) next = Math.round(next / step) * step;
+      input.value = String(Math.round(next * 10) / 10);
     }
 
     function selectedTaxMode() {
@@ -1958,6 +2216,9 @@
         days: Math.max(0, num(el.days)),
         services: Math.max(0, overrideServices == null ? num(el.services) : overrideServices),
         shiftDuration: Math.max(1, num(el.shiftDuration)),
+        sessionBreak: Math.max(0, num(el.sessionBreak)),
+        commuteTime: Math.max(0, num(el.commuteTime)),
+        prepTime: Math.max(0, num(el.prepTime)),
         presenceMode: el.presenceMode.value,
         guarantee: el.guaranteeEnabled.checked ? Math.max(0, num(el.guarantee)) : 0,
         discount: attractionActive ? attractionDiscountPercent(discountBase) / 100 : 0,
@@ -2031,10 +2292,22 @@
       var massageHoursPerShift = serviceHoursPerShift;
       var totalServices = sessions * settings.days;
       var massageHours = massageHoursPerShift * settings.days;
-      var salonHoursPerShift = settings.presenceMode === "full" ? Math.max(settings.shiftDuration, massageHoursPerShift) : massageHoursPerShift;
+      var serviceMinutesPerShift = serviceHoursPerShift * 60;
+      var breaksCount = Math.max(0, Math.ceil(sessions) - 1);
+      var breakMinutesPerShift = breaksCount * settings.sessionBreak;
+      var activeSalonMinutes = serviceMinutesPerShift + breakMinutesPerShift;
+      var scheduledSalonMinutes = settings.presenceMode === "full" ? settings.shiftDuration * 60 : activeSalonMinutes;
+      var salonMinutesPerShift = Math.max(scheduledSalonMinutes, activeSalonMinutes);
+      var freeMinutesPerShift = Math.max(0, scheduledSalonMinutes - activeSalonMinutes);
+      var overbookedMinutesPerShift = Math.max(0, activeSalonMinutes - scheduledSalonMinutes);
+      var outsideMinutesPerShift = settings.commuteTime + settings.prepTime;
+      var totalDayMinutesPerShift = salonMinutesPerShift + outsideMinutesPerShift;
+      var salonHoursPerShift = salonMinutesPerShift / 60;
       var salonHours = salonHoursPerShift * settings.days;
-      var salonLoad = settings.presenceMode === "full" && settings.shiftDuration > 0 ? massageHoursPerShift / settings.shiftDuration * 100 : 0;
+      var totalDayHours = totalDayMinutesPerShift / 60 * settings.days;
+      var salonLoad = salonMinutesPerShift > 0 ? activeSalonMinutes / salonMinutesPerShift * 100 : 0;
       var salonHourRate = salonHours > 0 ? finalMonthlyNet / salonHours : 0;
+      var dayHourRate = totalDayHours > 0 ? finalMonthlyNet / totalDayHours : 0;
       var breakEvenServices = incomePerSession > 0 ? settings.guarantee / incomePerSession : 0;
       return {
         paidPrice: paidPrice,
@@ -2060,11 +2333,68 @@
         totalServices: totalServices,
         massageHoursPerShift: massageHoursPerShift,
         massageHours: massageHours,
+        serviceMinutesPerShift: serviceMinutesPerShift,
+        breakMinutesPerShift: breakMinutesPerShift,
+        activeSalonMinutes: activeSalonMinutes,
+        salonMinutesPerShift: salonMinutesPerShift,
+        freeMinutesPerShift: freeMinutesPerShift,
+        overbookedMinutesPerShift: overbookedMinutesPerShift,
+        totalDayMinutesPerShift: totalDayMinutesPerShift,
         salonHours: salonHours,
+        totalDayHours: totalDayHours,
         salonLoad: salonLoad,
         salonHourRate: salonHourRate,
+        dayHourRate: dayHourRate,
         breakEvenServices: breakEvenServices
       };
+    }
+
+    function setDaySegment(id, minutes, totalMinutes, label, shortLabel) {
+      var segment = document.getElementById(id);
+      if (!segment) return;
+      var visible = minutes > 0.4 && totalMinutes > 0;
+      segment.hidden = !visible;
+      if (!visible) return;
+      var percent = Math.max(0, minutes / totalMinutes * 100);
+      segment.style.flexBasis = percent + "%";
+      segment.style.flexGrow = "0";
+      segment.style.flexShrink = "0";
+      var text = (percent >= 14 ? label + " " : "") + formatMinutes(minutes);
+      if (percent < 8) text = shortLabel || formatMinutes(minutes);
+      segment.querySelector("span").textContent = text;
+      segment.title = label + ": " + formatMinutes(minutes);
+      if (segment.classList.contains("draggable")) {
+        segment.setAttribute("aria-label", label + ". Потяни, чтобы изменить. Сейчас " + formatMinutes(minutes));
+      }
+    }
+
+    function renderDayTimeline(settings, result) {
+      var totalMinutes = Math.max(1, result.totalDayMinutesPerShift);
+      var dayTotal = document.getElementById("dayTotal");
+      var dayVisualHint = document.getElementById("dayVisualHint");
+      var dayLegendFree = document.getElementById("dayLegendFree");
+      var dayLegendOver = document.getElementById("dayLegendOver");
+      if (dayTotal) dayTotal.textContent = formatMinutes(totalMinutes);
+
+      setDaySegment("daySegmentPrep", settings.prepTime, totalMinutes, "Сборы", "сборы");
+      setDaySegment("daySegmentCommute", settings.commuteTime, totalMinutes, "Дорога", "дорога");
+      setDaySegment("daySegmentService", result.serviceMinutesPerShift, totalMinutes, "Услуги", "услуги");
+      setDaySegment("daySegmentBreak", result.breakMinutesPerShift, totalMinutes, "Отдых", "отдых");
+      setDaySegment("daySegmentFree", result.freeMinutesPerShift, totalMinutes, "Свободно", "свободно");
+      setDaySegment("daySegmentOver", result.overbookedMinutesPerShift, totalMinutes, "Не влезает", "лишнее");
+
+      if (dayLegendFree) dayLegendFree.hidden = result.freeMinutesPerShift <= 0;
+      if (dayLegendOver) dayLegendOver.hidden = result.overbookedMinutesPerShift <= 0;
+      if (dayVisualHint) {
+        var hint = "Услуги: " + formatMinutes(result.serviceMinutesPerShift);
+        if (result.breakMinutesPerShift > 0) hint += " · отдых: " + formatMinutes(result.breakMinutesPerShift);
+        if (settings.commuteTime > 0) hint += " · дорога: " + formatMinutes(settings.commuteTime);
+        if (settings.prepTime > 0) hint += " · сборы: " + formatMinutes(settings.prepTime);
+        if (result.freeMinutesPerShift > 0) hint += " · запас: " + formatMinutes(result.freeMinutesPerShift);
+        if (result.overbookedMinutesPerShift > 0) hint += " · не влезает: " + formatMinutes(result.overbookedMinutesPerShift);
+        hint += ". Цветные части можно тянуть мышкой.";
+        dayVisualHint.textContent = hint;
+      }
     }
 
     function setActiveChips() {
@@ -2120,19 +2450,25 @@
       document.getElementById("summaryMassageHours").textContent = one(result.massageHours) + " ч";
       document.getElementById("salonHours").textContent = one(result.salonHours) + " ч";
       document.getElementById("salonHourRate").textContent = money(result.salonHourRate);
+      document.getElementById("summaryTotalDayHours").textContent = one(result.totalDayHours) + " ч";
+      document.getElementById("dayHourRate").textContent = money(result.dayHourRate);
       document.getElementById("salonLoad").textContent = Math.round(result.salonLoad).toLocaleString("ru-RU") + "%";
       document.getElementById("salonLoadItem").hidden = settings.presenceMode !== "full";
       if (el.timeHint) {
         var timeHint = "Ср. " + one(settings.services) + " услуг × " + one(settings.duration) + " мин = " + one(result.massageHoursPerShift) + " ч услуг за смену.";
+        if (settings.advancedMode && result.breakMinutesPerShift > 0) {
+          timeHint += " Отдых между сеансами: " + formatMinutes(result.breakMinutesPerShift) + " за смену.";
+        }
         if (settings.advancedMode && settings.presenceMode === "full") {
-          timeHint += " Загрузка: " + Math.round(result.salonLoad).toLocaleString("ru-RU") + "% от " + one(settings.shiftDuration) + " ч в салоне.";
+          timeHint += " Занятость: " + Math.round(result.salonLoad).toLocaleString("ru-RU") + "% от " + one(result.salonHours / Math.max(1, settings.days)) + " ч в салоне.";
         }
         if (settings.advancedMode && settings.presenceMode === "appointments") {
-          timeHint += " В режиме записей время в салоне приравниваем к времени услуг.";
+          timeHint += " В режиме записей время в салоне = услуги + отдых между ними.";
         }
         el.timeHint.textContent = timeHint;
       }
       el.timeSummary.hidden = !settings.advancedMode;
+      renderDayTimeline(settings, result);
       document.getElementById("monthlyExpenses").textContent = negativeMoney(result.monthlyExpenses);
       syncNegativeMetric("monthlyExpensesMetric", result.monthlyExpenses);
       document.getElementById("monthlyBeforeExpenses").textContent = money(result.monthlyNet);
@@ -2177,6 +2513,66 @@
       setActiveChips();
       saveSettings();
       syncResetButton();
+    }
+
+    function setupDayTimelineDrag() {
+      var bar = document.getElementById("dayBar");
+      if (!bar) return;
+      var dragState = null;
+
+      function dragFactor(field) {
+        if (field !== "sessionBreak") return 1;
+        var sessions = Math.max(0, num(el.services));
+        return Math.max(1, Math.ceil(sessions) - 1);
+      }
+
+      function moveDrag(event) {
+        if (!dragState) return;
+        var rect = bar.getBoundingClientRect();
+        var settings = currentSettings();
+        var result = calculate(settings);
+        var minutesPerPixel = Math.max(0.1, result.totalDayMinutesPerShift / Math.max(1, rect.width));
+        var deltaMinutes = (event.clientX - dragState.startX) * minutesPerPixel / dragState.factor;
+        setNumericValue(dragState.input, dragState.startValue + deltaMinutes);
+        render();
+      }
+
+      function endDrag(event) {
+        if (!dragState) return;
+        try { dragState.segment.releasePointerCapture(event.pointerId); } catch (error) {}
+        dragState = null;
+      }
+
+      document.querySelectorAll(".day-segment.draggable").forEach(function(segment) {
+        segment.addEventListener("pointerdown", function(event) {
+          var field = segment.dataset.timeField;
+          var input = el[field];
+          if (!input || !isAdvancedMode()) return;
+          event.preventDefault();
+          dragState = {
+            segment: segment,
+            input: input,
+            startX: event.clientX,
+            startValue: num(input),
+            factor: dragFactor(field)
+          };
+          segment.setPointerCapture(event.pointerId);
+        });
+
+        segment.addEventListener("pointermove", moveDrag);
+        segment.addEventListener("pointerup", endDrag);
+        segment.addEventListener("pointercancel", endDrag);
+        segment.addEventListener("keydown", function(event) {
+          var field = segment.dataset.timeField;
+          var input = el[field];
+          if (!input) return;
+          var direction = event.key === "ArrowRight" || event.key === "ArrowUp" ? 1 : event.key === "ArrowLeft" || event.key === "ArrowDown" ? -1 : 0;
+          if (!direction) return;
+          event.preventDefault();
+          setNumericValue(input, num(input) + direction * 5);
+          render();
+        });
+      });
     }
 
     [el.firstVisitShare, el.packageShare, el.otherDiscountShare].forEach(function(input) {
@@ -2265,6 +2661,7 @@
       }
     }
 
+    setupDayTimelineDrag();
     restoreSettings();
     render();
     setupMobileResultBar();
