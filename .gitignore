@@ -9,3 +9,4 @@ _site/
 sitemap.xml
 AGENTS.md
 .codex/config.toml
+.netlify/
