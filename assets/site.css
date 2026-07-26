@@ -3899,10 +3899,11 @@ footer a:hover {
   position: relative;
   display: flex;
   flex: 0 0 clamp(310px, 36vw, 430px);
-  min-height: 270px;
+  height: 260px;
+  min-height: 0;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 20px;
+  justify-content: flex-start;
+  gap: 16px;
   padding: 22px;
   border: 1px solid var(--line);
   border-radius: 28px;
@@ -3973,20 +3974,44 @@ footer a:hover {
   text-shadow: none;
 }
 
-.review-card p {
+.review-card .review-text {
   position: relative;
   z-index: 1;
+  display: -webkit-box;
+  overflow: hidden;
   margin: 0;
   color: rgba(245,241,234,.76);
   font-size: var(--font-small);
   line-height: 1.6;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 6;
+}
+
+.review-card.is-expanded {
+  height: auto;
+  min-height: 260px;
+}
+
+.review-card.is-expanded .review-text {
+  display: block;
+  overflow: visible;
+  -webkit-line-clamp: initial;
+}
+
+.review-footer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
 }
 
 .review-source {
-  position: relative;
-  z-index: 1;
   display: inline-flex;
   width: fit-content;
+  flex: 0 0 auto;
   padding: 7px 10px;
   border: 1px solid rgba(245,241,234,.12);
   border-radius: 999px;
@@ -3994,6 +4019,30 @@ footer a:hover {
   background: rgba(255,255,255,.045);
   font-size: 12px;
   line-height: 1;
+}
+
+.review-more {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  border: 0;
+  padding: 7px 0;
+  color: #f3d5b5;
+  background: transparent;
+  font: inherit;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  text-align: right;
+  transition: color .2s ease, opacity .2s ease;
+}
+
+.review-more:hover {
+  color: var(--text);
+}
+
+.review-more[hidden] {
+  display: none;
 }
 
 @media (max-width: 720px) {
@@ -4028,10 +4077,20 @@ footer a:hover {
 
   .review-card {
     flex-basis: min(86vw, 360px);
-    min-height: 280px;
+    height: 260px;
+    min-height: 0;
     padding: 20px;
     border-radius: 24px;
     scroll-snap-align: start;
+  }
+
+  .review-card .review-text {
+    -webkit-line-clamp: 6;
+  }
+
+  .review-card.is-expanded {
+    height: auto;
+    min-height: 260px;
   }
 }
 

@@ -589,6 +589,45 @@
       return card;
     }
 
+    function prepareReviewCards(root) {
+      root.querySelectorAll(".review-card").forEach(function (card) {
+        if (card.dataset.reviewPrepared === "true") return;
+
+        var text = card.querySelector("p");
+        var source = card.querySelector(".review-source");
+        if (!text || !source) return;
+
+        text.classList.add("review-text");
+
+        var footer = document.createElement("div");
+        footer.className = "review-footer";
+        source.parentNode.insertBefore(footer, source);
+        footer.appendChild(source);
+
+        var more = document.createElement("button");
+        more.className = "review-more";
+        more.type = "button";
+        more.textContent = "Читать полностью";
+        more.setAttribute("data-review-more", "");
+        more.setAttribute("aria-expanded", "false");
+        more.hidden = true;
+        footer.appendChild(more);
+
+        card.dataset.reviewPrepared = "true";
+      });
+
+      root.querySelectorAll(".review-card").forEach(function (card) {
+        var text = card.querySelector(".review-text");
+        var more = card.querySelector("[data-review-more]");
+        if (!text || !more) return;
+        if (card.classList.contains("is-expanded")) {
+          more.hidden = false;
+          return;
+        }
+        more.hidden = text.scrollHeight <= text.clientHeight + 1;
+      });
+    }
+
     function loadRemoteReviews(rail) {
       if (!window.fetch) return Promise.resolve(false);
 
@@ -653,12 +692,16 @@
         if (!originalCount) return;
 
         renderStars(rail);
+        prepareReviewCards(rail);
 
         var beforeClones = document.createDocumentFragment();
         originals.forEach(function (card) {
           var clone = card.cloneNode(true);
           clone.setAttribute("aria-hidden", "true");
           clone.setAttribute("data-review-clone", "before");
+          clone.querySelectorAll("button, a").forEach(function (control) {
+            control.tabIndex = -1;
+          });
           beforeClones.appendChild(clone);
         });
         rail.insertBefore(beforeClones, rail.firstChild);
@@ -667,6 +710,9 @@
           var clone = card.cloneNode(true);
           clone.setAttribute("aria-hidden", "true");
           clone.setAttribute("data-review-clone", "after");
+          clone.querySelectorAll("button, a").forEach(function (control) {
+            control.tabIndex = -1;
+          });
           rail.appendChild(clone);
         });
 
@@ -766,8 +812,20 @@
         if (prev) prev.addEventListener("click", goPrev);
         if (next) next.addEventListener("click", goNext);
         viewport.addEventListener("scroll", scheduleNormalize, { passive: true });
+        viewport.addEventListener("click", function (event) {
+          var more = event.target.closest && event.target.closest("[data-review-more]");
+          if (!more || !viewport.contains(more)) return;
+          var card = more.closest(".review-card");
+          if (!card) return;
+
+          var expanded = !card.classList.contains("is-expanded");
+          card.classList.toggle("is-expanded", expanded);
+          more.textContent = expanded ? "Свернуть" : "Читать полностью";
+          more.setAttribute("aria-expanded", expanded ? "true" : "false");
+        });
 
         window.addEventListener("resize", function () {
+          prepareReviewCards(rail);
           moveTo(normalizeSlideIndex(index), false);
         });
 
