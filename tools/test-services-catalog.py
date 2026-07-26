@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import copy
-import hashlib
 import re
 import unittest
 from xml.etree import ElementTree
@@ -101,11 +100,9 @@ class ServicesCatalogueTests(unittest.TestCase):
     def test_all_public_images_are_local_versioned_webp(self) -> None:
         for service, row in self.mapped:
             image = public_image_path(service, row)
-            path = ROOT / "assets" / "services" / row["imageFile"]
-            expected_hash = hashlib.sha256(path.read_bytes()).hexdigest()[:12]
             self.assertEqual(
                 image,
-                f"/assets/services/{row['imageFile']}?v={expected_hash}",
+                f"/assets/services/{row['imageFile']}",
             )
             self.assertNotIn("/catalog/", image)
 

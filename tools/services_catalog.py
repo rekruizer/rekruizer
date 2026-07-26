@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
 import re
 from collections import defaultdict
@@ -237,8 +236,7 @@ def public_image_path(
     if str(service["id"]) != str(row["id"]):
         raise CatalogValidationError("Service and local image mapping ids do not match")
     path = local_image_path(row)
-    digest = hashlib.sha256(path.read_bytes()).hexdigest()[:12]
-    return "/" + path.relative_to(ROOT).as_posix() + f"?v={digest}"
+    return "/" + path.relative_to(ROOT).as_posix()
 
 
 def format_rubles(value: int) -> str:
