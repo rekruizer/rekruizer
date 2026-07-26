@@ -13,6 +13,7 @@
       "id": "22470908",
       "slug": "first-visit",
       "offerId": "first-visit-55",
+      "imageFile": "sale.webp",
       "oldPriceRub": 2990,
       "primaryForPage": true
     },
@@ -20,57 +21,67 @@
       "id": "22461255",
       "slug": "back-neck",
       "offerId": "back-neck-30",
+      "imageFile": "back-neck-30.webp",
       "primaryForPage": true
     },
     {
       "id": "22446587",
       "slug": "face",
       "offerId": "face-30",
+      "imageFile": "face-30.webp",
       "primaryForPage": true
     },
     {
       "id": "22022788",
       "slug": "classic",
       "offerId": "classic-55",
+      "imageFile": "classic-55.webp",
       "primaryForPage": true
     },
     {
       "id": "22083841",
       "slug": "classic",
-      "offerId": "classic-90"
+      "offerId": "classic-90",
+      "imageFile": "classic-90.webp"
     },
     {
       "id": "22446970",
       "slug": "lymph",
       "offerId": "lymph-55",
+      "imageFile": "lymph-55.webp",
       "primaryForPage": true
     },
     {
       "id": "22446974",
       "slug": "lymph",
-      "offerId": "lymph-90"
+      "offerId": "lymph-90",
+      "imageFile": "lymph-90.webp"
     },
     {
       "id": "22446669",
       "slug": "relax",
       "offerId": "relax-55",
+      "imageFile": "relax-55.webp",
       "primaryForPage": true
     },
     {
       "id": "22446697",
       "slug": "relax",
-      "offerId": "relax-90"
+      "offerId": "relax-90",
+      "imageFile": "relax-90.webp"
     },
     {
       "id": "22461114",
       "slug": "sport",
       "offerId": "sport-55",
+      "imageFile": "sport-55.webp",
       "primaryForPage": true
     },
     {
       "id": "22461132",
       "slug": "sport",
-      "offerId": "sport-90"
+      "offerId": "sport-90",
+      "imageFile": "sport-90.webp"
     }
   ]
 }

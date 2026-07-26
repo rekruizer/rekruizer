@@ -210,11 +210,11 @@ def update_schema(
         schema = json.loads(match.group(2))
     except json.JSONDecodeError as error:
         raise RuntimeError(f"Invalid service JSON-LD in /services/{slug}/: {error}") from error
-    primary, _primary_row = primary_service(rows)
+    primary, primary_row = primary_service(rows)
     if len(rows) == 1:
         schema["name"] = primary["name"]
     schema["description"] = primary["description"]
-    schema["image"] = SITE + public_image_path(primary)
+    schema["image"] = SITE + public_image_path(primary, primary_row)
     schema["offers"] = [
         {
             "@type": "Offer",
@@ -240,8 +240,8 @@ def update_detail_page(
     if not path.is_file():
         raise RuntimeError(f"Missing page /services/{slug}/")
     source = path.read_text(encoding="utf-8")
-    primary, _primary_row = primary_service(rows)
-    image_path = public_image_path(primary)
+    primary, primary_row = primary_service(rows)
+    image_path = public_image_path(primary, primary_row)
 
     source = replace_once(
         source,
@@ -319,8 +319,8 @@ def update_service_cards(
     source = path.read_text(encoding="utf-8")
     first_slug = next(iter(grouped))
     for slug, rows in grouped.items():
-        primary, _primary_row = primary_service(rows)
-        image = public_image_path(primary)
+        primary, primary_row = primary_service(rows)
+        image = public_image_path(primary, primary_row)
         list_pattern = (
             rf'(<a class="service-list-card" '
             rf'href="/services/{re.escape(slug)}/">\s*)'

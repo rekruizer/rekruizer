@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
-"""Download one fully validated services snapshot and its immutable images."""
+"""Install a validated services snapshot using explicit local WebP images."""
 
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
-import shutil
 import ssl
 import sys
 import tempfile
@@ -18,12 +16,9 @@ from pathlib import Path
 from typing import Any
 
 from services_catalog import (
-    CATALOG_IMAGES_DIR,
     CATALOG_PATH,
     CatalogValidationError,
-    ROOT,
     load_presentation,
-    local_image_path,
     validate_catalog,
 )
 
@@ -118,6 +113,8 @@ def install_catalogue(value: dict[str, Any]) -> bool:
     presentation = load_presentation()
     validate_catalog(value, presentation)
     if existing_snapshot_matches(value, presentation):
+        current = json.loads(CATALOG_PATH.read_text(encoding="utf-8"))
+        validate_catalog(current, presentation, require_local_images=True)
         # lastCheckedAt changes every day; contentHash changes only when catalogue
         # content changes, so unchanged days must not create noisy Git commits.
         print(f"Services catalogue unchanged: {value['contentHash']}")
@@ -132,50 +129,10 @@ def install_catalogue(value: dict[str, Any]) -> bool:
             if str(service["id"]) in published_ids
         ],
     }
-    validate_catalog(public_value, presentation)
+    validate_catalog(public_value, presentation, require_local_images=True)
 
     with tempfile.TemporaryDirectory(prefix="denisyuce-services-") as temp_name:
         temp = Path(temp_name)
-        downloaded: dict[Path, Path] = {}
-        by_id = {
-            str(service["id"]): service for service in public_value["services"]
-        }
-        for service_id in sorted(published_ids):
-            service = by_id[service_id]
-            destination = local_image_path(service)
-            if destination.is_file():
-                data = destination.read_bytes()
-                if (
-                    len(data) == service["image"]["byteLength"]
-                    and hashlib.sha256(data).hexdigest() == service["image"]["sha256"]
-                ):
-                    continue
-            body, content_type = download(
-                service["image"]["url"],
-                accept="image/avif,image/webp,image/png,image/jpeg,image/*;q=0.8",
-            )
-            if content_type != service["image"]["contentType"]:
-                raise CatalogValidationError(
-                    f"Image type mismatch for service {service_id}: {content_type}"
-                )
-            if len(body) != service["image"]["byteLength"]:
-                raise CatalogValidationError(
-                    f"Image size mismatch for service {service_id}"
-                )
-            if hashlib.sha256(body).hexdigest() != service["image"]["sha256"]:
-                raise CatalogValidationError(
-                    f"Image hash mismatch for service {service_id}"
-                )
-            temporary_image = temp / destination.name
-            temporary_image.write_bytes(body)
-            downloaded[destination] = temporary_image
-
-        # Nothing is replaced until every service and every required image has
-        # passed validation. The previous snapshot therefore remains deployable.
-        CATALOG_IMAGES_DIR.mkdir(parents=True, exist_ok=True)
-        for destination, temporary_image in downloaded.items():
-            shutil.copyfile(temporary_image, destination)
-
         temporary_catalogue = temp / "services-catalog.json"
         temporary_catalogue.write_text(
             json.dumps(public_value, ensure_ascii=False, indent=2) + "\n",
@@ -184,16 +141,11 @@ def install_catalogue(value: dict[str, Any]) -> bool:
         CATALOG_PATH.parent.mkdir(parents=True, exist_ok=True)
         temporary_catalogue.replace(CATALOG_PATH)
 
-        referenced = {local_image_path(by_id[service_id]) for service_id in published_ids}
-        for path in CATALOG_IMAGES_DIR.iterdir():
-            if path.is_file() and path not in referenced:
-                path.unlink()
-
     validate_catalog(public_value, presentation, require_local_images=True)
     print(
         f"Installed services catalogue {value['contentHash']}: "
         f"{len(presentation['services'])} published services, "
-        f"{len(downloaded)} downloaded images"
+        f"{len(presentation['services'])} local WebP images"
     )
     return True
 

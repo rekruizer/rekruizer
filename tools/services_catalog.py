@@ -13,7 +13,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parent.parent
 CATALOG_PATH = ROOT / "assets" / "data" / "services-catalog.json"
 PRESENTATION_PATH = ROOT / "assets" / "data" / "services-presentation.json"
-CATALOG_IMAGES_DIR = ROOT / "assets" / "services" / "catalog"
+SERVICE_IMAGES_DIR = ROOT / "assets" / "services"
 
 CONTENT_TYPE_EXTENSIONS = {
     "image/jpeg": "jpg",
@@ -49,6 +49,7 @@ def validate_presentation(value: dict[str, Any]) -> dict[str, Any]:
 
     ids: set[str] = set()
     offer_ids: set[str] = set()
+    image_files: set[str] = set()
     primary_slugs: set[str] = set()
     for row in rows:
         if not isinstance(row, dict):
@@ -56,16 +57,26 @@ def validate_presentation(value: dict[str, Any]) -> dict[str, Any]:
         service_id = str(row.get("id", ""))
         slug = row.get("slug")
         offer_id = row.get("offerId")
+        image_file = row.get("imageFile")
         if not re.fullmatch(r"\d+", service_id):
             raise CatalogValidationError(f"Invalid DIKIDI id in presentation: {service_id!r}")
         if not isinstance(slug, str) or not re.fullmatch(r"[a-z0-9-]+", slug):
             raise CatalogValidationError(f"Invalid page slug for service {service_id}")
         if not isinstance(offer_id, str) or not re.fullmatch(r"[a-z0-9-]+", offer_id):
             raise CatalogValidationError(f"Invalid feed offerId for service {service_id}")
-        if service_id in ids or offer_id in offer_ids:
-            raise CatalogValidationError("Duplicate service id or offerId in presentation")
+        if not isinstance(image_file, str) or not re.fullmatch(
+            r"[a-z0-9-]+\.webp", image_file
+        ):
+            raise CatalogValidationError(
+                f"Invalid local WebP imageFile for service {service_id}"
+            )
+        if service_id in ids or offer_id in offer_ids or image_file in image_files:
+            raise CatalogValidationError(
+                "Duplicate service id, offerId or imageFile in presentation"
+            )
         ids.add(service_id)
         offer_ids.add(offer_id)
+        image_files.add(image_file)
         if row.get("primaryForPage"):
             if slug in primary_slugs:
                 raise CatalogValidationError(f"More than one primary service for /services/{slug}/")
@@ -159,20 +170,23 @@ def validate_catalog(
         )
 
     if require_local_images:
+        rows_by_id = {
+            str(row["id"]): row for row in presentation["services"]
+        }
         for service_id in mapped_ids:
-            path = local_image_path(by_id[service_id])
+            path = local_image_path(rows_by_id[service_id])
             if not path.is_file():
                 raise CatalogValidationError(
                     f"Missing local image: {path.relative_to(ROOT)}"
                 )
             data = path.read_bytes()
-            if len(data) != by_id[service_id]["image"]["byteLength"]:
+            if len(data) < 1024 or len(data) > 8 * 1024 * 1024:
                 raise CatalogValidationError(
-                    f"Local image size mismatch: {path.relative_to(ROOT)}"
+                    f"Invalid local WebP size: {path.relative_to(ROOT)}"
                 )
-            if hashlib.sha256(data).hexdigest() != by_id[service_id]["image"]["sha256"]:
+            if data[:4] != b"RIFF" or data[8:12] != b"WEBP":
                 raise CatalogValidationError(
-                    f"Local image hash mismatch: {path.relative_to(ROOT)}"
+                    f"Invalid local WebP content: {path.relative_to(ROOT)}"
                 )
     return value
 
@@ -213,14 +227,18 @@ def primary_service(
     return next((item for item in rows if item[1].get("primaryForPage")), rows[0])
 
 
-def local_image_path(service: dict[str, Any]) -> Path:
-    image = service["image"]
-    extension = CONTENT_TYPE_EXTENSIONS[image["contentType"]]
-    return CATALOG_IMAGES_DIR / f"{service['id']}-{image['sha256']}.{extension}"
+def local_image_path(row: dict[str, Any]) -> Path:
+    return SERVICE_IMAGES_DIR / str(row["imageFile"])
 
 
-def public_image_path(service: dict[str, Any]) -> str:
-    return "/" + local_image_path(service).relative_to(ROOT).as_posix()
+def public_image_path(
+    service: dict[str, Any], row: dict[str, Any]
+) -> str:
+    if str(service["id"]) != str(row["id"]):
+        raise CatalogValidationError("Service and local image mapping ids do not match")
+    path = local_image_path(row)
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()[:12]
+    return "/" + path.relative_to(ROOT).as_posix() + f"?v={digest}"
 
 
 def format_rubles(value: int) -> str:

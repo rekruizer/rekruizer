@@ -62,7 +62,7 @@ def build_offers() -> list[Offer]:
                 ),
                 duration_min=service["durationMinutes"],
                 booking_url=service["bookingUrl"],
-                picture=SITE + public_image_path(service),
+                picture=SITE + public_image_path(service, row),
                 description=service["description"],
                 category_id=str(category_ids[service["category"]]),
                 category_name=service["category"],

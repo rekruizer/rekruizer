@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import re
 import unittest
 from xml.etree import ElementTree
@@ -16,6 +17,7 @@ from services_catalog import (
     public_image_path,
     services_by_slug,
     validate_catalog,
+    validate_presentation,
 )
 
 
@@ -93,7 +95,33 @@ class ServicesCatalogueTests(unittest.TestCase):
             self.assertEqual(offer.findtext("description"), service["description"])
             self.assertEqual(
                 offer.findtext("picture"),
-                "https://denisyuce.com" + public_image_path(service),
+                "https://denisyuce.com" + public_image_path(service, row),
+            )
+
+    def test_all_public_images_are_local_versioned_webp(self) -> None:
+        for service, row in self.mapped:
+            image = public_image_path(service, row)
+            path = ROOT / "assets" / "services" / row["imageFile"]
+            expected_hash = hashlib.sha256(path.read_bytes()).hexdigest()[:12]
+            self.assertEqual(
+                image,
+                f"/assets/services/{row['imageFile']}?v={expected_hash}",
+            )
+            self.assertNotIn("/catalog/", image)
+
+    def test_unsafe_or_missing_local_image_fails_closed(self) -> None:
+        unsafe = copy.deepcopy(self.presentation)
+        unsafe["services"][0]["imageFile"] = "../outside.webp"
+        with self.assertRaisesRegex(CatalogValidationError, "Invalid local WebP"):
+            validate_presentation(unsafe)
+
+        missing = copy.deepcopy(self.presentation)
+        missing["services"][0]["imageFile"] = "missing-service-image.webp"
+        with self.assertRaisesRegex(CatalogValidationError, "Missing local image"):
+            validate_catalog(
+                self.catalogue,
+                validate_presentation(missing),
+                require_local_images=True,
             )
 
 
