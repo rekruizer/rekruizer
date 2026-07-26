@@ -6,6 +6,7 @@ from __future__ import annotations
 import copy
 import re
 import unittest
+from html import escape
 from xml.etree import ElementTree
 
 from services_catalog import (
@@ -14,6 +15,7 @@ from services_catalog import (
     load_catalog,
     mapped_services,
     public_image_path,
+    primary_service,
     services_by_slug,
     validate_catalog,
     validate_presentation,
@@ -71,10 +73,30 @@ class ServicesCatalogueTests(unittest.TestCase):
             source = (ROOT / "services" / slug / "index.html").read_text(
                 encoding="utf-8"
             )
+            primary, _primary_row = primary_service(rows)
             for service, _row in rows:
                 self.assertIn(f'data-service-id="{service["id"]}"', source)
                 self.assertIn(service["name"], source)
-                self.assertIn(service["description"].split("\n", 1)[0], source)
+            description_section = re.search(
+                r'<section class="service-info">\s*<h2>Описание</h2>'
+                r'(.*?)<div class="service-accordion">',
+                source,
+                re.S,
+            )
+            self.assertIsNotNone(description_section)
+            visible_paragraphs = re.findall(
+                r"<p>(.*?)</p>", description_section.group(1), re.S
+            )
+            expected_paragraphs = [
+                escape(paragraph, quote=False)
+                for paragraph in primary["description"].split("\n\n")
+                if paragraph.strip()
+            ]
+            self.assertEqual(visible_paragraphs, expected_paragraphs)
+            if len(rows) > 1:
+                self.assertEqual(primary["durationMinutes"], 55)
+            self.assertNotIn("service-catalog-summary", source)
+            self.assertNotIn("service-catalog-description", source)
             self.assertNotIn(
                 "denisyuce-services-catalog.den100hero.workers.dev/service-images/",
                 source,

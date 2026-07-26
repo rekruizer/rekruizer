@@ -2473,32 +2473,6 @@ footer a:hover {
   letter-spacing: -0.06em;
 }
 
-.service-booking-card > p,
-.service-catalog-summary {
-  max-width: 620px;
-  margin: 22px 0 0;
-  color: var(--muted);
-  font-size: var(--font-subtitle);
-  line-height: 1.65;
-}
-
-.service-catalog-summary p {
-  margin: 0;
-}
-
-.service-catalog-summary p + p {
-  margin-top: 12px;
-}
-
-.service-catalog-description + .service-catalog-description {
-  margin-top: 28px;
-}
-
-.service-catalog-description h3 {
-  margin: 0 0 10px;
-  font-size: var(--font-subtitle);
-}
-
 .service-options {
   display: grid;
   gap: 10px;
@@ -2570,10 +2544,15 @@ footer a:hover {
 }
 
 .service-info > p {
-  margin: 0 0 14px;
+  max-width: 620px;
+  margin: 0;
   color: var(--muted);
-  font-size: var(--font-body);
-  line-height: 1.75;
+  font-size: var(--font-subtitle);
+  line-height: 1.65;
+}
+
+.service-info > p + p {
+  margin-top: 12px;
 }
 
 .service-accordion {
@@ -2679,10 +2658,6 @@ footer a:hover {
 @media (max-width: 860px) {
   .service-hero-card {
     grid-template-columns: 1fr;
-  }
-
-  .service-booking-card p {
-    font-size: var(--font-body);
   }
 
   .service-option {

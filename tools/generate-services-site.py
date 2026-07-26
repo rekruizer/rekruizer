@@ -181,17 +181,11 @@ def render_options(rows: list[tuple[dict[str, Any], dict[str, Any]]]) -> str:
 def render_descriptions(
     rows: list[tuple[dict[str, Any], dict[str, Any]]]
 ) -> str:
-    if len(rows) == 1:
-        return description_html(rows[0][0]["description"])
-    return "\n".join(
-        (
-            f'        <div class="service-catalog-description" '
-            f'data-service-id="{service["id"]}">'
-            f"<h3>{html_text(service['name'])}</h3>"
-            f"{description_html(service['description'])}</div>"
-        )
-        for service, _row in rows
+    primary, _primary_row = primary_service(rows)
+    paragraphs = description_html(primary["description"]).replace(
+        "</p><p>", "</p>\n        <p>"
     )
+    return f"        {paragraphs}"
 
 
 def update_schema(
@@ -272,15 +266,12 @@ def update_detail_page(
         )
     source = replace_once(
         source,
-        r'(<div class="service-booking-card">.*?</h1>\s*)'
-        r'(?:<div class="service-catalog-summary">.*?</div>|(?:<p>.*?</p>\s*)+)'
-        r'(\s*<div class="service-options">)',
-        lambda match: (
-            f'{match.group(1)}<div class="service-catalog-summary">'
-            f'{description_html(primary["description"])}</div>\n        '
-            f'{match.group(2).lstrip()}'
-        ),
-        label=f"hero description in /services/{slug}/",
+        r'(<div class="service-booking-card">.*?</h1>)'
+        r'(?:\s*<div class="service-catalog-summary">.*?</div>'
+        r'|\s*(?:<p>.*?</p>\s*)+)?\s*'
+        r'(<div class="service-options">)',
+        lambda match: f"{match.group(1)}\n        {match.group(2)}",
+        label=f"remove hero description in /services/{slug}/",
         flags=re.S,
     )
     source = replace_once(
