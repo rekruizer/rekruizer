@@ -2544,7 +2544,6 @@ footer a:hover {
 }
 
 .service-info > p {
-  max-width: 620px;
   margin: 0;
   color: var(--muted);
   font-size: var(--font-subtitle);
