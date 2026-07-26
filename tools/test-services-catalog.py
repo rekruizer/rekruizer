@@ -27,6 +27,10 @@ class ServicesCatalogueTests(unittest.TestCase):
         cls.grouped = services_by_slug(cls.catalogue, cls.presentation)
 
     def test_expected_public_services_are_mapped_once(self) -> None:
+        self.assertEqual(
+            {service["id"] for service in self.catalogue["services"]},
+            {row["id"] for row in self.presentation["services"]},
+        )
         self.assertEqual(len(self.mapped), 11)
         self.assertEqual(
             {service["id"] for service, _row in self.mapped},

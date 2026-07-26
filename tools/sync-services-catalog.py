@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import shutil
 import ssl
 import sys
@@ -46,12 +47,18 @@ def download(url: str, *, accept: str, attempts: int = 2) -> tuple[bytes, str]:
     last_error: Exception | None = None
     for attempt in range(attempts):
         try:
+            headers = {
+                "Accept": accept,
+                "User-Agent": "denisyuce.com-services-sync/1.0",
+            }
+            read_token = os.environ.get(
+                "SERVICES_CATALOG_READ_TOKEN"
+            ) or os.environ.get("CATALOG_READ_SECRET")
+            if read_token:
+                headers["X-Services-Catalog-Token"] = read_token
             request = urllib.request.Request(
                 url,
-                headers={
-                    "Accept": accept,
-                    "User-Agent": "denisyuce.com-services-sync/1.0",
-                },
+                headers=headers,
             )
             with urllib.request.urlopen(
                 request,
@@ -81,31 +88,58 @@ def fetch_catalogue(url: str) -> dict[str, Any]:
     return value
 
 
-def existing_hash() -> str | None:
+def existing_snapshot_matches(
+    remote: dict[str, Any], presentation: dict[str, Any]
+) -> bool:
     if not CATALOG_PATH.is_file():
-        return None
+        return False
     try:
-        value = json.loads(CATALOG_PATH.read_text(encoding="utf-8"))
+        current = json.loads(CATALOG_PATH.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
-        return None
-    content_hash = value.get("contentHash") if isinstance(value, dict) else None
-    return content_hash if isinstance(content_hash, str) else None
+        return False
+    if not isinstance(current, dict):
+        return False
+    expected_ids = {str(row["id"]) for row in presentation["services"]}
+    current_services = current.get("services")
+    if not isinstance(current_services, list):
+        return False
+    current_ids = {
+        str(service.get("id"))
+        for service in current_services
+        if isinstance(service, dict)
+    }
+    return (
+        current.get("contentHash") == remote["contentHash"]
+        and current_ids == expected_ids
+    )
 
 
 def install_catalogue(value: dict[str, Any]) -> bool:
     presentation = load_presentation()
     validate_catalog(value, presentation)
-    if existing_hash() == value["contentHash"]:
+    if existing_snapshot_matches(value, presentation):
         # lastCheckedAt changes every day; contentHash changes only when catalogue
         # content changes, so unchanged days must not create noisy Git commits.
         print(f"Services catalogue unchanged: {value['contentHash']}")
         return False
 
+    published_ids = {str(row["id"]) for row in presentation["services"]}
+    public_value = {
+        **value,
+        "services": [
+            service
+            for service in value["services"]
+            if str(service["id"]) in published_ids
+        ],
+    }
+    validate_catalog(public_value, presentation)
+
     with tempfile.TemporaryDirectory(prefix="denisyuce-services-") as temp_name:
         temp = Path(temp_name)
         downloaded: dict[Path, Path] = {}
-        published_ids = {str(row["id"]) for row in presentation["services"]}
-        by_id = {str(service["id"]): service for service in value["services"]}
+        by_id = {
+            str(service["id"]): service for service in public_value["services"]
+        }
         for service_id in sorted(published_ids):
             service = by_id[service_id]
             destination = local_image_path(service)
@@ -144,7 +178,7 @@ def install_catalogue(value: dict[str, Any]) -> bool:
 
         temporary_catalogue = temp / "services-catalog.json"
         temporary_catalogue.write_text(
-            json.dumps(value, ensure_ascii=False, indent=2) + "\n",
+            json.dumps(public_value, ensure_ascii=False, indent=2) + "\n",
             encoding="utf-8",
         )
         CATALOG_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -155,7 +189,7 @@ def install_catalogue(value: dict[str, Any]) -> bool:
             if path.is_file() and path not in referenced:
                 path.unlink()
 
-    validate_catalog(value, presentation, require_local_images=True)
+    validate_catalog(public_value, presentation, require_local_images=True)
     print(
         f"Installed services catalogue {value['contentHash']}: "
         f"{len(presentation['services'])} published services, "
