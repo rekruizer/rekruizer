@@ -4,9 +4,13 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    # Cloudflare refreshes at 04:20 Moscow time. GitHub reads the completed
+    # snapshot 50 minutes later and never calls the Worker's admin refresh.
+    - cron: "10 2 * * *"
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -24,11 +28,41 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Read and validate services catalogue
+        run: |
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            python3 tools/sync-services-catalog.py
+          else
+            python3 tools/sync-services-catalog.py --require-remote
+          fi
+
+      - name: Render services into static pages
+        run: python3 tools/generate-services-site.py
+
       - name: Generate services-feed.xml
         run: python3 tools/generate-services-feed.py
 
+      - name: Verify generated services and feed
+        run: python3 tools/test-services-catalog.py
+
       - name: Generate sitemap.xml
         run: python3 tools/generate-sitemap.py
+
+      - name: Save a new verified services snapshot
+        run: |
+          git add \
+            assets/data/services-catalog.json \
+            assets/services/catalog/ \
+            index.html \
+            services/
+          if git diff --cached --quiet; then
+            echo "Services have not changed — this is normal."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Sync services from DIKIDI catalogue"
+            git push
+          fi
 
       - name: Prepare static site artifact
         run: |

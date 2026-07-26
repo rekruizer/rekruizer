@@ -2473,12 +2473,30 @@ footer a:hover {
   letter-spacing: -0.06em;
 }
 
-.service-booking-card p {
+.service-booking-card > p,
+.service-catalog-summary {
   max-width: 620px;
   margin: 22px 0 0;
   color: var(--muted);
   font-size: var(--font-subtitle);
   line-height: 1.65;
+}
+
+.service-catalog-summary p {
+  margin: 0;
+}
+
+.service-catalog-summary p + p {
+  margin-top: 12px;
+}
+
+.service-catalog-description + .service-catalog-description {
+  margin-top: 28px;
+}
+
+.service-catalog-description h3 {
+  margin: 0 0 10px;
+  font-size: var(--font-subtitle);
 }
 
 .service-options {
