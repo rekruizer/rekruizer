@@ -1,7 +1,18 @@
 {
   "version": 1,
-  "publishedAt": "2026-08-12T03:17:35.062Z",
+  "publishedAt": "2026-08-13T03:17:35.509Z",
   "reviews": [
+    {
+      "source": "yandex",
+      "id": "WSulZ1NfAcCpnGEQbUKeN3YRWV9jcULsg",
+      "authorName": "илья М.",
+      "authorAvatar": "https://avatars.mds.yandex.net/get-yapic/53031/0a-1/islands-200",
+      "rating": 5,
+      "text": "Был на сеансе у массажиста Дениса — очень доволен! У него просто золотые руки: сразу нашёл проблемные зоны, проработал их бережно, но эффективно. После массажа — никакой скованности, только лёгкость и расслабление. Атмосфера спокойная, общение комфортное. Однозначно буду ходить ещё! 😊",
+      "reviewDate": "2026-08-12T11:07:08.070Z",
+      "sourceUrl": "https://yandex.ru/maps/org/159539374930/reviews/",
+      "businessReply": null
+    },
     {
       "source": "yandex",
       "id": "M3O_upfP-SbnzWWR2EgxdZ-GPiO-XfYU2",
