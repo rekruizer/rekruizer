@@ -3,10 +3,78 @@
   "provider": "DIKIDI",
   "companyId": "2037751",
   "masterId": "4371698",
-  "contentHash": "eee47e200324f5d3c7940c1f7c2f04d16aa5c195fdd4ee70bee41b8142ca3795",
-  "lastCheckedAt": "2026-07-26T15:42:31.987Z",
-  "lastChangedAt": "2026-07-26T15:42:31.987Z",
+  "contentHash": "956fbc1f197addd912caabdf1567eea75dc245c28f1ce27f0a2710435b9ff79c",
+  "lastCheckedAt": "2026-08-18T20:00:02.640Z",
+  "lastChangedAt": "2026-08-18T20:00:02.640Z",
   "services": [
+    {
+      "id": "22461095",
+      "category": "Абонементы",
+      "name": "Абонемент 5 х 55 мин",
+      "durationMinutes": 55,
+      "priceRub": 13500,
+      "description": "Формат для тех, кто хочет ходить на массаж регулярно и сделать заботу о теле частью нормального ритма.\n\nМожно менять тип сеанса по самочувствию: классический, расслабляющий, лимфодренажный или с акцентом на отдельные зоны.\n\n4 сеанса по 60 минут — удобно на месяц: приходить примерно раз в неделю, без спешки и разовых решений каждый раз.\n\nСрок действия: 45 дней.",
+      "bookingUrl": "https://dikidi.net/massages?p=2.pi-ssm-sd&s=22461095&rl=0_undefined",
+      "published": true,
+      "image": {
+        "sourceUrl": "https://f2.dikidi.net/c27/v26674/bl6mri6fvc.jpg",
+        "sha256": "706f183902507594ea81e73444323a4df53af1c697f0e0e5642531f04a701568",
+        "contentType": "image/jpeg",
+        "byteLength": 379022,
+        "url": "https://denisyuce-services-catalog.den100hero.workers.dev/service-images/22461095/706f183902507594ea81e73444323a4df53af1c697f0e0e5642531f04a701568"
+      }
+    },
+    {
+      "id": "22461101",
+      "category": "Абонементы",
+      "name": "Абонемент 5 х 90 мин",
+      "durationMinutes": 90,
+      "priceRub": 18000,
+      "description": "Формат для тех, кому хочется больше времени на тело и более спокойные, полные сеансы.\n\n90 минут дают возможность работать без суеты: пройти всё тело, уделить внимание спине, шее, ногам и зонам, где накопилось больше напряжения.\n\n4 сеанса по 90 минут — для регулярного глубокого отдыха и внимательной работы с телом.\n\nСрок действия: 60 дней.",
+      "bookingUrl": "https://dikidi.net/massages?p=2.pi-ssm-sd&s=22461101&rl=0_undefined",
+      "published": true,
+      "image": {
+        "sourceUrl": "https://f2.dikidi.net/c27/v26245/3nskg0pmib.jpg",
+        "sha256": "73d85bce045c984515b86feaf2989f82c961df58431c0e5a22b2af332271ef8d",
+        "contentType": "image/jpeg",
+        "byteLength": 377756,
+        "url": "https://denisyuce-services-catalog.den100hero.workers.dev/service-images/22461101/73d85bce045c984515b86feaf2989f82c961df58431c0e5a22b2af332271ef8d"
+      }
+    },
+    {
+      "id": "22461104",
+      "category": "Абонементы",
+      "name": "Абонемент 10 х 55 мин",
+      "durationMinutes": 55,
+      "priceRub": 25500,
+      "description": "Формат для тех, кто хочет сделать массаж регулярной привычкой.\n\nСеансы можно подбирать по состоянию: где-то плотнее, где-то спокойнее, где-то больше внимания спине, шее, ногам или общему расслаблению.\n\n8 сеансов по 60 минут — удобный вариант на 2 месяца, чтобы поддерживать тело в более спокойном и собранном состоянии.\n\nСрок действия: 90 дней.",
+      "bookingUrl": "https://dikidi.net/massages?p=2.pi-ssm-sd&s=22461104&rl=0_undefined",
+      "published": true,
+      "image": {
+        "sourceUrl": "https://f2.dikidi.net/c27/v26674/718i80n3a7.jpg",
+        "sha256": "f481d53060bdf36994e969480bb8b15a80fcce653510c63251af972056511357",
+        "contentType": "image/jpeg",
+        "byteLength": 381586,
+        "url": "https://denisyuce-services-catalog.den100hero.workers.dev/service-images/22461104/f481d53060bdf36994e969480bb8b15a80fcce653510c63251af972056511357"
+      }
+    },
+    {
+      "id": "22461106",
+      "category": "Абонементы",
+      "name": "Абонемент 10 х 90 мин",
+      "durationMinutes": 90,
+      "priceRub": 34000,
+      "description": "Формат для тех, кто хочет сделать массаж регулярной привычкой.\n\nСеансы можно подбирать по состоянию: где-то плотнее, где-то спокойнее, где-то больше внимания спине, шее, ногам или общему расслаблению.\n\n8 сеансов по 90 минут — удобный вариант на несколько месяцев, чтобы поддерживать тело в более спокойном и собранном состоянии.\n\nСрок действия: 110 дней.",
+      "bookingUrl": "https://dikidi.net/massages?p=2.pi-ssm-sd&s=22461106&rl=0_undefined",
+      "published": true,
+      "image": {
+        "sourceUrl": "https://f2.dikidi.net/c27/v26245/1pjmg9fj4g.jpg",
+        "sha256": "1b9ca635eb002ebcc0d93b56edeac98baa8978a332dc7b2194ce891d4e51654c",
+        "contentType": "image/jpeg",
+        "byteLength": 381173,
+        "url": "https://denisyuce-services-catalog.den100hero.workers.dev/service-images/22461106/1b9ca635eb002ebcc0d93b56edeac98baa8978a332dc7b2194ce891d4e51654c"
+      }
+    },
     {
       "id": "22446587",
       "category": "Массаж по зонам",
@@ -17,11 +85,11 @@
       "bookingUrl": "https://dikidi.net/massages?p=2.pi-ssm-sd&s=22446587&rl=0_undefined",
       "published": true,
       "image": {
-        "sourceUrl": "https://f2.dikidi.net/c27/v26299/4dag2jb31g.jpg",
-        "sha256": "c44732bef670b2264fb89fc64c4ddb770cb9318b210f7762c2309f2c84bf8059",
+        "sourceUrl": "https://f2.dikidi.net/c28/v27088/33ih254eib.jpg",
+        "sha256": "fb0426c1efbdd836b854d8db3873405b650d90979a6e2c42b32343a39e53bba6",
         "contentType": "image/jpeg",
-        "byteLength": 401598,
-        "url": "https://denisyuce-services-catalog.den100hero.workers.dev/service-images/22446587/c44732bef670b2264fb89fc64c4ddb770cb9318b210f7762c2309f2c84bf8059"
+        "byteLength": 404271,
+        "url": "https://denisyuce-services-catalog.den100hero.workers.dev/service-images/22446587/fb0426c1efbdd836b854d8db3873405b650d90979a6e2c42b32343a39e53bba6"
       }
     },
     {
@@ -34,11 +102,11 @@
       "bookingUrl": "https://dikidi.net/massages?p=2.pi-ssm-sd&s=22461255&rl=0_undefined",
       "published": true,
       "image": {
-        "sourceUrl": "https://f2.dikidi.net/c27/v26156/2c5i5lrgfe.jpg",
-        "sha256": "6af4f5fbe5d3fe206f065f0f057b3118b8d04e360ca6d80aee6b7af1e47fc3cf",
+        "sourceUrl": "https://f2.dikidi.net/c28/v27088/r745t9mcso.jpg",
+        "sha256": "d1f6d7174e2b15ef6d0624c95cca028de63bdc999774293015c53aa9331bf93b",
         "contentType": "image/jpeg",
-        "byteLength": 433512,
-        "url": "https://denisyuce-services-catalog.den100hero.workers.dev/service-images/22461255/6af4f5fbe5d3fe206f065f0f057b3118b8d04e360ca6d80aee6b7af1e47fc3cf"
+        "byteLength": 436904,
+        "url": "https://denisyuce-services-catalog.den100hero.workers.dev/service-images/22461255/d1f6d7174e2b15ef6d0624c95cca028de63bdc999774293015c53aa9331bf93b"
       }
     },
     {
@@ -76,23 +144,6 @@
       }
     },
     {
-      "id": "22446970",
-      "category": "Лимфодренажный",
-      "name": "Лимфодренаж 55 мин",
-      "durationMinutes": 55,
-      "priceRub": 2990,
-      "description": "Особый мягкий плавно-ритмичный массаж для активизации работы лимфатической системы.\n\nКогда тело кажется тяжёлым, ноги устали или отекли, после долгого сидения или нагрузки с плавной и деликатной работой. Движения спокойные, мягкие, без сильного давления.\n\n55 минут — общая мягкая работа по телу с вниманием к зонам тяжести.",
-      "bookingUrl": "https://dikidi.net/massages?p=2.pi-ssm-sd&s=22446970&rl=0_undefined",
-      "published": true,
-      "image": {
-        "sourceUrl": "https://f2.dikidi.net/c27/v26674/6g2i0ar1du.jpg",
-        "sha256": "9d38a676061ab6e2022b51a0282cb116368ddbb27c75c963515a2db1b8f85a35",
-        "contentType": "image/jpeg",
-        "byteLength": 643861,
-        "url": "https://denisyuce-services-catalog.den100hero.workers.dev/service-images/22446970/9d38a676061ab6e2022b51a0282cb116368ddbb27c75c963515a2db1b8f85a35"
-      }
-    },
-    {
       "id": "22446974",
       "category": "Лимфодренажный",
       "name": "Лимфодренаж 90 мин",
@@ -110,20 +161,20 @@
       }
     },
     {
-      "id": "22461114",
-      "category": "Спортивный",
-      "name": "Спортивный 55 мин",
+      "id": "22446970",
+      "category": "Лимфодренажный",
+      "name": "Лимфодренаж 55 мин",
       "durationMinutes": 55,
       "priceRub": 2990,
-      "description": "Более активный массаж для людей, которые тренируются, много двигаются или чувствуют мышечную забитость после нагрузки. Цель — помочь телу восстановиться и снизить избыточное напряжение.",
-      "bookingUrl": "https://dikidi.net/massages?p=2.pi-ssm-sd&s=22461114&rl=0_undefined",
+      "description": "Особый мягкий плавно-ритмичный массаж для активизации работы лимфатической системы.\n\nКогда тело кажется тяжёлым, ноги устали или отекли, после долгого сидения или нагрузки с плавной и деликатной работой. Движения спокойные, мягкие, без сильного давления.\n\n55 минут — общая мягкая работа по телу с вниманием к зонам тяжести.",
+      "bookingUrl": "https://dikidi.net/massages?p=2.pi-ssm-sd&s=22446970&rl=0_undefined",
       "published": true,
       "image": {
-        "sourceUrl": "https://f2.dikidi.net/c27/v26674/605tlp248j.jpg",
-        "sha256": "3ef8babb395a77e3494ff02bf46259ac048252385d21c874a86fc24c7f52f2aa",
+        "sourceUrl": "https://f2.dikidi.net/c27/v26674/6g2i0ar1du.jpg",
+        "sha256": "9d38a676061ab6e2022b51a0282cb116368ddbb27c75c963515a2db1b8f85a35",
         "contentType": "image/jpeg",
-        "byteLength": 404896,
-        "url": "https://denisyuce-services-catalog.den100hero.workers.dev/service-images/22461114/3ef8babb395a77e3494ff02bf46259ac048252385d21c874a86fc24c7f52f2aa"
+        "byteLength": 643861,
+        "url": "https://denisyuce-services-catalog.den100hero.workers.dev/service-images/22446970/9d38a676061ab6e2022b51a0282cb116368ddbb27c75c963515a2db1b8f85a35"
       }
     },
     {
@@ -141,6 +192,23 @@
         "contentType": "image/jpeg",
         "byteLength": 407704,
         "url": "https://denisyuce-services-catalog.den100hero.workers.dev/service-images/22461132/528c187b28f343a286a1ef5c8c70444b7d687dc15db75c2cbe43274187077274"
+      }
+    },
+    {
+      "id": "22461114",
+      "category": "Спортивный",
+      "name": "Спортивный 55 мин",
+      "durationMinutes": 55,
+      "priceRub": 2990,
+      "description": "Более активный массаж для людей, которые тренируются, много двигаются или чувствуют мышечную забитость после нагрузки. Цель — помочь телу восстановиться и снизить избыточное напряжение.",
+      "bookingUrl": "https://dikidi.net/massages?p=2.pi-ssm-sd&s=22461114&rl=0_undefined",
+      "published": true,
+      "image": {
+        "sourceUrl": "https://f2.dikidi.net/c27/v26674/605tlp248j.jpg",
+        "sha256": "3ef8babb395a77e3494ff02bf46259ac048252385d21c874a86fc24c7f52f2aa",
+        "contentType": "image/jpeg",
+        "byteLength": 404896,
+        "url": "https://denisyuce-services-catalog.den100hero.workers.dev/service-images/22461114/3ef8babb395a77e3494ff02bf46259ac048252385d21c874a86fc24c7f52f2aa"
       }
     },
     {

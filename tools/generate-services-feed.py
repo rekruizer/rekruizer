@@ -8,7 +8,13 @@ from datetime import datetime
 from xml.etree.ElementTree import Element, ElementTree, SubElement, indent
 from zoneinfo import ZoneInfo
 
-from services_catalog import ROOT, load_catalog, mapped_services, public_image_path
+from services_catalog import (
+    ROOT,
+    load_catalog,
+    mapped_services,
+    mapped_subscriptions,
+    public_image_path,
+)
 
 
 SITE = "https://denisyuce.com"
@@ -41,6 +47,7 @@ class Offer:
     description: str
     category_id: str
     category_name: str
+    sessions: int | None = None
 
 
 def build_offers() -> list[Offer]:
@@ -66,6 +73,23 @@ def build_offers() -> list[Offer]:
                 description=service["description"],
                 category_id=str(category_ids[service["category"]]),
                 category_name=service["category"],
+            )
+        )
+    for service, row in mapped_subscriptions(catalogue, presentation):
+        offers.append(
+            Offer(
+                id=row["offerId"],
+                name=service["name"],
+                page_url=f"{SITE}/#subscriptions",
+                price=service["priceRub"],
+                oldprice=None,
+                duration_min=service["durationMinutes"],
+                booking_url=service["bookingUrl"],
+                picture=SITE + public_image_path(service, row),
+                description=service["description"],
+                category_id=str(category_ids[service["category"]]),
+                category_name=service["category"],
+                sessions=int(row["sessions"]),
             )
         )
     return offers
@@ -130,12 +154,19 @@ def write_feed(offers: list[Offer]) -> None:
         add(offer, "categoryId", item.category_id)
         add(offer, "picture", item.picture)
         add(offer, "description", item.description)
+        duration_note = (
+            f"{item.sessions} сеансов × {item.duration_min} минут"
+            if item.sessions
+            else f"{item.duration_min} минут"
+        )
         add(
             offer,
             "sales_notes",
-            f"{item.duration_min} минут — {item.price:,} ₽".replace(",", " "),
+            f"{duration_note} — {item.price:,} ₽".replace(",", " "),
         )
         add(offer, "param", f"{item.duration_min} минут", name="Длительность")
+        if item.sessions:
+            add(offer, "param", item.sessions, name="Количество сеансов")
         add(offer, "param", CONTACT["region"], name="Район")
         add(offer, "param", CONTACT["address"], name="Адрес")
         add(offer, "param", CONTACT["phone"], name="Телефон")

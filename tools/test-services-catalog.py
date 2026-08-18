@@ -13,7 +13,9 @@ from services_catalog import (
     CatalogValidationError,
     ROOT,
     load_catalog,
+    mapped_catalogue_items,
     mapped_services,
+    mapped_subscriptions,
     public_image_path,
     primary_service,
     services_by_slug,
@@ -27,19 +29,30 @@ class ServicesCatalogueTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.catalogue, cls.presentation = load_catalog(require_local_images=True)
         cls.mapped = mapped_services(cls.catalogue, cls.presentation)
+        cls.subscriptions = mapped_subscriptions(cls.catalogue, cls.presentation)
+        cls.all_mapped = mapped_catalogue_items(cls.catalogue, cls.presentation)
         cls.grouped = services_by_slug(cls.catalogue, cls.presentation)
 
     def test_expected_public_services_are_mapped_once(self) -> None:
         self.assertEqual(
             {service["id"] for service in self.catalogue["services"]},
-            {row["id"] for row in self.presentation["services"]},
+            {
+                row["id"]
+                for row in self.presentation["services"]
+                + self.presentation["subscriptions"]
+            },
         )
         self.assertEqual(len(self.mapped), 11)
+        self.assertEqual(len(self.subscriptions), 4)
+        self.assertEqual(len(self.all_mapped), 15)
         self.assertEqual(
             {service["id"] for service, _row in self.mapped},
             {row["id"] for row in self.presentation["services"]},
         )
         self.assertTrue(all(service["published"] for service, _row in self.mapped))
+        self.assertTrue(
+            all(service["published"] for service, _row in self.subscriptions)
+        )
 
     def test_unmapped_new_service_fails_closed(self) -> None:
         altered = copy.deepcopy(self.catalogue)
@@ -102,14 +115,50 @@ class ServicesCatalogueTests(unittest.TestCase):
                 source,
             )
 
+    def test_subscription_cards_use_catalogue_prices(self) -> None:
+        source = (ROOT / "index.html").read_text(encoding="utf-8")
+        block = re.search(
+            r"<!-- subscriptions-catalog:start -->(.*?)"
+            r"<!-- subscriptions-catalog:end -->",
+            source,
+            re.S,
+        )
+        self.assertIsNotNone(block)
+        actual_ids = re.findall(r'data-service-id="(\d+)"', block.group(1))
+        self.assertEqual(
+            actual_ids,
+            [service["id"] for service, _row in self.subscriptions],
+        )
+        by_id = {service["id"]: service for service in self.catalogue["services"]}
+        for service, row in self.subscriptions:
+            reference = by_id[row["referenceServiceId"]]
+            saving = reference["priceRub"] * row["sessions"] - service["priceRub"]
+            self.assertIn(service["name"], block.group(1))
+            self.assertIn(service["bookingUrl"].replace("&", "&amp;"), block.group(1))
+            self.assertIn(
+                f'{service["priceRub"]:,}'.replace(",", " ") + " ₽",
+                block.group(1),
+            )
+            self.assertIn(
+                f'{saving:,}'.replace(",", " ") + " ₽",
+                block.group(1),
+            )
+
     def test_feed_matches_catalogue(self) -> None:
         root = ElementTree.parse(ROOT / "services-feed.xml").getroot()
         offers = {
             offer.get("id"): offer
             for offer in root.findall("./shop/offers/offer")
         }
-        self.assertEqual(set(offers), {row["offerId"] for row in self.presentation["services"]})
-        for service, row in self.mapped:
+        self.assertEqual(
+            set(offers),
+            {
+                row["offerId"]
+                for row in self.presentation["services"]
+                + self.presentation["subscriptions"]
+            },
+        )
+        for service, row in self.all_mapped:
             offer = offers[row["offerId"]]
             self.assertEqual(offer.findtext("name"), service["name"])
             self.assertEqual(offer.findtext("price"), str(service["priceRub"]))
@@ -118,9 +167,16 @@ class ServicesCatalogueTests(unittest.TestCase):
                 offer.findtext("picture"),
                 "https://denisyuce.com" + public_image_path(service, row),
             )
+        for service, row in self.subscriptions:
+            offer = offers[row["offerId"]]
+            self.assertEqual(offer.findtext("url"), "https://denisyuce.com/#subscriptions")
+            params = {
+                item.get("name"): item.text for item in offer.findall("param")
+            }
+            self.assertEqual(params["Количество сеансов"], str(row["sessions"]))
 
     def test_all_public_images_are_local_versioned_webp(self) -> None:
-        for service, row in self.mapped:
+        for service, row in self.all_mapped:
             image = public_image_path(service, row)
             self.assertEqual(
                 image,

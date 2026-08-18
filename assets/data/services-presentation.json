@@ -6,7 +6,8 @@
     "Классика": "3",
     "Лимфодренажный": "4",
     "Расслабляющий": "5",
-    "Спортивный": "6"
+    "Спортивный": "6",
+    "Абонементы": "7"
   },
   "services": [
     {
@@ -82,6 +83,37 @@
       "slug": "sport",
       "offerId": "sport-90",
       "imageFile": "sport-90.webp"
+    }
+  ],
+  "subscriptions": [
+    {
+      "id": "22461095",
+      "offerId": "subscription-5-55",
+      "imageFile": "abonement-5x55.webp",
+      "sessions": 5,
+      "referenceServiceId": "22022788"
+    },
+    {
+      "id": "22461101",
+      "offerId": "subscription-5-90",
+      "imageFile": "abonement-5x90.webp",
+      "sessions": 5,
+      "referenceServiceId": "22083841"
+    },
+    {
+      "id": "22461104",
+      "offerId": "subscription-10-55",
+      "imageFile": "abonement-10x55.webp",
+      "sessions": 10,
+      "referenceServiceId": "22022788",
+      "featured": true
+    },
+    {
+      "id": "22461106",
+      "offerId": "subscription-10-90",
+      "imageFile": "abonement-10x90.webp",
+      "sessions": 10,
+      "referenceServiceId": "22083841"
     }
   ]
 }

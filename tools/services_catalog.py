@@ -41,10 +41,13 @@ def validate_presentation(value: dict[str, Any]) -> dict[str, Any]:
         raise CatalogValidationError("Unsupported services-presentation schemaVersion")
     category_ids = value.get("categoryIds")
     rows = value.get("services")
+    subscription_rows = value.get("subscriptions")
     if not isinstance(category_ids, dict) or not category_ids:
         raise CatalogValidationError("services-presentation has no categoryIds")
     if not isinstance(rows, list) or not rows:
         raise CatalogValidationError("services-presentation has no services")
+    if not isinstance(subscription_rows, list) or not subscription_rows:
+        raise CatalogValidationError("services-presentation has no subscriptions")
 
     ids: set[str] = set()
     offer_ids: set[str] = set()
@@ -83,6 +86,51 @@ def validate_presentation(value: dict[str, Any]) -> dict[str, Any]:
         old_price = row.get("oldPriceRub")
         if old_price is not None and (not isinstance(old_price, int) or old_price <= 0):
             raise CatalogValidationError(f"Invalid oldPriceRub for service {service_id}")
+
+    featured_subscriptions = 0
+    regular_ids = set(ids)
+    for row in subscription_rows:
+        if not isinstance(row, dict):
+            raise CatalogValidationError("Invalid subscription presentation row")
+        service_id = str(row.get("id", ""))
+        offer_id = row.get("offerId")
+        image_file = row.get("imageFile")
+        sessions = row.get("sessions")
+        reference_service_id = str(row.get("referenceServiceId", ""))
+        if not re.fullmatch(r"\d+", service_id):
+            raise CatalogValidationError(
+                f"Invalid DIKIDI subscription id: {service_id!r}"
+            )
+        if not isinstance(offer_id, str) or not re.fullmatch(r"[a-z0-9-]+", offer_id):
+            raise CatalogValidationError(
+                f"Invalid feed offerId for subscription {service_id}"
+            )
+        if not isinstance(image_file, str) or not re.fullmatch(
+            r"[a-z0-9-]+\.webp", image_file
+        ):
+            raise CatalogValidationError(
+                f"Invalid local WebP imageFile for subscription {service_id}"
+            )
+        if not isinstance(sessions, int) or isinstance(sessions, bool) or sessions <= 1:
+            raise CatalogValidationError(
+                f"Invalid session count for subscription {service_id}"
+            )
+        if reference_service_id not in regular_ids:
+            raise CatalogValidationError(
+                f"Invalid reference service for subscription {service_id}"
+            )
+        if service_id in ids or offer_id in offer_ids or image_file in image_files:
+            raise CatalogValidationError(
+                "Duplicate service id, offerId or imageFile in presentation"
+            )
+        ids.add(service_id)
+        offer_ids.add(offer_id)
+        image_files.add(image_file)
+        if row.get("featured"):
+            featured_subscriptions += 1
+
+    if featured_subscriptions > 1:
+        raise CatalogValidationError("More than one featured subscription")
 
     slugs = {str(row["slug"]) for row in rows}
     missing_primary = slugs - primary_slugs
@@ -147,7 +195,10 @@ def validate_catalog(
             raise CatalogValidationError(f"Service {service_id} has an invalid image URL")
         by_id[service_id] = service
 
-    mapped_ids = {str(row["id"]) for row in presentation["services"]}
+    mapped_ids = {
+        str(row["id"])
+        for row in presentation["services"] + presentation["subscriptions"]
+    }
     published_ids = {
         service_id for service_id, service in by_id.items() if service["published"]
     }
@@ -168,10 +219,30 @@ def validate_catalog(
             f"Missing stable category ids for: {', '.join(sorted(missing_categories))}"
         )
 
+    for row in presentation["subscriptions"]:
+        subscription = by_id[str(row["id"])]
+        reference = by_id[str(row["referenceServiceId"])]
+        if not (
+            subscription["category"].casefold().startswith("абонемент")
+            or subscription["name"].casefold().startswith("абонемент")
+        ):
+            raise CatalogValidationError(
+                f"Service {subscription['id']} is not a DIKIDI subscription"
+            )
+        if subscription["durationMinutes"] != reference["durationMinutes"]:
+            raise CatalogValidationError(
+                f"Subscription {subscription['id']} duration does not match "
+                f"reference service {reference['id']}"
+            )
+        regular_total = reference["priceRub"] * row["sessions"]
+        if subscription["priceRub"] > regular_total:
+            raise CatalogValidationError(
+                f"Subscription {subscription['id']} costs more than separate sessions"
+            )
+
     if require_local_images:
-        rows_by_id = {
-            str(row["id"]): row for row in presentation["services"]
-        }
+        all_rows = presentation["services"] + presentation["subscriptions"]
+        rows_by_id = {str(row["id"]): row for row in all_rows}
         for service_id in mapped_ids:
             path = local_image_path(rows_by_id[service_id])
             if not path.is_file():
@@ -209,6 +280,24 @@ def mapped_services(
 ) -> list[tuple[dict[str, Any], dict[str, Any]]]:
     by_id = {str(service["id"]): service for service in catalogue["services"]}
     return [(by_id[str(row["id"])], row) for row in presentation["services"]]
+
+
+def mapped_subscriptions(
+    catalogue: dict[str, Any], presentation: dict[str, Any]
+) -> list[tuple[dict[str, Any], dict[str, Any]]]:
+    by_id = {str(service["id"]): service for service in catalogue["services"]}
+    return [
+        (by_id[str(row["id"])], row)
+        for row in presentation["subscriptions"]
+    ]
+
+
+def mapped_catalogue_items(
+    catalogue: dict[str, Any], presentation: dict[str, Any]
+) -> list[tuple[dict[str, Any], dict[str, Any]]]:
+    return mapped_services(catalogue, presentation) + mapped_subscriptions(
+        catalogue, presentation
+    )
 
 
 def services_by_slug(

@@ -94,7 +94,10 @@ def existing_snapshot_matches(
         return False
     if not isinstance(current, dict):
         return False
-    expected_ids = {str(row["id"]) for row in presentation["services"]}
+    expected_ids = {
+        str(row["id"])
+        for row in presentation["services"] + presentation["subscriptions"]
+    }
     current_services = current.get("services")
     if not isinstance(current_services, list):
         return False
@@ -120,7 +123,8 @@ def install_catalogue(value: dict[str, Any]) -> bool:
         print(f"Services catalogue unchanged: {value['contentHash']}")
         return False
 
-    published_ids = {str(row["id"]) for row in presentation["services"]}
+    presentation_rows = presentation["services"] + presentation["subscriptions"]
+    published_ids = {str(row["id"]) for row in presentation_rows}
     public_value = {
         **value,
         "services": [
@@ -144,8 +148,8 @@ def install_catalogue(value: dict[str, Any]) -> bool:
     validate_catalog(public_value, presentation, require_local_images=True)
     print(
         f"Installed services catalogue {value['contentHash']}: "
-        f"{len(presentation['services'])} published services, "
-        f"{len(presentation['services'])} local WebP images"
+        f"{len(presentation_rows)} published services and subscriptions, "
+        f"{len(presentation_rows)} local WebP images"
     )
     return True
 

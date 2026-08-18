@@ -6,6 +6,7 @@ from __future__ import annotations
 import html
 import json
 import re
+from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
@@ -14,6 +15,7 @@ from services_catalog import (
     format_rubles,
     load_catalog,
     mapped_services,
+    mapped_subscriptions,
     primary_service,
     public_image_path,
     services_by_slug,
@@ -66,6 +68,89 @@ def price_markup(service: dict[str, Any], row: dict[str, Any]) -> str:
 
 def service_goal(row: dict[str, Any], service: dict[str, Any]) -> str:
     return f"service_{row['slug'].replace('-', '_')}_{service['durationMinutes']}_click"
+
+
+def format_per_session(total: int, sessions: int) -> str:
+    value = (Decimal(total) / Decimal(sessions)).quantize(Decimal("0.01"))
+    if value == value.to_integral():
+        return format_rubles(int(value))
+    whole, fraction = f"{value:.2f}".split(".")
+    return f"{int(whole):,}".replace(",", " ") + f",{fraction} ₽"
+
+
+def render_subscriptions(
+    catalogue: dict[str, Any], presentation: dict[str, Any]
+) -> str:
+    by_id = {str(service["id"]): service for service in catalogue["services"]}
+    output: list[str] = []
+    for service, row in mapped_subscriptions(catalogue, presentation):
+        sessions = int(row["sessions"])
+        reference = by_id[str(row["referenceServiceId"])]
+        regular_total = reference["priceRub"] * sessions
+        saving = regular_total - service["priceRub"]
+        featured = " subscription-card-featured" if row.get("featured") else ""
+        goal = (
+            f"service_sub_{sessions}_{service['durationMinutes']}_click"
+        )
+        output.extend(
+            [
+                (
+                    f'        <a class="subscription-card{featured}" '
+                    f'href="{html_attr(service["bookingUrl"])}" '
+                    f'data-service-id="{service["id"]}" '
+                    f'data-goal="{goal}">'
+                ),
+                f"          <span>{html_text(service['name'])}</span>",
+                (
+                    '          <div class="subscription-total">'
+                    f'<span>Стоимость</span><span class="text-bold">'
+                    f'{format_rubles(service["priceRub"])}</span></div>'
+                ),
+                '          <div class="subscription-session">',
+                '            <div class="subscription-session-main">',
+                (
+                    f'              <span class="text-bold">'
+                    f'{format_per_session(service["priceRub"], sessions)}</span>'
+                ),
+                '              <span>/ сеанс</span>',
+                '            </div>',
+                (
+                    '            <div class="subscription-usual">'
+                    f'<span class="old-price">'
+                    f'{format_rubles(reference["priceRub"])}</span></div>'
+                ),
+                '          </div>',
+                (
+                    '          <div class="subscription-saving">Выгода '
+                    f'<span class="text-bold">{format_rubles(saving)}</span></div>'
+                ),
+                (
+                    '          <div class="subscription-action">Купить '
+                    '<span class="arrow-right-icon" aria-hidden="true"></span></div>'
+                ),
+                '        </a>',
+            ]
+        )
+    return "\n".join(output)
+
+
+def update_subscription_section(
+    path: Path, catalogue: dict[str, Any], presentation: dict[str, Any]
+) -> None:
+    source = path.read_text(encoding="utf-8")
+    rendered = render_subscriptions(catalogue, presentation)
+    source = replace_once(
+        source,
+        r"(?P<start>\s*<!-- subscriptions-catalog:start -->).*?"
+        r"(?P<end>\s*<!-- subscriptions-catalog:end -->)",
+        lambda match: (
+            f"{match.group('start')}\n{rendered}\n"
+            f"        <!-- subscriptions-catalog:end -->"
+        ),
+        label=f"subscriptions catalogue block in {path.relative_to(ROOT)}",
+        flags=re.S,
+    )
+    path.write_text(source, encoding="utf-8")
 
 
 def render_price_rows(
@@ -369,6 +454,7 @@ def main() -> None:
 
     for path in PRICE_PAGES:
         update_price_page(path, catalogue, presentation)
+    update_subscription_section(ROOT / "index.html", catalogue, presentation)
     for slug, rows in grouped.items():
         update_detail_page(slug, rows)
 
@@ -380,7 +466,9 @@ def main() -> None:
 
     print(
         f"Rendered {len(presentation['services'])} services into "
-        f"{len(grouped)} service pages from catalogue {catalogue['contentHash']}"
+        f"{len(grouped)} service pages and "
+        f"{len(presentation['subscriptions'])} subscriptions from catalogue "
+        f"{catalogue['contentHash']}"
     )
 
 
