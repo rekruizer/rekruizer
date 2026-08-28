@@ -71,6 +71,16 @@ class ServicesCatalogueTests(unittest.TestCase):
         ):
             validate_catalog(altered, self.presentation)
 
+    def test_presentation_can_correct_a_public_display_name(self) -> None:
+        first_service, first_row = self.mapped[0]
+        self.assertEqual(first_service["name"], first_row["displayName"])
+        raw_service = next(
+            service
+            for service in self.catalogue["services"]
+            if service["id"] == first_service["id"]
+        )
+        self.assertNotEqual(raw_service["name"], first_service["name"])
+
     def test_price_tables_contain_each_service_once(self) -> None:
         expected_ids = [service["id"] for service, _row in self.mapped]
         for relative in ("index.html", "services/index.html"):

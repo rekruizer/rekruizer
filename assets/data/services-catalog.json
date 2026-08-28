@@ -3,9 +3,9 @@
   "provider": "DIKIDI",
   "companyId": "2037751",
   "masterId": "4371698",
-  "contentHash": "956fbc1f197addd912caabdf1567eea75dc245c28f1ce27f0a2710435b9ff79c",
-  "lastCheckedAt": "2026-08-18T20:00:02.640Z",
-  "lastChangedAt": "2026-08-18T20:00:02.640Z",
+  "contentHash": "b477586020fa0c538bcba01009d57ac68f1d0ea573ba3306d3c0dde434678854",
+  "lastCheckedAt": "2026-08-28T01:21:11.103Z",
+  "lastChangedAt": "2026-08-27T01:21:24.570Z",
   "services": [
     {
       "id": "22461095",
@@ -246,20 +246,20 @@
       }
     },
     {
-      "id": "22470908",
+      "id": "22679592",
       "category": "Акции %",
-      "name": "Первый визит 55 мин — со скидкой!",
-      "durationMinutes": 55,
-      "priceRub": 2390,
-      "description": "Первое посещение — со скидкой 20%\n\nПолноценный сеанс массажа по сниженной цене, чтобы вы могли спокойно познакомиться со мной, почувствовать качество работы и понять, какой формат вам подходит.\n\nСкидка действует на любой разовый сеанс 55 мин при первом визите.",
-      "bookingUrl": "https://dikidi.net/massages?p=2.pi-ssm-sd&s=22470908&rl=0_undefined",
+      "name": "Первое визит 90 мин — со скидкой!",
+      "durationMinutes": 90,
+      "priceRub": 3400,
+      "description": "Первое посещение — со скидкой\n\nПолноценный сеанс массажа по сниженной цене, чтобы вы могли спокойно познакомиться со мной, почувствовать качество работы и понять, какой формат вам подходит.\n\nСкидка действует на любой разовый сеанс 90 мин при первом визите.",
+      "bookingUrl": "https://dikidi.net/massages?p=2.pi-ssm-sd&s=22679592&rl=0_undefined",
       "published": true,
       "image": {
-        "sourceUrl": "https://f2.dikidi.net/c27/v26156/1p8m3limea.jpg",
-        "sha256": "2d2d20c108b4c2b51237b704f10d656f85847f208470e46dc8aac77e97e7b304",
+        "sourceUrl": "https://f2.dikidi.net/c28/v27428/38dcu9knuc.jpg",
+        "sha256": "b5c857dc89fb39b0496c85d7583c1c1d98b81223045448181f216852fb4df50f",
         "contentType": "image/jpeg",
-        "byteLength": 149206,
-        "url": "https://denisyuce-services-catalog.den100hero.workers.dev/service-images/22470908/2d2d20c108b4c2b51237b704f10d656f85847f208470e46dc8aac77e97e7b304"
+        "byteLength": 472965,
+        "url": "https://denisyuce-services-catalog.den100hero.workers.dev/service-images/22679592/b5c857dc89fb39b0496c85d7583c1c1d98b81223045448181f216852fb4df50f"
       }
     }
   ]

@@ -86,6 +86,13 @@ def validate_presentation(value: dict[str, Any]) -> dict[str, Any]:
         old_price = row.get("oldPriceRub")
         if old_price is not None and (not isinstance(old_price, int) or old_price <= 0):
             raise CatalogValidationError(f"Invalid oldPriceRub for service {service_id}")
+        display_name = row.get("displayName")
+        if display_name is not None and (
+            not isinstance(display_name, str)
+            or not display_name.strip()
+            or len(display_name) > 160
+        ):
+            raise CatalogValidationError(f"Invalid displayName for service {service_id}")
 
     featured_subscriptions = 0
     regular_ids = set(ids)
@@ -279,7 +286,14 @@ def mapped_services(
     catalogue: dict[str, Any], presentation: dict[str, Any]
 ) -> list[tuple[dict[str, Any], dict[str, Any]]]:
     by_id = {str(service["id"]): service for service in catalogue["services"]}
-    return [(by_id[str(row["id"])], row) for row in presentation["services"]]
+    result: list[tuple[dict[str, Any], dict[str, Any]]] = []
+    for row in presentation["services"]:
+        service = by_id[str(row["id"])]
+        display_name = row.get("displayName")
+        if isinstance(display_name, str):
+            service = {**service, "name": display_name}
+        result.append((service, row))
+    return result
 
 
 def mapped_subscriptions(
