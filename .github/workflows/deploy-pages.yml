@@ -31,12 +31,10 @@ jobs:
       - name: Read and validate services catalogue
         env:
           SERVICES_CATALOG_READ_TOKEN: ${{ secrets.SERVICES_CATALOG_READ_TOKEN }}
-        run: |
-          if [[ "${{ github.event_name }}" == "push" ]]; then
-            python3 tools/sync-services-catalog.py
-          else
-            python3 tools/sync-services-catalog.py --require-remote
-          fi
+        # An unknown or replaced DIKIDI service must not block unrelated site
+        # deployments. The sync script keeps the last validated snapshot and
+        # adds a visible warning to this run instead.
+        run: python3 tools/sync-services-catalog.py
 
       - name: Render services into static pages
         run: python3 tools/generate-services-site.py

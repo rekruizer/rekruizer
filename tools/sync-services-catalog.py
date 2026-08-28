@@ -154,6 +154,27 @@ def install_catalogue(value: dict[str, Any]) -> bool:
     return True
 
 
+def report_github_warning(message: str) -> None:
+    """Surface a non-blocking catalogue problem in Actions and its summary."""
+    if os.environ.get("GITHUB_ACTIONS") != "true":
+        return
+    annotation = message.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+    print(f"::warning title=Каталог услуг DIKIDI::{annotation}", file=sys.stderr)
+    summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+    if not summary_path:
+        return
+    try:
+        with open(summary_path, "a", encoding="utf-8") as summary:
+            summary.write(
+                "\n## ⚠️ Каталог услуг требует внимания\n\n"
+                f"{message}\n\n"
+                "Сайт опубликован с последней проверенной версией каталога. "
+                "Другие изменения сайта не заблокированы.\n"
+            )
+    except OSError as error:
+        print(f"Could not update GitHub step summary: {error}", file=sys.stderr)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -183,10 +204,12 @@ def main() -> None:
                 "Services sync failed and the local fallback is invalid: "
                 f"{error}; fallback: {fallback_error}"
             )
-        print(
-            f"WARNING: remote services sync failed; using the last checked-in snapshot: {error}",
-            file=sys.stderr,
+        warning = (
+            "Удалённый каталог не принят; используется последняя проверенная версия: "
+            f"{error}"
         )
+        print(f"WARNING: {warning}", file=sys.stderr)
+        report_github_warning(warning)
         print("changed=false")
 
 
