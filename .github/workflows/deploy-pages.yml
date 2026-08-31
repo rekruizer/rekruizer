@@ -58,6 +58,11 @@ jobs:
             --exclude .local/ \
             --exclude _site/
 
+      - name: Minify CSS and JS
+        run: |
+          npx --yes esbuild@0.27.2 _site/assets/site.css --minify --outfile=_site/assets/site.css --allow-overwrite
+          npx --yes esbuild@0.27.2 _site/assets/site.js --minify --outfile=_site/assets/site.js --allow-overwrite
+
       - name: Configure Pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
 
