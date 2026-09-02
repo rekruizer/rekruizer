@@ -643,6 +643,10 @@
           var reviews = payload && Array.isArray(payload.reviews)
             ? payload.reviews.filter(function (review) {
                 return review && review.text && Number(review.rating) >= 4;
+              }).sort(function (a, b) {
+                var aTime = Date.parse(a.reviewDate || "") || 0;
+                var bTime = Date.parse(b.reviewDate || "") || 0;
+                return bTime - aTime;
               })
             : [];
 
@@ -659,8 +663,26 @@
           return true;
         })
         .catch(function () {
-          // Если API временно недоступен, посетитель увидит статические отзывы.
+          // Если файл временно недоступен, посетитель увидит статические отзывы.
           return false;
+        });
+    }
+
+    function sortReviewCardsByDate(root) {
+      Array.prototype.slice.call(root.children)
+        .map(function (card, position) {
+          var time = card.querySelector("time[datetime]");
+          return {
+            card: card,
+            position: position,
+            timestamp: time ? Date.parse(time.getAttribute("datetime")) || 0 : 0
+          };
+        })
+        .sort(function (a, b) {
+          return b.timestamp - a.timestamp || a.position - b.position;
+        })
+        .forEach(function (item) {
+          root.appendChild(item.card);
         });
     }
 
@@ -683,6 +705,8 @@
 
       loadRemoteReviews(rail).then(function () {
         rail.dataset.carouselReady = "true";
+
+        sortReviewCardsByDate(rail);
 
         var section = viewport.closest(".reviews-section");
         var prev = section ? section.querySelector("[data-reviews-prev]") : null;
