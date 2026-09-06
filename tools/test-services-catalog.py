@@ -71,15 +71,24 @@ class ServicesCatalogueTests(unittest.TestCase):
         ):
             validate_catalog(altered, self.presentation)
 
-    def test_presentation_can_correct_a_public_display_name(self) -> None:
-        first_service, first_row = self.mapped[0]
-        self.assertEqual(first_service["name"], first_row["displayName"])
+    def test_presentation_can_override_a_public_display_name(self) -> None:
+        first_row = self.presentation["services"][0]
+        altered = copy.deepcopy(self.catalogue)
         raw_service = next(
             service
-            for service in self.catalogue["services"]
-            if service["id"] == first_service["id"]
+            for service in altered["services"]
+            if service["id"] == first_row["id"]
         )
-        self.assertNotEqual(raw_service["name"], first_service["name"])
+        raw_service["name"] = "Техническое название из DIKIDI"
+
+        remapped = mapped_services(altered, self.presentation)
+        first_service = next(
+            service
+            for service, row in remapped
+            if row["id"] == first_row["id"]
+        )
+
+        self.assertEqual(first_service["name"], first_row["displayName"])
 
     def test_price_tables_contain_each_service_once(self) -> None:
         expected_ids = [service["id"] for service, _row in self.mapped]
