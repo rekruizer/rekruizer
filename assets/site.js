@@ -541,6 +541,24 @@
       }
     }
 
+    function formatReviewAuthorName(value) {
+      var normalized = String(value || "").trim().replace(/\s+/g, " ");
+      if (!normalized) return "Клиент";
+
+      return normalized.split(" ").map(function (word) {
+        return word.split(/([-’'])/).map(function (part) {
+          if (!part || part === "-" || part === "’" || part === "'") return part;
+
+          var withoutInitialDot = part.length === 2 && part.charAt(1) === "."
+            ? part.charAt(0)
+            : part;
+
+          return withoutInitialDot.charAt(0).toLocaleUpperCase("ru-RU") +
+            withoutInitialDot.slice(1).toLocaleLowerCase("ru-RU");
+        }).join("");
+      }).join(" ");
+    }
+
     function createReviewCard(review) {
       var card = document.createElement("article");
       card.className = "review-card";
@@ -551,7 +569,7 @@
 
       var identity = document.createElement("div");
       var author = document.createElement("h3");
-      author.textContent = review.authorName || "Клиент";
+      author.textContent = formatReviewAuthorName(review.authorName);
 
       var stars = document.createElement("div");
       var rating = Math.max(0, Math.min(5, parseInt(review.rating, 10) || 0));
@@ -591,6 +609,9 @@
 
     function prepareReviewCards(root) {
       root.querySelectorAll(".review-card").forEach(function (card) {
+        var author = card.querySelector(".review-top h3");
+        if (author) author.textContent = formatReviewAuthorName(author.textContent);
+
         if (card.dataset.reviewPrepared === "true") return;
 
         var text = card.querySelector("p");
