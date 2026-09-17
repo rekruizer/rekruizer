@@ -220,6 +220,10 @@ class ServicesCatalogueTests(unittest.TestCase):
                 item.findtext("g:condition", namespaces=namespace),
                 "new",
             )
+            self.assertEqual(
+                item.findtext("g:custom_label_0", namespaces=namespace),
+                service["category"],
+            )
             image_name = re.sub(r"\.webp$", ".png", row["imageFile"])
             self.assertEqual(
                 item.findtext("g:image_link", namespaces=namespace),

@@ -119,6 +119,10 @@ def write_feed(rows: list[tuple[dict, dict]], subscription_ids: set[str]) -> Non
         add(item, google_tag("brand"), "Денис Пучков")
         add(item, google_tag("mpn"), row["offerId"])
         add(item, google_tag("product_type"), service["category"])
+        # Professional Services catalogues do not expose product_type as a
+        # product-set filter in every Commerce Manager interface. Custom label
+        # 0 is consistently available and keeps category-based sets dynamic.
+        add(item, google_tag("custom_label_0"), service["category"])
 
     indent(root, space="  ")
     ElementTree(root).write(OUTPUT_PATH, encoding="UTF-8", xml_declaration=True)
