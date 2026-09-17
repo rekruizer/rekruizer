@@ -5,6 +5,8 @@ __pycache__/
 *.py[cod]
 
 services-feed.xml
+meta-services-feed.xml
+assets/meta-services/
 _site/
 sitemap.xml
 AGENTS.md

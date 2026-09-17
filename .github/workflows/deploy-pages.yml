@@ -42,6 +42,14 @@ jobs:
       - name: Generate services-feed.xml
         run: python3 tools/generate-services-feed.py
 
+      - name: Install WebP tools for Meta catalogue images
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends --yes webp
+
+      - name: Generate meta-services-feed.xml and PNG images
+        run: python3 tools/generate-meta-services-feed.py
+
       - name: Verify generated services and feed
         run: python3 tools/test-services-catalog.py
 

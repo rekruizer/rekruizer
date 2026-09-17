@@ -194,6 +194,62 @@ class ServicesCatalogueTests(unittest.TestCase):
             }
             self.assertEqual(params["Количество сеансов"], str(row["sessions"]))
 
+    def test_meta_feed_matches_catalogue_and_uses_local_png_images(self) -> None:
+        namespace = {"g": "http://base.google.com/ns/1.0"}
+        root = ElementTree.parse(ROOT / "meta-services-feed.xml").getroot()
+        items = {
+            item.findtext("g:id", namespaces=namespace): item
+            for item in root.findall("./channel/item")
+        }
+        self.assertEqual(
+            set(items),
+            {service["id"] for service, _row in self.all_mapped},
+        )
+
+        for service, row in self.all_mapped:
+            item = items[service["id"]]
+            self.assertEqual(
+                item.findtext("g:title", namespaces=namespace),
+                service["name"],
+            )
+            self.assertEqual(
+                item.findtext("g:availability", namespaces=namespace),
+                "in stock",
+            )
+            self.assertEqual(
+                item.findtext("g:condition", namespaces=namespace),
+                "new",
+            )
+            image_name = re.sub(r"\.webp$", ".png", row["imageFile"])
+            self.assertEqual(
+                item.findtext("g:image_link", namespaces=namespace),
+                f"https://denisyuce.com/assets/meta-services/{image_name}",
+            )
+            image_path = ROOT / "assets" / "meta-services" / image_name
+            self.assertTrue(image_path.is_file())
+            self.assertEqual(image_path.read_bytes()[:8], b"\x89PNG\r\n\x1a\n")
+            self.assertLessEqual(image_path.stat().st_size, 8 * 1024 * 1024)
+
+            old_price = row.get("oldPriceRub")
+            expected_price = (
+                old_price
+                if isinstance(old_price, int) and old_price > service["priceRub"]
+                else service["priceRub"]
+            )
+            self.assertEqual(
+                item.findtext("g:price", namespaces=namespace),
+                f"{expected_price:.2f} RUB",
+            )
+            expected_sale_price = (
+                f"{service['priceRub']:.2f} RUB"
+                if expected_price != service["priceRub"]
+                else None
+            )
+            self.assertEqual(
+                item.findtext("g:sale_price", namespaces=namespace),
+                expected_sale_price,
+            )
+
     def test_all_public_images_are_local_versioned_webp(self) -> None:
         for service, row in self.all_mapped:
             image = public_image_path(service, row)
