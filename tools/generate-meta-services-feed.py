@@ -118,6 +118,10 @@ def write_feed(rows: list[tuple[dict, dict]], subscription_ids: set[str]) -> Non
         add(item, google_tag("image_link"), meta_image_url(row))
         add(item, google_tag("brand"), "Денис Пучков")
         add(item, google_tag("mpn"), row["offerId"])
+        # Professional Services catalogues expose this native field in
+        # Commerce Manager as "Service category".
+        add(item, google_tag("category"), service["category"])
+        # Keep the generic product classification for feed compatibility.
         add(item, google_tag("product_type"), service["category"])
         # Professional Services catalogues do not expose product_type as a
         # product-set filter in every Commerce Manager interface. Custom label
