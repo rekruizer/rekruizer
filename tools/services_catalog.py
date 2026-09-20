@@ -60,6 +60,7 @@ def validate_presentation(value: dict[str, Any]) -> dict[str, Any]:
         slug = row.get("slug")
         offer_id = row.get("offerId")
         image_file = row.get("imageFile")
+        site_image_file = row.get("siteImageFile")
         if not re.fullmatch(r"\d+", service_id):
             raise CatalogValidationError(f"Invalid DIKIDI id in presentation: {service_id!r}")
         if not isinstance(slug, str) or not re.fullmatch(r"[a-z0-9-]+", slug):
@@ -71,6 +72,12 @@ def validate_presentation(value: dict[str, Any]) -> dict[str, Any]:
         ):
             raise CatalogValidationError(
                 f"Invalid local WebP imageFile for service {service_id}"
+            )
+        if not isinstance(site_image_file, str) or not re.fullmatch(
+            r"[a-z0-9-]+\.webp", site_image_file
+        ):
+            raise CatalogValidationError(
+                f"Invalid local WebP siteImageFile for service {service_id}"
             )
         if service_id in ids or offer_id in offer_ids or image_file in image_files:
             raise CatalogValidationError(
@@ -265,6 +272,21 @@ def validate_catalog(
                 raise CatalogValidationError(
                     f"Invalid local WebP content: {path.relative_to(ROOT)}"
                 )
+        for row in presentation["services"]:
+            path = local_site_image_path(row)
+            if not path.is_file():
+                raise CatalogValidationError(
+                    f"Missing local site image: {path.relative_to(ROOT)}"
+                )
+            data = path.read_bytes()
+            if len(data) < 1024 or len(data) > 8 * 1024 * 1024:
+                raise CatalogValidationError(
+                    f"Invalid local site WebP size: {path.relative_to(ROOT)}"
+                )
+            if data[:4] != b"RIFF" or data[8:12] != b"WEBP":
+                raise CatalogValidationError(
+                    f"Invalid local site WebP content: {path.relative_to(ROOT)}"
+                )
     return value
 
 
@@ -333,12 +355,25 @@ def local_image_path(row: dict[str, Any]) -> Path:
     return SERVICE_IMAGES_DIR / str(row["imageFile"])
 
 
+def local_site_image_path(row: dict[str, Any]) -> Path:
+    return SERVICE_IMAGES_DIR / str(row["siteImageFile"])
+
+
 def public_image_path(
     service: dict[str, Any], row: dict[str, Any]
 ) -> str:
     if str(service["id"]) != str(row["id"]):
         raise CatalogValidationError("Service and local image mapping ids do not match")
     path = local_image_path(row)
+    return "/" + path.relative_to(ROOT).as_posix()
+
+
+def public_site_image_path(
+    service: dict[str, Any], row: dict[str, Any]
+) -> str:
+    if str(service["id"]) != str(row["id"]):
+        raise CatalogValidationError("Service and site image mapping ids do not match")
+    path = local_site_image_path(row)
     return "/" + path.relative_to(ROOT).as_posix()
 
 

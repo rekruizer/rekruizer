@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import copy
+import json
 import re
 import unittest
 from html import escape
@@ -17,6 +18,7 @@ from services_catalog import (
     mapped_services,
     mapped_subscriptions,
     public_image_path,
+    public_site_image_path,
     primary_service,
     services_by_slug,
     validate_catalog,
@@ -105,7 +107,8 @@ class ServicesCatalogueTests(unittest.TestCase):
             source = (ROOT / "services" / slug / "index.html").read_text(
                 encoding="utf-8"
             )
-            primary, _primary_row = primary_service(rows)
+            primary, primary_row = primary_service(rows)
+            expected_image = public_site_image_path(primary, primary_row)
             for service, _row in rows:
                 self.assertIn(f'data-service-id="{service["id"]}"', source)
                 self.assertIn(service["name"], source)
@@ -133,6 +136,35 @@ class ServicesCatalogueTests(unittest.TestCase):
                 "denisyuce-services-catalog.den100hero.workers.dev/service-images/",
                 source,
             )
+            hero = re.search(
+                r'<div class="service-photo">\s*<img\b[^>]*\bsrc="([^"]+)"',
+                source,
+            )
+            self.assertIsNotNone(hero)
+            self.assertEqual(hero.group(1), expected_image)
+
+            schema_match = re.search(
+                r'<script type="application/ld\+json" data-seo-schema>'
+                r'(.*?)</script>',
+                source,
+                re.S,
+            )
+            self.assertIsNotNone(schema_match)
+            schema = json.loads(schema_match.group(1))
+            self.assertEqual(schema["image"], "https://denisyuce.com" + expected_image)
+
+    def test_service_index_cards_use_site_images(self) -> None:
+        source = (ROOT / "services" / "index.html").read_text(encoding="utf-8")
+        for slug, rows in self.grouped.items():
+            primary, primary_row = primary_service(rows)
+            expected_image = public_site_image_path(primary, primary_row)
+            card = re.search(
+                rf'<a class="service-list-card" href="/services/{re.escape(slug)}/">'
+                rf'\s*<img\b[^>]*\bsrc="([^"]+)"',
+                source,
+            )
+            self.assertIsNotNone(card, slug)
+            self.assertEqual(card.group(1), expected_image, slug)
 
     def test_subscription_cards_use_catalogue_prices(self) -> None:
         source = (ROOT / "index.html").read_text(encoding="utf-8")
@@ -267,6 +299,24 @@ class ServicesCatalogueTests(unittest.TestCase):
             )
             self.assertNotIn("/catalog/", image)
 
+        for service, row in self.mapped:
+            site_image = public_site_image_path(service, row)
+            self.assertEqual(
+                site_image,
+                f"/assets/services/{row['siteImageFile']}",
+            )
+            self.assertNotRegex(site_image, r"-(?:30|55|90)\.webp$")
+
+    def test_every_service_webp_has_a_png_source(self) -> None:
+        source_root = ROOT / "services" / "source-images"
+        source_stems = {
+            path.stem for path in source_root.glob("*/*.png") if path.is_file()
+        }
+        public_stems = {
+            path.stem for path in (ROOT / "assets" / "services").glob("*.webp")
+        }
+        self.assertEqual(source_stems, public_stems)
+
     def test_unsafe_or_missing_local_image_fails_closed(self) -> None:
         unsafe = copy.deepcopy(self.presentation)
         unsafe["services"][0]["imageFile"] = "../outside.webp"
@@ -281,6 +331,11 @@ class ServicesCatalogueTests(unittest.TestCase):
                 validate_presentation(missing),
                 require_local_images=True,
             )
+
+        unsafe_site = copy.deepcopy(self.presentation)
+        unsafe_site["services"][0]["siteImageFile"] = "../outside.webp"
+        with self.assertRaisesRegex(CatalogValidationError, "siteImageFile"):
+            validate_presentation(unsafe_site)
 
 
 if __name__ == "__main__":

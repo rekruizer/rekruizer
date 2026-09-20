@@ -7,6 +7,7 @@ matches the URLs declared in HTML and avoids manual maintenance.
 from __future__ import annotations
 
 import re
+import subprocess
 from datetime import datetime
 from pathlib import Path
 from xml.etree.ElementTree import Element, ElementTree, SubElement, indent, register_namespace
@@ -78,21 +79,88 @@ def canonical_for_page(path: Path) -> str | None:
     return url if url.endswith("/") else url + "/"
 
 
+def git_lastmod(path: Path, today: str) -> str | None:
+    """Use today for working-tree changes, otherwise the path's last Git change."""
+    relative = path.relative_to(ROOT).as_posix()
+    try:
+        changed = subprocess.run(
+            ["git", "diff", "--quiet", "HEAD", "--", relative],
+            cwd=ROOT,
+            check=False,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        if changed.returncode == 1:
+            return today
+        if changed.returncode != 0:
+            return None
+
+        result = subprocess.run(
+            ["git", "log", "-1", "--format=%cs", "--", relative],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except (OSError, subprocess.CalledProcessError):
+        return None
+
+    value = result.stdout.strip()
+    return value if re.fullmatch(r"\d{4}-\d{2}-\d{2}", value) else None
+
+
+def page_dependencies(path: Path) -> list[Path]:
+    relative = path.relative_to(ROOT).as_posix()
+    shared_catalogue = [
+        ROOT / "assets" / "data" / "services-catalog.json",
+        ROOT / "assets" / "data" / "services-presentation.json",
+    ]
+    if relative == "index.html":
+        return shared_catalogue + [ROOT / "assets" / "data" / "reviews.json"]
+    if relative == "services/index.html" or (
+        relative.startswith("services/") and relative.endswith("/index.html")
+    ):
+        return shared_catalogue + sorted(
+            (ROOT / "services" / "source-images" / "site").glob("*.png")
+        )
+    return []
+
+
+def lastmod_for_page(path: Path, today: str) -> str | None:
+    """Return the newest real change among a page and its visible dependencies."""
+    dates = [
+        value
+        for candidate in [path, *page_dependencies(path)]
+        if (value := git_lastmod(candidate, today)) is not None
+    ]
+    return max(dates) if dates else None
+
+
 def build_sitemap() -> None:
-    urls = sorted({url for page in iter_html_pages() if (url := canonical_for_page(page))}, key=sort_key)
-    lastmod = datetime.now(MOSCOW_TZ).strftime("%Y-%m-%d")
+    today = datetime.now(MOSCOW_TZ).strftime("%Y-%m-%d")
+    urls: dict[str, str | None] = {}
+    for page in iter_html_pages():
+        url = canonical_for_page(page)
+        if not url:
+            continue
+        lastmod = lastmod_for_page(page, today)
+        previous = urls.get(url)
+        if previous is None or (lastmod is not None and lastmod > previous):
+            urls[url] = lastmod
 
     register_namespace("", "http://www.sitemaps.org/schemas/sitemap/0.9")
     root = Element("urlset", {"xmlns": "http://www.sitemaps.org/schemas/sitemap/0.9"})
-    for url in urls:
+    for url in sorted(urls, key=sort_key):
         item = SubElement(root, "url")
         SubElement(item, "loc").text = url
-        SubElement(item, "lastmod").text = lastmod
+        if urls[url]:
+            SubElement(item, "lastmod").text = urls[url]
         SubElement(item, "priority").text = priority_for_url(url)
 
     indent(root, space="  ")
     ElementTree(root).write(ROOT / "sitemap.xml", encoding="UTF-8", xml_declaration=True)
-    print(f"Generated sitemap.xml with {len(urls)} URLs")
+    dated = sum(lastmod is not None for lastmod in urls.values())
+    print(f"Generated sitemap.xml with {len(urls)} URLs ({dated} with lastmod)")
 
 
 if __name__ == "__main__":

@@ -16,6 +16,7 @@
       "offerId": "first-visit-90",
       "displayName": "Первый визит 90 мин — со скидкой!",
       "imageFile": "sale.webp",
+      "siteImageFile": "sale.webp",
       "oldPriceRub": 3990,
       "primaryForPage": true
     },
@@ -24,6 +25,7 @@
       "slug": "back-neck",
       "offerId": "back-neck-30",
       "imageFile": "back-neck-30.webp",
+      "siteImageFile": "back.webp",
       "primaryForPage": true
     },
     {
@@ -31,6 +33,7 @@
       "slug": "face",
       "offerId": "face-30",
       "imageFile": "face-30.webp",
+      "siteImageFile": "face.webp",
       "primaryForPage": true
     },
     {
@@ -38,52 +41,60 @@
       "slug": "classic",
       "offerId": "classic-55",
       "imageFile": "classic-55.webp",
+      "siteImageFile": "classic.webp",
       "primaryForPage": true
     },
     {
       "id": "22083841",
       "slug": "classic",
       "offerId": "classic-90",
-      "imageFile": "classic-90.webp"
+      "imageFile": "classic-90.webp",
+      "siteImageFile": "classic.webp"
     },
     {
       "id": "22446970",
       "slug": "lymph",
       "offerId": "lymph-55",
       "imageFile": "lymph-55.webp",
+      "siteImageFile": "lymph.webp",
       "primaryForPage": true
     },
     {
       "id": "22446974",
       "slug": "lymph",
       "offerId": "lymph-90",
-      "imageFile": "lymph-90.webp"
+      "imageFile": "lymph-90.webp",
+      "siteImageFile": "lymph.webp"
     },
     {
       "id": "22446669",
       "slug": "relax",
       "offerId": "relax-55",
       "imageFile": "relax-55.webp",
+      "siteImageFile": "relax.webp",
       "primaryForPage": true
     },
     {
       "id": "22446697",
       "slug": "relax",
       "offerId": "relax-90",
-      "imageFile": "relax-90.webp"
+      "imageFile": "relax-90.webp",
+      "siteImageFile": "relax.webp"
     },
     {
       "id": "22461114",
       "slug": "sport",
       "offerId": "sport-55",
       "imageFile": "sport-55.webp",
+      "siteImageFile": "sport.webp",
       "primaryForPage": true
     },
     {
       "id": "22461132",
       "slug": "sport",
       "offerId": "sport-90",
-      "imageFile": "sport-90.webp"
+      "imageFile": "sport-90.webp",
+      "siteImageFile": "sport.webp"
     }
   ],
   "subscriptions": [

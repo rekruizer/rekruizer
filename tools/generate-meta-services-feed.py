@@ -24,6 +24,7 @@ IMAGE_OUTPUT_DIR = ROOT / "assets" / "meta-services"
 GOOGLE_NAMESPACE = "http://base.google.com/ns/1.0"
 META_IMAGE_MAX_BYTES = 8 * 1024 * 1024
 META_IMAGE_MIN_SIDE = 500
+META_IMAGE_SIDE = 1200
 
 
 def google_tag(name: str) -> str:
@@ -45,9 +46,14 @@ def png_dimensions(path: Path) -> tuple[int, int]:
 
 def generate_png_images(rows: list[tuple[dict, dict]]) -> None:
     decoder = shutil.which("dwebp")
+    optimizer = shutil.which("pngquant")
     if not decoder:
         raise RuntimeError(
             "dwebp is required to generate Meta PNG images (install the WebP tools package)"
+        )
+    if not optimizer:
+        raise RuntimeError(
+            "pngquant is required to optimize Meta PNG images"
         )
 
     IMAGE_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -55,13 +61,40 @@ def generate_png_images(rows: list[tuple[dict, dict]]) -> None:
     for service, row in rows:
         source = local_image_path(row)
         destination = IMAGE_OUTPUT_DIR / (Path(row["imageFile"]).stem + ".png")
+        raw_destination = destination.with_suffix(".raw.png")
         expected.add(destination)
         subprocess.run(
-            [decoder, str(source), "-o", str(destination)],
+            [
+                decoder,
+                str(source),
+                "-resize",
+                str(META_IMAGE_SIDE),
+                str(META_IMAGE_SIDE),
+                "-o",
+                str(raw_destination),
+            ],
             check=True,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.PIPE,
         )
+        try:
+            subprocess.run(
+                [
+                    optimizer,
+                    "--force",
+                    "--strip",
+                    "--quality=70-90",
+                    "--speed=1",
+                    "--output",
+                    str(destination),
+                    str(raw_destination),
+                ],
+                check=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.PIPE,
+            )
+        finally:
+            raw_destination.unlink(missing_ok=True)
         width, height = png_dimensions(destination)
         if min(width, height) < META_IMAGE_MIN_SIDE:
             raise RuntimeError(

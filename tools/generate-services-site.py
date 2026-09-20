@@ -17,7 +17,7 @@ from services_catalog import (
     mapped_services,
     mapped_subscriptions,
     primary_service,
-    public_image_path,
+    public_site_image_path,
     services_by_slug,
 )
 
@@ -293,7 +293,7 @@ def update_schema(
     if len(rows) == 1:
         schema["name"] = primary["name"]
     schema["description"] = primary["description"]
-    schema["image"] = SITE + public_image_path(primary, primary_row)
+    schema["image"] = SITE + public_site_image_path(primary, primary_row)
     schema["offers"] = [
         {
             "@type": "Offer",
@@ -320,7 +320,7 @@ def update_detail_page(
         raise RuntimeError(f"Missing page /services/{slug}/")
     source = path.read_text(encoding="utf-8")
     primary, primary_row = primary_service(rows)
-    image_path = public_image_path(primary, primary_row)
+    image_path = public_site_image_path(primary, primary_row)
 
     source = replace_once(
         source,
@@ -396,7 +396,7 @@ def update_service_cards(
     first_slug = next(iter(grouped))
     for slug, rows in grouped.items():
         primary, primary_row = primary_service(rows)
-        image = public_image_path(primary, primary_row)
+        image = public_site_image_path(primary, primary_row)
         list_pattern = (
             rf'(<a class="service-list-card" '
             rf'href="/services/{re.escape(slug)}/">\s*)'
