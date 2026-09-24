@@ -446,6 +446,9 @@ def update_service_cards(
             flags=re.S,
         )
 
+    # Removed DIKIDI services must not remain as stale authored cards.
+    source = remove_inactive_service_cards(source, set(grouped))
+
     # Card copy remains intentionally authored in HTML, while its position is
     # synchronized with DIKIDI. Reorder only cards that already exist on the
     # page; related-service selections stay editorial and are merely put in the
@@ -454,6 +457,20 @@ def update_service_cards(
     source = reorder_service_cards(source, "service-list-card", ordered_slugs)
     source = reorder_service_cards(source, "other-service-card", ordered_slugs)
     path.write_text(source, encoding="utf-8")
+
+
+def remove_inactive_service_cards(source: str, active_slugs: set[str]) -> str:
+    pattern = re.compile(
+        r'[ \t]*<a class="(?:service-list-card|other-service-card)" '
+        r'href="/services/(?P<slug>[a-z0-9-]+)/">.*?</a>\s*',
+        re.S,
+    )
+    return pattern.sub(
+        lambda match: match.group(0)
+        if match.group("slug") in active_slugs
+        else "",
+        source,
+    )
 
 
 def reorder_service_cards(
@@ -484,6 +501,13 @@ def reorder_service_cards(
 def main() -> None:
     catalogue, presentation = load_catalog(require_local_images=True)
     grouped = services_by_slug(catalogue, presentation)
+
+    configured_slugs = {row["slug"] for row in presentation["services"]}
+    inactive_slugs = configured_slugs - set(grouped)
+    for slug in inactive_slugs:
+        stale_page = ROOT / "services" / slug / "index.html"
+        if stale_page.exists():
+            stale_page.unlink()
 
     for path in PRICE_PAGES:
         update_price_page(path, catalogue, presentation)

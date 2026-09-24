@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import copy
+import importlib.util
 import json
 import re
 import unittest
@@ -24,6 +25,14 @@ from services_catalog import (
     validate_catalog,
     validate_presentation,
 )
+
+
+GENERATOR_SPEC = importlib.util.spec_from_file_location(
+    "generate_services_site", ROOT / "tools" / "generate-services-site.py"
+)
+assert GENERATOR_SPEC and GENERATOR_SPEC.loader
+GENERATOR = importlib.util.module_from_spec(GENERATOR_SPEC)
+GENERATOR_SPEC.loader.exec_module(GENERATOR)
 
 
 class ServicesCatalogueTests(unittest.TestCase):
@@ -134,6 +143,16 @@ class ServicesCatalogueTests(unittest.TestCase):
                 detail,
             )
             self.assertEqual(related, sorted(related, key=rank.__getitem__), slug)
+
+    def test_inactive_service_cards_are_removed(self) -> None:
+        source = """
+        <a class="service-list-card" href="/services/active/"><div>Active</div></a>
+        <a class="service-list-card" href="/services/removed/"><div>Removed</div></a>
+        <a class="other-service-card" href="/services/removed/"><div>Removed</div></a>
+        """
+        cleaned = GENERATOR.remove_inactive_service_cards(source, {"active"})
+        self.assertIn('/services/active/', cleaned)
+        self.assertNotIn('/services/removed/', cleaned)
 
     def test_detail_pages_use_catalogue_content(self) -> None:
         for slug, rows in self.grouped.items():
