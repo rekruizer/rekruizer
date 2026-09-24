@@ -177,11 +177,15 @@ def validate_catalog(
         service_id = str(service.get("id", ""))
         if not re.fullmatch(r"\d+", service_id) or service_id in by_id:
             raise CatalogValidationError(f"Invalid or duplicate service id: {service_id!r}")
-        for field in ("category", "name", "description", "bookingUrl"):
+        for field in ("category", "name", "bookingUrl"):
             if not isinstance(service.get(field), str) or not service[field].strip():
                 raise CatalogValidationError(
                     f"Service {service_id} has an invalid {field}"
                 )
+        if not isinstance(service.get("description"), str):
+            raise CatalogValidationError(
+                f"Service {service_id} has an invalid description"
+            )
         if not service["bookingUrl"].startswith("https://"):
             raise CatalogValidationError(f"Service {service_id} has an unsafe bookingUrl")
         duration = service.get("durationMinutes")
@@ -192,41 +196,37 @@ def validate_catalog(
             raise CatalogValidationError(f"Service {service_id} has an invalid price")
         if not isinstance(service.get("published"), bool):
             raise CatalogValidationError(f"Service {service_id} has no published flag")
+        # Older snapshots include an image copied from DIKIDI. It is accepted
+        # for backwards compatibility but never used by the website. The
+        # checked-in PNG source library is the only image source of truth.
         image = service.get("image")
-        if not isinstance(image, dict):
-            raise CatalogValidationError(f"Service {service_id} has no image metadata")
-        image_hash = image.get("sha256")
-        content_type = image.get("contentType")
-        byte_length = image.get("byteLength")
-        image_url = image.get("url")
-        if not isinstance(image_hash, str) or not re.fullmatch(r"[a-f0-9]{64}", image_hash):
-            raise CatalogValidationError(f"Service {service_id} has an invalid image hash")
-        if content_type not in CONTENT_TYPE_EXTENSIONS:
-            raise CatalogValidationError(f"Service {service_id} has an unsupported image type")
-        if not isinstance(byte_length, int) or byte_length < 1024 or byte_length > 8 * 1024 * 1024:
-            raise CatalogValidationError(f"Service {service_id} has an invalid image size")
-        if not isinstance(image_url, str) or not image_url.startswith("https://"):
-            raise CatalogValidationError(f"Service {service_id} has an invalid image URL")
+        if image is not None and not isinstance(image, dict):
+            raise CatalogValidationError(f"Service {service_id} has invalid legacy image metadata")
         by_id[service_id] = service
 
     mapped_ids = {
         str(row["id"])
         for row in presentation["services"] + presentation["subscriptions"]
     }
-    published_ids = {
-        service_id for service_id, service in by_id.items() if service["published"]
+    # New DIKIDI services are allowed. Until an image is selected in the site
+    # presentation they remain visible as an admin task instead of blocking an
+    # otherwise healthy catalogue deployment. Stale presentation rows are also
+    # allowed so a removed service can disappear without losing its settings.
+    available_mapped_ids = mapped_ids & set(by_id)
+    unpublished_mapped_ids = {
+        service_id
+        for service_id in available_mapped_ids
+        if not by_id[service_id]["published"]
     }
-    if published_ids != mapped_ids:
-        missing = sorted(mapped_ids - published_ids)
-        unexpected = sorted(published_ids - mapped_ids)
-        details = []
-        if missing:
-            details.append(f"missing published services: {', '.join(missing)}")
-        if unexpected:
-            details.append(f"unmapped published services: {', '.join(unexpected)}")
-        raise CatalogValidationError("; ".join(details))
+    if unpublished_mapped_ids:
+        raise CatalogValidationError(
+            "mapped services are not published: "
+            + ", ".join(sorted(unpublished_mapped_ids))
+        )
 
-    catalogue_categories = {by_id[service_id]["category"] for service_id in mapped_ids}
+    catalogue_categories = {
+        by_id[service_id]["category"] for service_id in available_mapped_ids
+    }
     missing_categories = catalogue_categories - set(presentation["categoryIds"])
     if missing_categories:
         raise CatalogValidationError(
@@ -234,8 +234,10 @@ def validate_catalog(
         )
 
     for row in presentation["subscriptions"]:
+        if str(row["id"]) not in by_id:
+            continue
         subscription = by_id[str(row["id"])]
-        reference = by_id[str(row["referenceServiceId"])]
+        reference = by_id.get(str(row["referenceServiceId"]))
         if not (
             subscription["category"].casefold().startswith("абонемент")
             or subscription["name"].casefold().startswith("абонемент")
@@ -243,6 +245,8 @@ def validate_catalog(
             raise CatalogValidationError(
                 f"Service {subscription['id']} is not a DIKIDI subscription"
             )
+        if reference is None:
+            continue
         if subscription["durationMinutes"] != reference["durationMinutes"]:
             raise CatalogValidationError(
                 f"Subscription {subscription['id']} duration does not match "
@@ -310,10 +314,20 @@ def mapped_services(
     by_id = {str(service["id"]): service for service in catalogue["services"]}
     result: list[tuple[dict[str, Any], dict[str, Any]]] = []
     for row in presentation["services"]:
-        service = by_id[str(row["id"])]
+        service = by_id.get(str(row["id"]))
+        if service is None:
+            continue
         display_name = row.get("displayName")
         if isinstance(display_name, str):
             service = {**service, "name": display_name}
+        if not service.get("description", "").strip():
+            service = {
+                **service,
+                "description": (
+                    f"{service['name']}. Продолжительность — "
+                    f"{service['durationMinutes']} минут."
+                ),
+            }
         result.append((service, row))
     return result
 
@@ -322,10 +336,21 @@ def mapped_subscriptions(
     catalogue: dict[str, Any], presentation: dict[str, Any]
 ) -> list[tuple[dict[str, Any], dict[str, Any]]]:
     by_id = {str(service["id"]): service for service in catalogue["services"]}
-    return [
-        (by_id[str(row["id"])], row)
-        for row in presentation["subscriptions"]
-    ]
+    result: list[tuple[dict[str, Any], dict[str, Any]]] = []
+    for row in presentation["subscriptions"]:
+        service = by_id.get(str(row["id"]))
+        if service is None:
+            continue
+        if not service.get("description", "").strip():
+            service = {
+                **service,
+                "description": (
+                    f"{service['name']}. Продолжительность — "
+                    f"{service['durationMinutes']} минут."
+                ),
+            }
+        result.append((service, row))
+    return result
 
 
 def mapped_catalogue_items(

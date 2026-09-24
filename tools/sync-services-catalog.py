@@ -95,8 +95,9 @@ def existing_snapshot_matches(
     if not isinstance(current, dict):
         return False
     expected_ids = {
-        str(row["id"])
-        for row in presentation["services"] + presentation["subscriptions"]
+        str(service["id"])
+        for service in remote.get("services", [])
+        if isinstance(service, dict) and service.get("published") is True
     }
     current_services = current.get("services")
     if not isinstance(current_services, list):
@@ -124,15 +125,7 @@ def install_catalogue(value: dict[str, Any]) -> bool:
         return False
 
     presentation_rows = presentation["services"] + presentation["subscriptions"]
-    published_ids = {str(row["id"]) for row in presentation_rows}
-    public_value = {
-        **value,
-        "services": [
-            service
-            for service in value["services"]
-            if str(service["id"]) in published_ids
-        ],
-    }
+    public_value = value
     validate_catalog(public_value, presentation, require_local_images=True)
 
     with tempfile.TemporaryDirectory(prefix="denisyuce-services-") as temp_name:
@@ -148,7 +141,8 @@ def install_catalogue(value: dict[str, Any]) -> bool:
     validate_catalog(public_value, presentation, require_local_images=True)
     print(
         f"Installed services catalogue {value['contentHash']}: "
-        f"{len(presentation_rows)} published services and subscriptions, "
+        f"{len(public_value['services'])} DIKIDI services, "
+        f"{len(presentation_rows)} configured for the website, "
         f"{len(presentation_rows)} local WebP images"
     )
     return True

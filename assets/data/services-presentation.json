@@ -7,7 +7,8 @@
     "Лимфодренажный": "4",
     "Расслабляющий": "5",
     "Спортивный": "6",
-    "Абонементы": "7"
+    "Абонементы": "7",
+    "Проминающий": "8"
   },
   "services": [
     {
@@ -95,6 +96,21 @@
       "offerId": "sport-90",
       "imageFile": "sport-90.webp",
       "siteImageFile": "sport.webp"
+    },
+    {
+      "id": "23447516",
+      "slug": "deep",
+      "offerId": "deep-55",
+      "imageFile": "deep-55.webp",
+      "siteImageFile": "deep.webp",
+      "primaryForPage": true
+    },
+    {
+      "id": "23447522",
+      "slug": "deep",
+      "offerId": "deep-90",
+      "imageFile": "deep-90.webp",
+      "siteImageFile": "deep.webp"
     }
   ],
   "subscriptions": [

@@ -36,27 +36,26 @@ class ServicesCatalogueTests(unittest.TestCase):
         cls.grouped = services_by_slug(cls.catalogue, cls.presentation)
 
     def test_expected_public_services_are_mapped_once(self) -> None:
+        catalogue_ids = {service["id"] for service in self.catalogue["services"]}
+        configured_ids = {
+            row["id"]
+            for row in self.presentation["services"]
+            + self.presentation["subscriptions"]
+        }
         self.assertEqual(
-            {service["id"] for service in self.catalogue["services"]},
-            {
-                row["id"]
-                for row in self.presentation["services"]
-                + self.presentation["subscriptions"]
-            },
+            {service["id"] for service, _row in self.all_mapped},
+            configured_ids & catalogue_ids,
         )
-        self.assertEqual(len(self.mapped), 11)
-        self.assertEqual(len(self.subscriptions), 4)
-        self.assertEqual(len(self.all_mapped), 15)
         self.assertEqual(
             {service["id"] for service, _row in self.mapped},
-            {row["id"] for row in self.presentation["services"]},
+            {row["id"] for row in self.presentation["services"]} & catalogue_ids,
         )
         self.assertTrue(all(service["published"] for service, _row in self.mapped))
         self.assertTrue(
             all(service["published"] for service, _row in self.subscriptions)
         )
 
-    def test_unmapped_new_service_fails_closed(self) -> None:
+    def test_unmapped_new_service_does_not_block_catalogue(self) -> None:
         altered = copy.deepcopy(self.catalogue)
         new_service = copy.deepcopy(altered["services"][0])
         new_service.update(
@@ -67,11 +66,7 @@ class ServicesCatalogueTests(unittest.TestCase):
             }
         )
         altered["services"].append(new_service)
-        with self.assertRaisesRegex(
-            CatalogValidationError,
-            "unmapped published services",
-        ):
-            validate_catalog(altered, self.presentation)
+        validate_catalog(altered, self.presentation)
 
     def test_presentation_can_override_a_public_display_name(self) -> None:
         first_row = self.presentation["services"][0]
