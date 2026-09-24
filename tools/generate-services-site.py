@@ -41,6 +41,18 @@ def description_html(value: str) -> str:
     )
 
 
+def seo_description(value: str, maximum: int = 160) -> str:
+    text = re.sub(r"\s+", " ", value).strip()
+    if len(text) <= maximum:
+        return text
+    shortened = text[: maximum - 1].rsplit(" ", 1)[0].rstrip(" ,.;:—-")
+    return shortened + "…"
+
+
+def page_content(presentation: dict[str, Any], slug: str) -> dict[str, str]:
+    return presentation["pages"][slug]
+
+
 def replace_once(
     source: str,
     pattern: str,
@@ -263,11 +275,8 @@ def render_options(rows: list[tuple[dict[str, Any], dict[str, Any]]]) -> str:
     return "\n".join(output)
 
 
-def render_descriptions(
-    rows: list[tuple[dict[str, Any], dict[str, Any]]]
-) -> str:
-    primary, _primary_row = primary_service(rows)
-    paragraphs = description_html(primary["description"]).replace(
+def render_descriptions(description: str) -> str:
+    paragraphs = description_html(description).replace(
         "</p><p>", "</p>\n        <p>"
     )
     return f"        {paragraphs}"
@@ -277,6 +286,7 @@ def update_schema(
     source: str,
     slug: str,
     rows: list[tuple[dict[str, Any], dict[str, Any]]],
+    page: dict[str, str],
 ) -> str:
     match = re.search(
         r'(<script type="application/ld\+json" data-seo-schema>)(.*?)(</script>)',
@@ -290,9 +300,8 @@ def update_schema(
     except json.JSONDecodeError as error:
         raise RuntimeError(f"Invalid service JSON-LD in /services/{slug}/: {error}") from error
     primary, primary_row = primary_service(rows)
-    if len(rows) == 1:
-        schema["name"] = primary["name"]
-    schema["description"] = primary["description"]
+    schema["name"] = page["title"]
+    schema["description"] = page["description"]
     schema["image"] = SITE + public_site_image_path(primary, primary_row)
     schema["offers"] = [
         {
@@ -311,16 +320,44 @@ def update_schema(
     return source[: match.start(2)] + encoded + source[match.end(2) :]
 
 
+def update_breadcrumb_schema(source: str, title: str) -> str:
+    match = re.search(
+        r'(<script type="application/ld\+json" data-breadcrumb-schema>)(.*?)(</script>)',
+        source,
+        re.S,
+    )
+    if not match:
+        raise RuntimeError("Missing service breadcrumb JSON-LD")
+    schema = json.loads(match.group(2))
+    items = schema.get("itemListElement", [])
+    if items:
+        items[-1]["name"] = title
+    encoded = json.dumps(schema, ensure_ascii=False, separators=(",", ":")).replace(
+        "</", "<\\/"
+    )
+    return source[: match.start(2)] + encoded + source[match.end(2) :]
+
+
 def update_detail_page(
     slug: str,
     rows: list[tuple[dict[str, Any], dict[str, Any]]],
+    presentation: dict[str, Any],
 ) -> None:
     path = ROOT / "services" / slug / "index.html"
     if not path.is_file():
         raise RuntimeError(f"Missing page /services/{slug}/")
     source = path.read_text(encoding="utf-8")
     primary, primary_row = primary_service(rows)
+    page = page_content(presentation, slug)
     image_path = public_site_image_path(primary, primary_row)
+
+    source = replace_once(
+        source,
+        r"(<title>).*?(</title>)",
+        rf"\g<1>{html_text(page['title'])} — цена и запись\g<2>",
+        label=f"document title in /services/{slug}/",
+        flags=re.S,
+    )
 
     source = replace_once(
         source,
@@ -336,19 +373,26 @@ def update_detail_page(
     )
     source = replace_once(
         source,
+        r'(<nav class="breadcrumbs".*?<a href="/services/">Услуги</a>'
+        r'<span>/</span><span>).*?(</span>)',
+        rf"\g<1>{html_text(page['title'])}\g<2>",
+        label=f"breadcrumb title in /services/{slug}/",
+        flags=re.S,
+    )
+    source = replace_once(
+        source,
         r'(<div class="service-kicker">).*?(</div>)',
         rf"\g<1>// {html_text(primary['category'])}\g<2>",
         label=f"category kicker in /services/{slug}/",
         flags=re.S,
     )
-    if len(rows) == 1:
-        source = replace_once(
-            source,
-            r'(<div class="service-booking-card">.*?<h1>).*?(</h1>)',
-            rf"\g<1>{html_text(primary['name'])}\g<2>",
-            label=f"service title in /services/{slug}/",
-            flags=re.S,
-        )
+    source = replace_once(
+        source,
+        r'(<div class="service-booking-card">.*?<h1>).*?(</h1>)',
+        rf"\g<1>{html_text(page['title'])}\g<2>",
+        label=f"service title in /services/{slug}/",
+        flags=re.S,
+    )
     source = replace_once(
         source,
         r'(<div class="service-booking-card">.*?</h1>)'
@@ -373,7 +417,7 @@ def update_detail_page(
         r'(<section class="service-info">\s*<h2>Описание</h2>)\s*.*?\s*'
         r'(<div class="service-accordion">)',
         lambda match: (
-            f"{match.group(1)}\n{render_descriptions(rows)}\n\n        {match.group(2)}"
+            f"{match.group(1)}\n{render_descriptions(page['description'])}\n\n        {match.group(2)}"
         ),
         label=f"catalogue descriptions in /services/{slug}/",
         flags=re.S,
@@ -381,16 +425,47 @@ def update_detail_page(
     source = replace_once(
         source,
         r'(<meta name="description" content=")[^"]*(" />)',
-        rf'\g<1>{html_attr(primary["description"])}\g<2>',
+        rf'\g<1>{html_attr(seo_description(page["description"]))}\g<2>',
         label=f"meta description in /services/{slug}/",
     )
-    source = update_schema(source, slug, rows)
+    short_description = html_attr(seo_description(page["description"]))
+    if 'property="og:description"' in source:
+        source = re.sub(
+            r'(<meta property="og:description" content=")[^"]*(" />)',
+            rf"\g<1>{short_description}\g<2>",
+            source,
+            count=1,
+        )
+    else:
+        source = source.replace(
+            '  <meta property="og:site_name" content="Денис Пучков" />',
+            '  <meta property="og:site_name" content="Денис Пучков" />\n'
+            f'  <meta property="og:description" content="{short_description}" />',
+            1,
+        )
+    if 'name="twitter:description"' in source:
+        source = re.sub(
+            r'(<meta name="twitter:description" content=")[^"]*(" />)',
+            rf"\g<1>{short_description}\g<2>",
+            source,
+            count=1,
+        )
+    else:
+        source = source.replace(
+            '  <meta name="twitter:card" content="summary_large_image" />',
+            '  <meta name="twitter:card" content="summary_large_image" />\n'
+            f'  <meta name="twitter:description" content="{short_description}" />',
+            1,
+        )
+    source = update_schema(source, slug, rows, page)
+    source = update_breadcrumb_schema(source, page["title"])
     path.write_text(source, encoding="utf-8")
 
 
 def update_service_cards(
     path: Path,
     grouped: dict[str, list[tuple[dict[str, Any], dict[str, Any]]]],
+    presentation: dict[str, Any],
 ) -> None:
     source = path.read_text(encoding="utf-8")
     first_slug = next(iter(grouped))
@@ -435,12 +510,36 @@ def update_service_cards(
     # On the service index these labels are the visible DIKIDI categories.
     for slug, rows in grouped.items():
         primary, _primary_row = primary_service(rows)
+        page = page_content(presentation, slug)
         source = re.sub(
             (
                 rf'(<a class="service-list-card" href="/services/{re.escape(slug)}/">'
                 rf'.*?<div><span>).*?(</span>)'
             ),
             rf"\g<1>{html_text(primary['category'])}\g<2>",
+            source,
+            count=1,
+            flags=re.S,
+        )
+        source = re.sub(
+            (
+                rf'(<a class="service-list-card" href="/services/{re.escape(slug)}/">'
+                rf'.*?<h3>).*?(</h3><p>).*?(</p>)'
+            ),
+            (
+                rf"\g<1>{html_text(page['cardTitle'])}\g<2>"
+                rf"{html_text(page['cardDescription'])}\g<3>"
+            ),
+            source,
+            count=1,
+            flags=re.S,
+        )
+        source = re.sub(
+            (
+                rf'(<a class="other-service-card" href="/services/{re.escape(slug)}/">'
+                rf'.*?<span class="text-bold">).*?(</span>)'
+            ),
+            rf"\g<1>{html_text(page['cardTitle'])}\g<2>",
             source,
             count=1,
             flags=re.S,
@@ -513,13 +612,13 @@ def main() -> None:
         update_price_page(path, catalogue, presentation)
     update_subscription_section(ROOT / "index.html", catalogue, presentation)
     for slug, rows in grouped.items():
-        update_detail_page(slug, rows)
+        update_detail_page(slug, rows, presentation)
 
     card_pages = [ROOT / "services" / "index.html"] + [
         ROOT / "services" / slug / "index.html" for slug in grouped
     ]
     for path in card_pages:
-        update_service_cards(path, grouped)
+        update_service_cards(path, grouped, presentation)
 
     print(
         f"Rendered {len(presentation['services'])} services into "

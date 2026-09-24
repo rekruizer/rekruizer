@@ -96,6 +96,21 @@ class ServicesCatalogueTests(unittest.TestCase):
 
         self.assertEqual(first_service["name"], first_row["displayName"])
 
+    def test_missing_dikidi_description_uses_page_copy_for_feeds(self) -> None:
+        service, row = next(
+            (service, row)
+            for service, row in self.mapped
+            if row["slug"] == "deep" and service["durationMinutes"] == 55
+        )
+        page = self.presentation["pages"]["deep"]
+        self.assertTrue(service["description"].startswith(page["description"]))
+        self.assertIn("Продолжительность — 55 минут.", service["description"])
+
+    def test_every_service_page_has_managed_content(self) -> None:
+        self.assertTrue(
+            set(self.grouped).issubset(self.presentation["pages"])
+        )
+
     def test_regular_services_follow_dikidi_catalogue_order(self) -> None:
         expected_ids = [
             service["id"]
@@ -160,6 +175,7 @@ class ServicesCatalogueTests(unittest.TestCase):
                 encoding="utf-8"
             )
             primary, primary_row = primary_service(rows)
+            page = self.presentation["pages"][slug]
             expected_image = public_site_image_path(primary, primary_row)
             for service, _row in rows:
                 self.assertIn(f'data-service-id="{service["id"]}"', source)
@@ -185,10 +201,11 @@ class ServicesCatalogueTests(unittest.TestCase):
             )
             expected_paragraphs = [
                 escape(paragraph, quote=False)
-                for paragraph in primary["description"].split("\n\n")
+                for paragraph in page["description"].split("\n\n")
                 if paragraph.strip()
             ]
             self.assertEqual(visible_paragraphs, expected_paragraphs)
+            self.assertIn(f"<h1>{page['title']}</h1>", source)
             if len(rows) > 1:
                 self.assertEqual(primary["durationMinutes"], 55)
             self.assertNotIn("service-catalog-summary", source)
@@ -212,20 +229,42 @@ class ServicesCatalogueTests(unittest.TestCase):
             )
             self.assertIsNotNone(schema_match)
             schema = json.loads(schema_match.group(1))
+            self.assertEqual(schema["name"], page["title"])
+            self.assertEqual(schema["description"], page["description"])
             self.assertEqual(schema["image"], "https://denisyuce.com" + expected_image)
+
+            meta_description = re.search(
+                r'<meta name="description" content="([^"]*)"', source
+            )
+            self.assertIsNotNone(meta_description)
+            self.assertLessEqual(len(meta_description.group(1)), 160)
+            self.assertNotIn("\n", meta_description.group(1))
+            self.assertIn(
+                f'<meta property="og:description" content="{meta_description.group(1)}" />',
+                source,
+            )
+            self.assertIn(
+                f'<meta name="twitter:description" content="{meta_description.group(1)}" />',
+                source,
+            )
 
     def test_service_index_cards_use_site_images(self) -> None:
         source = (ROOT / "services" / "index.html").read_text(encoding="utf-8")
         for slug, rows in self.grouped.items():
             primary, primary_row = primary_service(rows)
+            page = self.presentation["pages"][slug]
             expected_image = public_site_image_path(primary, primary_row)
             card = re.search(
                 rf'<a class="service-list-card" href="/services/{re.escape(slug)}/">'
-                rf'\s*<img\b[^>]*\bsrc="([^"]+)"',
+                rf'\s*<img\b[^>]*\bsrc="([^"]+)".*?'
+                rf'<h3>(.*?)</h3><p>(.*?)</p>',
                 source,
+                re.S,
             )
             self.assertIsNotNone(card, slug)
             self.assertEqual(card.group(1), expected_image, slug)
+            self.assertEqual(card.group(2), page["cardTitle"], slug)
+            self.assertEqual(card.group(3), page["cardDescription"], slug)
 
     def test_subscription_cards_use_catalogue_prices(self) -> None:
         source = (ROOT / "index.html").read_text(encoding="utf-8")

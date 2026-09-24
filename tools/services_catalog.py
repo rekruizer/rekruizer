@@ -40,10 +40,13 @@ def validate_presentation(value: dict[str, Any]) -> dict[str, Any]:
     if value.get("schemaVersion") != 1:
         raise CatalogValidationError("Unsupported services-presentation schemaVersion")
     category_ids = value.get("categoryIds")
+    pages = value.get("pages")
     rows = value.get("services")
     subscription_rows = value.get("subscriptions")
     if not isinstance(category_ids, dict) or not category_ids:
         raise CatalogValidationError("services-presentation has no categoryIds")
+    if not isinstance(pages, dict) or not pages:
+        raise CatalogValidationError("services-presentation has no pages")
     if not isinstance(rows, list) or not rows:
         raise CatalogValidationError("services-presentation has no services")
     if not isinstance(subscription_rows, list) or not subscription_rows:
@@ -147,6 +150,21 @@ def validate_presentation(value: dict[str, Any]) -> dict[str, Any]:
         raise CatalogValidationError("More than one featured subscription")
 
     slugs = {str(row["slug"]) for row in rows}
+    for slug in slugs:
+        page = pages.get(slug)
+        if not isinstance(page, dict):
+            raise CatalogValidationError(f"Missing page content for /services/{slug}/")
+        for field, maximum in (
+            ("title", 120),
+            ("cardTitle", 120),
+            ("cardDescription", 300),
+            ("description", 5000),
+        ):
+            text = page.get(field)
+            if not isinstance(text, str) or not text.strip() or len(text) > maximum:
+                raise CatalogValidationError(
+                    f"Invalid {field} for /services/{slug}/"
+                )
     missing_primary = slugs - primary_slugs
     if missing_primary:
         raise CatalogValidationError(
@@ -327,11 +345,13 @@ def mapped_services(
         if isinstance(display_name, str):
             service = {**service, "name": display_name}
         if not service.get("description", "").strip():
+            page = presentation["pages"].get(str(row["slug"]), {})
+            page_description = str(page.get("description", "")).strip()
             service = {
                 **service,
                 "description": (
-                    f"{service['name']}. Продолжительность — "
-                    f"{service['durationMinutes']} минут."
+                    f"{page_description}\n\n"
+                    f"Продолжительность — {service['durationMinutes']} минут."
                 ),
             }
         result.append((service, row))
