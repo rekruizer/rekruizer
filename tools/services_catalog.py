@@ -165,6 +165,27 @@ def validate_presentation(value: dict[str, Any]) -> dict[str, Any]:
                 raise CatalogValidationError(
                     f"Invalid {field} for /services/{slug}/"
                 )
+        field_sources = page.get("fieldSources")
+        if field_sources is not None:
+            if not isinstance(field_sources, dict):
+                raise CatalogValidationError(
+                    f"Invalid fieldSources for /services/{slug}/"
+                )
+            for field in ("title", "cardTitle", "cardDescription", "description"):
+                source = field_sources.get(field)
+                if not isinstance(source, dict) or source.get("type") not in {
+                    "manual",
+                    "dikidi",
+                }:
+                    raise CatalogValidationError(
+                        f"Invalid source for {field} in /services/{slug}/"
+                    )
+                if source["type"] == "dikidi" and not re.fullmatch(
+                    r"\d+", str(source.get("serviceId", ""))
+                ):
+                    raise CatalogValidationError(
+                        f"Missing DIKIDI source for {field} in /services/{slug}/"
+                    )
     missing_primary = slugs - primary_slugs
     if missing_primary:
         raise CatalogValidationError(
