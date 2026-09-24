@@ -445,7 +445,40 @@ def update_service_cards(
             count=1,
             flags=re.S,
         )
+
+    # Card copy remains intentionally authored in HTML, while its position is
+    # synchronized with DIKIDI. Reorder only cards that already exist on the
+    # page; related-service selections stay editorial and are merely put in the
+    # same relative order.
+    ordered_slugs = list(grouped)
+    source = reorder_service_cards(source, "service-list-card", ordered_slugs)
+    source = reorder_service_cards(source, "other-service-card", ordered_slugs)
     path.write_text(source, encoding="utf-8")
+
+
+def reorder_service_cards(
+    source: str, class_name: str, ordered_slugs: list[str]
+) -> str:
+    pattern = re.compile(
+        rf'^[ \t]*<a class="{re.escape(class_name)}" '
+        rf'href="/services/(?P<slug>[a-z0-9-]+)/">.*?^[ \t]*</a>',
+        re.M | re.S,
+    )
+    matches = list(pattern.finditer(source))
+    if len(matches) < 2:
+        return source
+
+    rank = {slug: index for index, slug in enumerate(ordered_slugs)}
+    blocks = [
+        (match.group("slug"), match.group(0), index)
+        for index, match in enumerate(matches)
+    ]
+    blocks.sort(key=lambda item: (rank.get(item[0], len(rank)), item[2]))
+
+    start = matches[0].start()
+    end = matches[-1].end()
+    rendered = "\n".join(block for _slug, block, _index in blocks)
+    return source[:start] + rendered + source[end:]
 
 
 def main() -> None:

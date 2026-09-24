@@ -87,6 +87,25 @@ class ServicesCatalogueTests(unittest.TestCase):
 
         self.assertEqual(first_service["name"], first_row["displayName"])
 
+    def test_regular_services_follow_dikidi_catalogue_order(self) -> None:
+        expected_ids = [
+            service["id"]
+            for service in self.catalogue["services"]
+            if any(
+                row["id"] == service["id"]
+                for row in self.presentation["services"]
+            )
+        ]
+        altered_presentation = copy.deepcopy(self.presentation)
+        altered_presentation["services"].reverse()
+        actual_ids = [
+            service["id"]
+            for service, _row in mapped_services(
+                self.catalogue, altered_presentation
+            )
+        ]
+        self.assertEqual(actual_ids, expected_ids)
+
     def test_price_tables_contain_each_service_once(self) -> None:
         expected_ids = [service["id"] for service, _row in self.mapped]
         for relative in ("index.html", "services/index.html"):
@@ -96,6 +115,25 @@ class ServicesCatalogueTests(unittest.TestCase):
                 source,
             )
             self.assertEqual(actual_ids, expected_ids, relative)
+
+    def test_service_cards_follow_the_first_dikidi_variant(self) -> None:
+        source = (ROOT / "services" / "index.html").read_text(encoding="utf-8")
+        actual_slugs = re.findall(
+            r'<a class="service-list-card" href="/services/([a-z0-9-]+)/">',
+            source,
+        )
+        self.assertEqual(actual_slugs, list(self.grouped))
+
+        rank = {slug: index for index, slug in enumerate(self.grouped)}
+        for slug in self.grouped:
+            detail = (ROOT / "services" / slug / "index.html").read_text(
+                encoding="utf-8"
+            )
+            related = re.findall(
+                r'<a class="other-service-card" href="/services/([a-z0-9-]+)/">',
+                detail,
+            )
+            self.assertEqual(related, sorted(related, key=rank.__getitem__), slug)
 
     def test_detail_pages_use_catalogue_content(self) -> None:
         for slug, rows in self.grouped.items():
@@ -107,6 +145,15 @@ class ServicesCatalogueTests(unittest.TestCase):
             for service, _row in rows:
                 self.assertIn(f'data-service-id="{service["id"]}"', source)
                 self.assertIn(service["name"], source)
+            option_ids = re.findall(
+                r'<a class="service-option" data-service-id="(\d+)"',
+                source,
+            )
+            self.assertEqual(
+                option_ids,
+                [service["id"] for service, _row in rows],
+                slug,
+            )
             description_section = re.search(
                 r'<section class="service-info">\s*<h2>Описание</h2>'
                 r'(.*?)<div class="service-accordion">',

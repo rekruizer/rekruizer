@@ -311,12 +311,18 @@ def load_catalog(*, require_local_images: bool = True) -> tuple[dict[str, Any], 
 def mapped_services(
     catalogue: dict[str, Any], presentation: dict[str, Any]
 ) -> list[tuple[dict[str, Any], dict[str, Any]]]:
-    by_id = {str(service["id"]): service for service in catalogue["services"]}
+    presentation_by_id = {
+        str(row["id"]): row for row in presentation["services"]
+    }
     result: list[tuple[dict[str, Any], dict[str, Any]]] = []
-    for row in presentation["services"]:
-        service = by_id.get(str(row["id"]))
-        if service is None:
+    # The catalogue is stored in DIKIDI display order. Presentation metadata
+    # decides how an item is rendered, but must not become a second ranking
+    # system for ordinary services.
+    for source_service in catalogue["services"]:
+        row = presentation_by_id.get(str(source_service["id"]))
+        if row is None:
             continue
+        service = source_service
         display_name = row.get("displayName")
         if isinstance(display_name, str):
             service = {**service, "name": display_name}
