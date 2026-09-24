@@ -55,7 +55,7 @@
     },
     "deep": {
       "title": "Проминающий массаж",
-      "cardTitle": "Проминающий массаж",
+      "cardTitle": "Проминающий",
       "cardDescription": "Плотная и внимательная работа с мышцами и зонами накопленного напряжения.",
       "description": "Плотная и внимательная работа с мышцами и зонами накопленного напряжения.",
       "fieldSources": {
@@ -63,7 +63,8 @@
           "type": "manual"
         },
         "cardTitle": {
-          "type": "manual"
+          "type": "dikidi",
+          "serviceId": "23447516"
         },
         "cardDescription": {
           "type": "manual"
