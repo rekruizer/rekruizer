@@ -96,15 +96,15 @@ class ServicesCatalogueTests(unittest.TestCase):
 
         self.assertEqual(first_service["name"], first_row["displayName"])
 
-    def test_missing_dikidi_description_uses_page_copy_for_feeds(self) -> None:
-        service, row = next(
-            (service, row)
-            for service, row in self.mapped
-            if row["slug"] == "deep" and service["durationMinutes"] == 55
-        )
-        page = self.presentation["pages"]["deep"]
-        self.assertTrue(service["description"].startswith(page["description"]))
-        self.assertIn("Продолжительность — 55 минут.", service["description"])
+    def test_variants_use_one_canonical_page_description(self) -> None:
+        for slug, rows in self.grouped.items():
+            expected = self.presentation["pages"][slug]["description"]
+            self.assertTrue(expected.strip(), slug)
+            self.assertEqual(
+                {service["description"] for service, _row in rows},
+                {expected},
+                slug,
+            )
 
     def test_every_service_page_has_managed_content(self) -> None:
         self.assertTrue(
@@ -351,6 +351,10 @@ class ServicesCatalogueTests(unittest.TestCase):
             self.assertEqual(
                 item.findtext("g:condition", namespaces=namespace),
                 "new",
+            )
+            self.assertEqual(
+                item.findtext("g:description", namespaces=namespace),
+                service["description"],
             )
             self.assertEqual(
                 item.findtext("g:custom_label_0", namespaces=namespace),

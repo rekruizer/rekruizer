@@ -365,16 +365,14 @@ def mapped_services(
         display_name = row.get("displayName")
         if isinstance(display_name, str):
             service = {**service, "name": display_name}
-        if not service.get("description", "").strip():
-            page = presentation["pages"].get(str(row["slug"]), {})
-            page_description = str(page.get("description", "")).strip()
-            service = {
-                **service,
-                "description": (
-                    f"{page_description}\n\n"
-                    f"Продолжительность — {service['durationMinutes']} минут."
-                ),
-            }
+        # A DIKIDI row is a bookable variant (for example 55 or 90 minutes),
+        # not a separate editorial entity. All variants linked to the same
+        # site page therefore publish the same canonical description. The raw
+        # DIKIDI copy stays in services-catalog.json and is available in the
+        # admin as an optional source when editing the common page text.
+        page = presentation["pages"].get(str(row["slug"]), {})
+        page_description = str(page.get("description", "")).strip()
+        service = {**service, "description": page_description}
         result.append((service, row))
     return result
 
