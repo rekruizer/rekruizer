@@ -1,10 +1,14 @@
 ---
 import relatedBySlug from "../data/service-related.json";
-import { groupBySlug } from "../lib/catalog";
+import { groupBySlug, servicesCatalogue } from "../lib/catalog";
 
 interface Props { slug: string }
 const { slug } = Astro.props;
-const configured = (relatedBySlug as Record<string, { slug: string; eyebrow: string }[]>)[slug] ?? [];
+const configured = (relatedBySlug as Record<string, { slug: string; eyebrow: string }[]>)[slug]
+  ?? servicesCatalogue.groups
+    .filter((group) => group.slug !== slug)
+    .slice(0, 4)
+    .map((group) => ({ slug: group.slug, eyebrow: group.category }));
 const related = configured.map((item) => ({ ...item, group: groupBySlug(item.slug) })).filter((item) => item.group);
 ---
 
