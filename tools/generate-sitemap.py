@@ -120,8 +120,11 @@ def page_dependencies(path: Path) -> list[Path]:
     if relative == "services/index.html" or (
         relative.startswith("services/") and relative.endswith("/index.html")
     ):
+        source_root = ROOT / "services" / "source-images"
         return shared_catalogue + sorted(
-            (ROOT / "services" / "source-images" / "site").glob("*.png")
+            path
+            for group in (source_root / "site", source_root / "catalog")
+            for path in group.glob("*.png")
         )
     return []
 
