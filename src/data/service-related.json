@@ -1,0 +1,50 @@
+{
+  "face": [
+    { "slug": "classic", "eyebrow": "Массаж тела" },
+    { "slug": "relax", "eyebrow": "Антистресс" },
+    { "slug": "lymph", "eyebrow": "Лёгкость и восстановление" },
+    { "slug": "back-neck", "eyebrow": "Массаж по зонам" }
+  ],
+  "classic": [
+    { "slug": "relax", "eyebrow": "Антистресс" },
+    { "slug": "lymph", "eyebrow": "Лёгкость и восстановление" },
+    { "slug": "face", "eyebrow": "Массаж лица" },
+    { "slug": "back-neck", "eyebrow": "Массаж по зонам" }
+  ],
+  "lymph": [
+    { "slug": "classic", "eyebrow": "Массаж тела" },
+    { "slug": "relax", "eyebrow": "Антистресс" },
+    { "slug": "face", "eyebrow": "Массаж лица" },
+    { "slug": "back-neck", "eyebrow": "Массаж по зонам" }
+  ],
+  "sport": [
+    { "slug": "classic", "eyebrow": "Массаж тела" },
+    { "slug": "lymph", "eyebrow": "Лёгкость и восстановление" },
+    { "slug": "face", "eyebrow": "Массаж лица" },
+    { "slug": "back-neck", "eyebrow": "Массаж по зонам" }
+  ],
+  "deep": [
+    { "slug": "relax", "eyebrow": "Антистресс" },
+    { "slug": "lymph", "eyebrow": "Лёгкость и восстановление" },
+    { "slug": "face", "eyebrow": "Массаж лица" },
+    { "slug": "back-neck", "eyebrow": "Массаж по зонам" }
+  ],
+  "first-visit": [
+    { "slug": "classic", "eyebrow": "Массаж тела" },
+    { "slug": "lymph", "eyebrow": "Лёгкость и восстановление" },
+    { "slug": "face", "eyebrow": "Массаж лица" },
+    { "slug": "back-neck", "eyebrow": "Массаж по зонам" }
+  ],
+  "back-neck": [
+    { "slug": "classic", "eyebrow": "Массаж тела" },
+    { "slug": "relax", "eyebrow": "Антистресс" },
+    { "slug": "lymph", "eyebrow": "Лёгкость и восстановление" },
+    { "slug": "face", "eyebrow": "Массаж лица" }
+  ],
+  "relax": [
+    { "slug": "classic", "eyebrow": "Массаж тела" },
+    { "slug": "lymph", "eyebrow": "Лёгкость и восстановление" },
+    { "slug": "face", "eyebrow": "Массаж лица" },
+    { "slug": "back-neck", "eyebrow": "Массаж по зонам" }
+  ]
+}

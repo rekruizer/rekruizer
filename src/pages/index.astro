@@ -1,0 +1,64 @@
+---
+import FAQ from "../components/FAQ.astro";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import Reviews from "../components/Reviews.astro";
+import ServicePriceList from "../components/ServicePriceList.astro";
+import Subscriptions from "../components/Subscriptions.astro";
+import homeBreadcrumb from "../data/home-breadcrumb.json";
+import homeSchema from "../data/home-schema.json";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const faq = [
+  { question: "Как выбрать подходящий вид массажа?", answer: "<p>Если сомневаетесь — выбирайте классический массаж на 55 или 90 минут. На первом сеансе мы обсудим жалобы, образ жизни и зоны напряжения, после чего я предложу наиболее подходящий формат работы.</p>" },
+  { question: "Когда массаж лучше отложить?", answer: '<p>При температуре, остром воспалении, свежих травмах, выраженной слабости, инфекциях, сильной внезапной боли, онемении, потере чувствительности или других необычных симптомах. Подробная памятка: <a href="/documents/contraindications/">противопоказания к массажу</a>.</p>' },
+  { question: "Что происходит на первом сеансе?", answer: "<p>Сначала я уточняю запрос, зоны дискомфорта и ограничения. Затем оцениваю напряжение тканей и подбираю интенсивность. Во время массажа можно говорить, если где-то слишком чувствительно или хочется изменить давление.</p>" },
+  { question: "Остаются ли синяки после массажа?", answer: "<p>При выполнении процедур опытными специалистами синяки не остаются. Если у вас чувствительная кожа, мы подберём щадящие техники, чтобы избежать таких эффектов.</p>" },
+  { question: "Больно ли делать массаж?", answer: "<p>Интенсивность массажа регулируется в зависимости от ваших предпочтений и ощущений. Мы подбираем индивидуальный подход, чтобы процедуры были комфортными и эффективными.</p>" },
+  { question: "Как проходит запись и оплата?", answer: "<p>Запись открывается через DIKIDI: вы выбираете услугу, дату и время. Оплата происходит уже на месте после прихода на сеанс — доступны разные способы оплаты.</p>" },
+];
+---
+
+<BaseLayout
+  title="Массаж в Крылатском, Молодёжная и Кунцево — Денис Пучков"
+  description="Массаж в Крылатском рядом с Молодёжной и Кунцево: классический, расслабляющий, спортивный, лимфодренажный массаж и массаж лица. Приём на Рублёвском шоссе 34к2, онлайн-запись."
+  canonical="https://denisyuce.com/"
+  schema={homeSchema}
+  breadcrumbSchema={homeBreadcrumb}
+>
+  <main class="page">
+    <Header />
+    <section class="hero">
+      <div class="hero-main">
+        <div>
+          <div class="eyebrow"><span class="dot"></span> Массаж · Москва</div>
+          <h1>Массаж с вниманием к телу</h1>
+          <p class="lead">Помогаю снять зажатость в спине, шее и плечах, восстановиться после нагрузки и выйти с ощущением лёгкости — без жёсткой боли и суеты.</p>
+          <div class="hero-tags" aria-label="Районы рядом с кабинетом"><span>Крылатское</span><span>Молодёжная</span><span>Кунцево</span></div>
+        </div>
+        <div class="hero-actions"><a class="button primary" href="https://dikidi.net/massages" data-goal="online_booking_click">Онлайн-запись</a></div>
+      </div>
+      <aside class="hero-side" id="about">
+        <div class="orb"></div>
+        <div class="portrait"><img src="/assets/denis-portrait.jpg" alt="Денис Пучков" width="1200" height="1200" fetchpriority="high" decoding="async" /></div>
+        <div class="side-copy"><h2>Денис Пучков</h2><div class="booking-lines"><p>🌿  Убираю боль и другие последствия сидячей и физической работы</p><p>🤲  Бережно, с заботой и вниманием к человеку</p><p>💫  Легкость и энергия после сеанса</p></div></div>
+      </aside>
+    </section>
+
+    <section class="section" id="services"><ServicePriceList /></section>
+    <section class="section" id="subscriptions">
+      <div class="section-head"><h2>Абонементы</h2><p>Если после первого сеанса вы понимаете, что хотите ходить регулярно, можно выбрать абонемент на 5 или 10 встреч. Так каждый сеанс получается выгоднее.</p></div>
+      <Subscriptions />
+    </section>
+    <section class="section" id="location">
+      <div class="location-panel">
+        <div class="location-copy"><div class="eyebrow"><span class="dot"></span> Где проходит приём</div><h2>Адрес</h2><p>Принимаю в комфортном коворкинге INDI:<br />Москва, Рублёвское шоссе 34к2.</p><a class="button" href="https://yandex.ru/maps/org/159539374930" target="_blank" rel="noopener noreferrer" data-goal="yandex_maps_route_click">Открыть в Яндекс Картах →</a></div>
+        <div class="location-map" aria-label="Адрес на Яндекс Картах"><div id="yandex-location-map" class="location-map-canvas" role="img" aria-label="Адрес: Москва, Рублёвское шоссе 34к2, INDI"></div></div>
+      </div>
+    </section>
+    <Reviews />
+    <section class="section" id="faq"><div class="section-head"><h2>Вопрос — Ответ</h2><p>Отвечаем на самые частые вопросы о массаже</p></div><FAQ items={faq} /></section>
+    <section class="section" id="pages"><div class="section-head"><h2>Материалы</h2></div><div class="links"><a class="link-card" href="/notes/"><div><h3>Полезное</h3><p>Калькуляторы, конспекты и рабочие материалы по массажу, сервису и практике.</p></div><div class="arrow">Открыть →</div></a></div></section>
+    <Footer />
+  </main>
+</BaseLayout>

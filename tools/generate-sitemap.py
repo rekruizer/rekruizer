@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate sitemap.xml from static HTML pages.
+"""Generate sitemap.xml from the final Astro build.
 
 The script uses each page's canonical URL as the source of truth, so the sitemap
 matches the URLs declared in HTML and avoids manual maintenance.
@@ -14,9 +14,9 @@ from xml.etree.ElementTree import Element, ElementTree, SubElement, indent, regi
 from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parents[1]
+SITE_ROOT = ROOT / "dist"
 SITE = "https://denisyuce.com"
 MOSCOW_TZ = ZoneInfo("Europe/Moscow")
-EXCLUDED_DIRS = {".git", ".github", ".local", "_site"}
 EXCLUDED_FILES = {"404.html"}
 
 CANONICAL_RE = re.compile(r'<link\s+rel="canonical"\s+href="([^"]+)"', re.I)
@@ -56,10 +56,9 @@ def sort_key(url: str) -> tuple[int, str]:
 
 def iter_html_pages() -> list[Path]:
     pages: list[Path] = []
-    for path in ROOT.rglob("*.html"):
-        rel_parts = path.relative_to(ROOT).parts
-        if any(part in EXCLUDED_DIRS for part in rel_parts):
-            continue
+    if not SITE_ROOT.is_dir():
+        raise RuntimeError("dist is missing; run the Astro build first")
+    for path in SITE_ROOT.rglob("*.html"):
         if path.name in EXCLUDED_FILES:
             continue
         pages.append(path)
@@ -81,6 +80,8 @@ def canonical_for_page(path: Path) -> str | None:
 
 def git_lastmod(path: Path, today: str) -> str | None:
     """Use today for working-tree changes, otherwise the path's last Git change."""
+    if not path.exists() or not path.is_relative_to(ROOT):
+        return None
     relative = path.relative_to(ROOT).as_posix()
     try:
         changed = subprocess.run(
@@ -110,30 +111,39 @@ def git_lastmod(path: Path, today: str) -> str | None:
 
 
 def page_dependencies(path: Path) -> list[Path]:
-    relative = path.relative_to(ROOT).as_posix()
+    relative = path.relative_to(SITE_ROOT).as_posix()
     shared_catalogue = [
         ROOT / "assets" / "data" / "services-catalog.json",
         ROOT / "assets" / "data" / "services-presentation.json",
     ]
+    shared_astro = [
+        ROOT / "src" / "layouts" / "BaseLayout.astro",
+        ROOT / "src" / "components" / "Header.astro",
+        ROOT / "src" / "components" / "Footer.astro",
+    ]
     if relative == "index.html":
-        return shared_catalogue + [ROOT / "assets" / "data" / "reviews.json"]
+        return shared_catalogue + shared_astro + [
+            ROOT / "src" / "pages" / "index.astro",
+            ROOT / "assets" / "data" / "reviews.json",
+        ]
     if relative == "services/index.html" or (
         relative.startswith("services/") and relative.endswith("/index.html")
     ):
-        source_root = ROOT / "services" / "source-images"
-        return shared_catalogue + sorted(
-            path
-            for group in (source_root / "site", source_root / "catalog")
-            for path in group.glob("*.png")
+        page_source = (
+            ROOT / "src" / "pages" / "services" / "index.astro"
+            if relative == "services/index.html"
+            else ROOT / "src" / "pages" / "services" / "[slug].astro"
         )
-    return []
+        return shared_catalogue + shared_astro + [page_source]
+    legacy_source = ROOT / relative
+    return [legacy_source] if legacy_source.is_file() else [ROOT / "src" / "pages" / "[...path].astro"]
 
 
 def lastmod_for_page(path: Path, today: str) -> str | None:
     """Return the newest real change among a page and its visible dependencies."""
     dates = [
         value
-        for candidate in [path, *page_dependencies(path)]
+        for candidate in page_dependencies(path)
         if (value := git_lastmod(candidate, today)) is not None
     ]
     return max(dates) if dates else None
@@ -161,7 +171,7 @@ def build_sitemap() -> None:
         SubElement(item, "priority").text = priority_for_url(url)
 
     indent(root, space="  ")
-    ElementTree(root).write(ROOT / "sitemap.xml", encoding="UTF-8", xml_declaration=True)
+    ElementTree(root).write(SITE_ROOT / "sitemap.xml", encoding="UTF-8", xml_declaration=True)
     dated = sum(lastmod is not None for lastmod in urls.values())
     print(f"Generated sitemap.xml with {len(urls)} URLs ({dated} with lastmod)")
 

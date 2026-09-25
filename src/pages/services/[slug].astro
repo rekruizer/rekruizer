@@ -1,0 +1,75 @@
+---
+import FAQ from "../../components/FAQ.astro";
+import Footer from "../../components/Footer.astro";
+import Header from "../../components/Header.astro";
+import RelatedServices from "../../components/RelatedServices.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { compactDescription, servicesCatalogue, type ServiceGroup } from "../../lib/catalog";
+
+export function getStaticPaths() {
+  return servicesCatalogue.groups.map((group) => ({ params: { slug: group.slug }, props: { group } }));
+}
+
+interface Props { group: ServiceGroup }
+const { group } = Astro.props;
+const canonical = `https://denisyuce.com/services/${group.slug}/`;
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  name: group.page.title,
+  description: group.page.description,
+  areaServed: ["Крылатское", "Молодёжная", "Кунцево", "Москва"],
+  provider: {
+    "@type": "HealthAndBeautyBusiness",
+    name: "Денис Пучков — массаж",
+    url: "https://denisyuce.com/",
+    address: { "@type": "PostalAddress", streetAddress: "Рублёвское шоссе 34к2", addressLocality: "Москва", addressCountry: "RU" },
+    geo: { "@type": "GeoCoordinates", latitude: 55.749238, longitude: 37.419761 },
+    hasMap: "https://yandex.ru/maps/?text=%D0%9C%D0%BE%D1%81%D0%BA%D0%B2%D0%B0%2C%20%D0%A0%D1%83%D0%B1%D0%BB%D1%91%D0%B2%D1%81%D0%BA%D0%BE%D0%B5%20%D1%88%D0%BE%D1%81%D1%81%D0%B5%2034%D0%BA2%20INDI",
+  },
+  url: canonical,
+  offers: group.services.map((service) => ({ "@type": "Offer", name: service.name, price: service.priceRub, priceCurrency: "RUB", availability: "https://schema.org/InStock", url: service.bookingUrl })),
+  image: `https://denisyuce.com${group.image}`,
+};
+const breadcrumb = { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
+  { "@type": "ListItem", position: 1, name: "Главная", item: "https://denisyuce.com/" },
+  { "@type": "ListItem", position: 2, name: "Услуги", item: "https://denisyuce.com/services/" },
+  { "@type": "ListItem", position: 3, name: group.page.title, item: canonical },
+] };
+const serviceFaq = [
+  { question: "Этапы процедуры", open: true, answer: "<p>Сначала коротко обсуждаем запрос и зоны напряжения. Затем подбираем комфортную интенсивность, выполняем массаж и в конце сверяем ощущения после процедуры.</p>" },
+  { question: "Кому подойдёт", answer: "<ul><li>общее мышечное напряжение</li><li>усталость после работы или тренировок</li><li>ощущение скованности в спине, шее и плечах</li><li>желание регулярно поддерживать тело</li></ul>" },
+  { question: "Когда лучше отложить", answer: '<p>При температуре, остром воспалении, свежих травмах, инфекциях, выраженной слабости, сильной внезапной боли, онемении или других необычных симптомах лучше сначала получить медицинскую консультацию. Подробнее: <a href="/documents/contraindications/">противопоказания к массажу</a>.</p>' },
+  { question: "Стоимость и запись", answer: "<p>Выберите длительность процедуры и нажмите «Записаться». Запись откроется в DIKIDI сразу на выбранной услуге. Оплата происходит на месте после прихода на сеанс.</p>" },
+];
+---
+
+<BaseLayout title={`${group.page.title} — цена и запись`} description={compactDescription(group.page.description)} canonical={canonical} schema={schema} breadcrumbSchema={breadcrumb}>
+  <main class="page service-page">
+    <Header />
+    <nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="/">Главная</a><span>/</span><a href="/services/">Услуги</a><span>/</span><span>{group.page.title}</span></nav>
+    <section class="service-hero-card">
+      <div class="service-photo"><img src={group.image} alt={group.imageAlt} decoding="async" fetchpriority="high" /></div>
+      <div class="service-booking-card">
+        <div class="service-kicker">// {group.category}</div>
+        <h1>{group.page.title}</h1>
+        <div class="service-options">
+          {group.services.map((service) => (
+            <a class="service-option" data-service-id={service.id} href={service.bookingUrl} data-goal={service.goal}>
+              <span>{service.name}</span>
+              <span class="text-bold">{service.oldPrice ? <><span class="service-option-old">{service.oldPrice}</span>{service.price}</> : service.price}</span>
+              <em>Записаться</em>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+    <section class="service-info">
+      <h2>Описание</h2>
+      {group.page.description.split(/\n\s*\n/).filter(Boolean).map((paragraph) => <p>{paragraph}</p>)}
+      <FAQ items={serviceFaq} class="service-accordion" />
+    </section>
+    <RelatedServices slug={group.slug} />
+    <Footer />
+  </main>
+</BaseLayout>

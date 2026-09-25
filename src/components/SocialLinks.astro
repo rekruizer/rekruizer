@@ -1,0 +1,20 @@
+---
+import socialLinks from "../data/social.json";
+
+interface Props {
+  class?: string;
+  label?: string;
+}
+
+const { class: className = "footer-social", label = "Соцсети" } = Astro.props;
+---
+
+<span class={className} aria-label={label}>
+  {socialLinks.map((item) => (
+    <a href={item.href} aria-label={item.label}>
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d={item.path}></path>
+      </svg>
+    </a>
+  ))}
+</span>

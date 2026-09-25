@@ -1,0 +1,23 @@
+---
+interface Item {
+  question: string;
+  answer: string;
+  open?: boolean;
+}
+
+interface Props {
+  items: Item[];
+  class?: string;
+}
+
+const { items, class: className = "faq-list" } = Astro.props;
+---
+
+<div class={className}>
+  {items.map((item) => (
+    <details class="faq-item" open={item.open}>
+      <summary>{item.question}</summary>
+      <Fragment set:html={item.answer} />
+    </details>
+  ))}
+</div>

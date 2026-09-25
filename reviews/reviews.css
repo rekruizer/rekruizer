@@ -288,6 +288,15 @@
   opacity: .78;
 }
 
+.platform-logo--personal svg {
+  width: 23px;
+  height: 23px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  opacity: .78;
+}
+
 .review-noscript {
   position: fixed;
   right: 16px;

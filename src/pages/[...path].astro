@@ -1,0 +1,26 @@
+---
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import LegacyLayout from "../layouts/LegacyLayout.astro";
+import { legacyPages, type LegacyPage } from "../lib/legacy";
+
+export function getStaticPaths() {
+  return legacyPages().map((page) => ({ params: { path: page.route }, props: { page } }));
+}
+
+interface Props {
+  page: LegacyPage;
+}
+
+const { page } = Astro.props;
+---
+
+<LegacyLayout headHtml={page.headHtml} bodyClass={page.bodyClass}>
+  {page.segments.map((segment) => (
+    segment.type === "header"
+      ? <Header />
+      : segment.type === "footer"
+        ? <Footer />
+        : <Fragment set:html={segment.html} />
+  ))}
+</LegacyLayout>

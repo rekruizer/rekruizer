@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import copy
-import importlib.util
 import json
 import re
 import unittest
@@ -27,12 +26,7 @@ from services_catalog import (
 )
 
 
-GENERATOR_SPEC = importlib.util.spec_from_file_location(
-    "generate_services_site", ROOT / "tools" / "generate-services-site.py"
-)
-assert GENERATOR_SPEC and GENERATOR_SPEC.loader
-GENERATOR = importlib.util.module_from_spec(GENERATOR_SPEC)
-GENERATOR_SPEC.loader.exec_module(GENERATOR)
+SITE_ROOT = ROOT / "dist"
 
 
 class ServicesCatalogueTests(unittest.TestCase):
@@ -133,7 +127,7 @@ class ServicesCatalogueTests(unittest.TestCase):
     def test_price_tables_contain_each_service_once(self) -> None:
         expected_ids = [service["id"] for service, _row in self.mapped]
         for relative in ("index.html", "services/index.html"):
-            source = (ROOT / relative).read_text(encoding="utf-8")
+            source = (SITE_ROOT / relative).read_text(encoding="utf-8")
             actual_ids = re.findall(
                 r'<div class="price-line" data-service-id="(\d+)"',
                 source,
@@ -141,7 +135,7 @@ class ServicesCatalogueTests(unittest.TestCase):
             self.assertEqual(actual_ids, expected_ids, relative)
 
     def test_service_cards_follow_the_first_dikidi_variant(self) -> None:
-        source = (ROOT / "services" / "index.html").read_text(encoding="utf-8")
+        source = (SITE_ROOT / "services" / "index.html").read_text(encoding="utf-8")
         actual_slugs = re.findall(
             r'<a class="service-list-card" href="/services/([a-z0-9-]+)/">',
             source,
@@ -150,7 +144,7 @@ class ServicesCatalogueTests(unittest.TestCase):
 
         rank = {slug: index for index, slug in enumerate(self.grouped)}
         for slug in self.grouped:
-            detail = (ROOT / "services" / slug / "index.html").read_text(
+            detail = (SITE_ROOT / "services" / slug / "index.html").read_text(
                 encoding="utf-8"
             )
             related = re.findall(
@@ -159,19 +153,9 @@ class ServicesCatalogueTests(unittest.TestCase):
             )
             self.assertEqual(related, sorted(related, key=rank.__getitem__), slug)
 
-    def test_inactive_service_cards_are_removed(self) -> None:
-        source = """
-        <a class="service-list-card" href="/services/active/"><div>Active</div></a>
-        <a class="service-list-card" href="/services/removed/"><div>Removed</div></a>
-        <a class="other-service-card" href="/services/removed/"><div>Removed</div></a>
-        """
-        cleaned = GENERATOR.remove_inactive_service_cards(source, {"active"})
-        self.assertIn('/services/active/', cleaned)
-        self.assertNotIn('/services/removed/', cleaned)
-
     def test_detail_pages_use_catalogue_content(self) -> None:
         for slug, rows in self.grouped.items():
-            source = (ROOT / "services" / slug / "index.html").read_text(
+            source = (SITE_ROOT / "services" / slug / "index.html").read_text(
                 encoding="utf-8"
             )
             primary, primary_row = primary_service(rows)
@@ -239,17 +223,17 @@ class ServicesCatalogueTests(unittest.TestCase):
             self.assertIsNotNone(meta_description)
             self.assertLessEqual(len(meta_description.group(1)), 160)
             self.assertNotIn("\n", meta_description.group(1))
-            self.assertIn(
-                f'<meta property="og:description" content="{meta_description.group(1)}" />',
+            self.assertRegex(
                 source,
+                rf'<meta property="og:description" content="{re.escape(meta_description.group(1))}"\s*/?>',
             )
-            self.assertIn(
-                f'<meta name="twitter:description" content="{meta_description.group(1)}" />',
+            self.assertRegex(
                 source,
+                rf'<meta name="twitter:description" content="{re.escape(meta_description.group(1))}"\s*/?>',
             )
 
     def test_service_index_cards_use_site_images(self) -> None:
-        source = (ROOT / "services" / "index.html").read_text(encoding="utf-8")
+        source = (SITE_ROOT / "services" / "index.html").read_text(encoding="utf-8")
         for slug, rows in self.grouped.items():
             primary, primary_row = primary_service(rows)
             page = self.presentation["pages"][slug]
@@ -267,10 +251,9 @@ class ServicesCatalogueTests(unittest.TestCase):
             self.assertEqual(card.group(3), page["cardDescription"], slug)
 
     def test_subscription_cards_use_catalogue_prices(self) -> None:
-        source = (ROOT / "index.html").read_text(encoding="utf-8")
+        source = (SITE_ROOT / "index.html").read_text(encoding="utf-8")
         block = re.search(
-            r"<!-- subscriptions-catalog:start -->(.*?)"
-            r"<!-- subscriptions-catalog:end -->",
+            r'<section class="section" id="subscriptions">(.*?)</section>',
             source,
             re.S,
         )

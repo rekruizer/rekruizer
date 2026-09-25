@@ -1,0 +1,18 @@
+---
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import LegacyLayout from "../layouts/LegacyLayout.astro";
+import { legacy404 } from "../lib/legacy";
+
+const page = legacy404();
+---
+
+<LegacyLayout headHtml={page.headHtml} bodyClass={page.bodyClass}>
+  {page.segments.map((segment) => (
+    segment.type === "header"
+      ? <Header />
+      : segment.type === "footer"
+        ? <Footer />
+        : <Fragment set:html={segment.html} />
+  ))}
+</LegacyLayout>

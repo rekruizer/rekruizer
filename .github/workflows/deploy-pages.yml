@@ -30,6 +30,15 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set up Node.js
+        uses: actions/setup-node@1e60f620b9541dca1512dbf1fbedb45c00d8b7c8 # v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install site dependencies
+        run: npm ci
+
       - name: Install image tools
         run: |
           sudo apt-get update
@@ -46,36 +55,37 @@ jobs:
         # adds a visible warning to this run instead.
         run: python3 tools/sync-services-catalog.py
 
-      - name: Render services into static pages
-        run: python3 tools/generate-services-site.py
-
       - name: Generate services-feed.xml
         run: python3 tools/generate-services-feed.py
 
       - name: Generate meta-services-feed.xml and PNG images
         run: python3 tools/generate-meta-services-feed.py
 
-      - name: Verify generated services and feed
-        run: python3 tools/test-services-catalog.py
+      - name: Build Astro site
+        run: npm run build
 
       - name: Generate sitemap.xml
         run: python3 tools/generate-sitemap.py
 
-      - name: Prepare static site artifact
+      - name: Add static assets to Astro output
         run: |
-          mkdir _site
-          rsync -a ./ _site/ \
-            --exclude .git/ \
-            --exclude .github/ \
-            --exclude .DS_Store \
-            --exclude .local/ \
-            --exclude services/source-images/ \
-            --exclude _site/
+          rsync -a --exclude 'Icon_Pack/' --exclude '.DS_Store' assets/ dist/assets/
+          cp CNAME robots.txt favicon.ico favicon.svg favicon-16x16.png favicon-32x32.png apple-touch-icon.png dist/
+          cp services-feed.xml meta-services-feed.xml dist/
+          mkdir -p dist/reviews/icons
+          cp reviews/reviews.css reviews/reviews.js dist/reviews/
+          cp reviews/icons/* dist/reviews/icons/
+
+      - name: Verify generated site, services and feeds
+        run: |
+          npm run check
+          python3 tools/test-services-catalog.py
+          python3 tools/test-astro-site.py
 
       - name: Minify CSS and JS
         run: |
-          npx --yes esbuild@0.27.2 _site/assets/site.css --minify --outfile=_site/assets/site.css --allow-overwrite
-          npx --yes esbuild@0.27.2 _site/assets/site.js --minify --outfile=_site/assets/site.js --allow-overwrite
+          npx --yes esbuild@0.27.2 dist/assets/site.css --minify --outfile=dist/assets/site.css --allow-overwrite
+          npx --yes esbuild@0.27.2 dist/assets/site.js --minify --outfile=dist/assets/site.js --allow-overwrite
 
       - name: Configure Pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
@@ -83,7 +93,7 @@ jobs:
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
         with:
-          path: _site
+          path: dist
 
       - name: Deploy to GitHub Pages
         id: deployment

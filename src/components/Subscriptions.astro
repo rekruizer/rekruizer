@@ -1,0 +1,23 @@
+---
+import { servicesCatalogue } from "../lib/catalog";
+---
+
+<div class="subscription-grid">
+  {servicesCatalogue.subscriptions.map((subscription) => (
+    <a
+      class:list={["subscription-card", { "subscription-card-featured": subscription.featured }]}
+      href={subscription.bookingUrl}
+      data-service-id={subscription.id}
+      data-goal={subscription.goal}
+    >
+      <span>{subscription.name}</span>
+      <div class="subscription-total"><span>Стоимость</span><span class="text-bold">{subscription.price}</span></div>
+      <div class="subscription-session">
+        <div class="subscription-session-main"><span class="text-bold">{subscription.perSession}</span><span>/ сеанс</span></div>
+        <div class="subscription-usual"><span class="old-price">{subscription.regularPrice}</span></div>
+      </div>
+      <div class="subscription-saving">Выгода <span class="text-bold">{subscription.saving}</span></div>
+      <div class="subscription-action">Купить <span class="arrow-right-icon" aria-hidden="true"></span></div>
+    </a>
+  ))}
+</div>

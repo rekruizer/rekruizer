@@ -12,3 +12,7 @@ sitemap.xml
 AGENTS.md
 .codex/config.toml
 tools/SERVICES_SYNC.md
+.astro/
+dist/
+node_modules/
+src/generated/services.json

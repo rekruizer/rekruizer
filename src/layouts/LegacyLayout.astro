@@ -1,0 +1,18 @@
+---
+interface Props {
+  headHtml: string;
+  bodyClass?: string;
+}
+
+const { headHtml, bodyClass = "" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <Fragment set:html={headHtml} />
+  </head>
+  <body class={bodyClass}>
+    <slot />
+  </body>
+</html>

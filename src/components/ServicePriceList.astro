@@ -1,0 +1,46 @@
+---
+import { servicesCatalogue } from "../lib/catalog";
+
+let previousCategory = "";
+---
+
+<div class="price-panel">
+  <div class="price-aside">
+    <div>
+      <div class="eyebrow"><span class="dot"></span> Услуги и цены</div>
+      <h2>Прайс</h2>
+      <div class="price-filter-group">
+        <span>Направления</span>
+        <div class="price-chips">
+          {servicesCatalogue.categories.map((category) => <span>{category}</span>)}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="price-table-wrap">
+    <div class="price-table-head">
+      <span>Услуга</span><span>Время</span><span>Цена</span><span></span>
+    </div>
+    {servicesCatalogue.services.map((service) => {
+      const showCategory = service.category !== previousCategory;
+      if (showCategory) previousCategory = service.category;
+      const categoryIndex = servicesCatalogue.categories.indexOf(service.category) + 1;
+      return (
+        <>
+          {showCategory && <div class="price-category" id={`price-category-${categoryIndex}`}>{service.category}</div>}
+          <div class="price-line" data-service-id={service.id} data-service-url={`/services/${service.slug}/`}>
+            <a class="price-row-link" href={`/services/${service.slug}/`}>
+              <div class="price-name">{service.name}</div>
+              <div class="price-time">{service.durationMinutes} мин</div>
+              <div class="price-cost">
+                {service.oldPrice ? <><span class="old-price">{service.oldPrice}</span><span class="new-price">{service.price}</span></> : service.price}
+              </div>
+            </a>
+            <a class="price-book" href={service.bookingUrl} data-goal={service.goal}>Записаться</a>
+          </div>
+        </>
+      );
+    })}
+  </div>
+</div>

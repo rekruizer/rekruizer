@@ -1,0 +1,29 @@
+---
+import SocialLinks from "./SocialLinks.astro";
+
+const year = new Date().getFullYear();
+---
+
+<footer>
+  <div class="footer-main">
+    <div class="footer-brand">
+      <a class="brand" href="/">
+        <span class="mark">D</span>
+        <span>Денис Пучков</span>
+      </a>
+      <p>Внимательные руки, спокойная голова и массаж, после которого телу легче доверять себе.</p>
+    </div>
+    <div class="footer-contact">
+      <a class="footer-phone" href="tel:+79951568066">+7 (995) 156-80-66</a>
+      <SocialLinks />
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© {year} Денис Пучков</span>
+    <nav class="footer-docs" aria-label="Документы">
+      <a href="/documents/contraindications/">Противопоказания</a>
+      <a href="/documents/privacy/">Политика конфиденциальности</a>
+      <a href="/documents/rules/">Правила записи и оказания услуг</a>
+    </nav>
+  </div>
+</footer>

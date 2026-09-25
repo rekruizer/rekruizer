@@ -1,0 +1,22 @@
+---
+import { servicesCatalogue } from "../lib/catalog";
+---
+
+<div class="service-list-grid">
+  {servicesCatalogue.groups.map((group, index) => (
+    <a class="service-list-card" href={`/services/${group.slug}/`}>
+      <img
+        src={group.image}
+        alt={group.imageAlt}
+        loading={index === 0 ? undefined : "lazy"}
+        decoding="async"
+        fetchpriority={index === 0 ? "high" : undefined}
+      />
+      <div>
+        <span>{group.category}</span>
+        <h3>{group.page.cardTitle}</h3>
+        <p>{group.page.cardDescription}</p>
+      </div>
+    </a>
+  ))}
+</div>

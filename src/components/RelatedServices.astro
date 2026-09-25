@@ -1,0 +1,22 @@
+---
+import relatedBySlug from "../data/service-related.json";
+import { groupBySlug } from "../lib/catalog";
+
+interface Props { slug: string }
+const { slug } = Astro.props;
+const configured = (relatedBySlug as Record<string, { slug: string; eyebrow: string }[]>)[slug] ?? [];
+const related = configured.map((item) => ({ ...item, group: groupBySlug(item.slug) })).filter((item) => item.group);
+---
+
+<section class="service-related section">
+  <div class="section-head"><h2>Другие услуги</h2></div>
+  <div class="other-services-grid">
+    {related.map(({ slug: relatedSlug, eyebrow, group }) => group && (
+      <a class="other-service-card" href={`/services/${relatedSlug}/`}>
+        <img src={group.image} alt={group.imageAlt} loading="lazy" decoding="async" />
+        <span>{eyebrow}</span>
+        <span class="text-bold">{group.page.cardTitle}</span>
+      </a>
+    ))}
+  </div>
+</section>
