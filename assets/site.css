@@ -3628,7 +3628,6 @@ footer a:hover {
   border-radius: 28px;
   overflow: hidden;
   background: rgba(255,255,255,.055);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
 }
 
 .location-map iframe,
@@ -3662,14 +3661,6 @@ footer a:hover {
 
 .location-map-canvas.is-ready::before {
   content: none;
-}
-
-.location-map::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
 }
 
 .location-map [class*="controls__control"],
@@ -3883,15 +3874,6 @@ footer a:hover {
   box-shadow: none;
   user-select: none;
   -webkit-user-select: none;
-}
-
-.review-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
 }
 
 .review-top {
