@@ -15,4 +15,5 @@ tools/SERVICES_SYNC.md
 .astro/
 dist/
 node_modules/
+public/
 src/generated/services.json

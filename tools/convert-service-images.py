@@ -10,7 +10,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent.parent
-SOURCE_DIR = ROOT / "services" / "source-images"
+SOURCE_DIR = ROOT / "assets" / "source" / "services"
 OUTPUT_DIR = ROOT / "assets" / "services"
 SOURCE_GROUPS = (SOURCE_DIR / "site", SOURCE_DIR / "catalog")
 WEBP_QUALITY = 82

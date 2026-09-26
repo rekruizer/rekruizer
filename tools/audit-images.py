@@ -110,6 +110,8 @@ def main() -> None:
     for path in ROOT.joinpath("assets").rglob("*"):
         if not path.is_file() or path.suffix.lower() not in IMAGE_EXTS:
             continue
+        if path.is_relative_to(ROOT / "assets" / "source"):
+            continue
         size = path.stat().st_size
         w, h = image_size(path)
         rows.append((size, path, w, h, recommendation(path, size, w, h)))

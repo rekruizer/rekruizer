@@ -395,7 +395,7 @@ class ServicesCatalogueTests(unittest.TestCase):
             self.assertNotRegex(site_image, r"-(?:30|55|90)\.webp$")
 
     def test_every_service_webp_has_a_png_source(self) -> None:
-        source_root = ROOT / "services" / "source-images"
+        source_root = ROOT / "assets" / "source" / "services"
         source_stems = {
             path.stem for path in source_root.glob("*/*.png") if path.is_file()
         }

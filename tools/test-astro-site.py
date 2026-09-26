@@ -6,6 +6,7 @@ from __future__ import annotations
 import re
 import json
 from pathlib import Path
+from xml.etree import ElementTree
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -48,6 +49,68 @@ def main() -> None:
         source = (DIST / relative).read_text(encoding="utf-8")
         assert '<header class="site-header">' in source, relative
         assert "<footer>" in source, relative
+
+    not_found = (DIST / "404.html").read_text(encoding="utf-8")
+    assert '<header class="site-header">' in not_found
+    assert "<footer>" in not_found
+    assert 'name="robots" content="noindex, follow"' in not_found
+    assert 'rel="canonical"' not in not_found
+
+    for source_page in (ROOT / "url").glob("*/index.html"):
+        relative = source_page.relative_to(ROOT)
+        built = (DIST / relative).read_text(encoding="utf-8")
+        assert 'name="robots" content="noindex, nofollow' in built, relative
+        assert 'rel="canonical"' not in built, relative
+        assert (
+            'http-equiv="refresh"' in built
+            or "Эта ссылка была отключена" in built
+        ), relative
+
+    for required in (
+        "CNAME",
+        "robots.txt",
+        "favicon.svg",
+        "assets/site.css",
+        "assets/site.js",
+        "assets/data/reviews.json",
+        "services-feed.xml",
+        "meta-services-feed.xml",
+        "reviews/reviews.css",
+        "reviews/reviews.js",
+    ):
+        assert (DIST / required).is_file(), f"missing public file: {required}"
+
+    for private_input in (
+        "assets/data/services-catalog.json",
+        "assets/data/services-presentation.json",
+        "assets/source",
+    ):
+        assert not (DIST / private_input).exists(), f"published build input: {private_input}"
+
+    indexable: set[str] = set()
+    for relative in actual:
+        source = (DIST / relative).read_text(encoding="utf-8")
+        if re.search(r'<meta\s+name="robots"\s+content="[^"]*noindex', source, re.I):
+            continue
+        canonical = re.search(
+            r'<link\s+rel="canonical"\s+href="([^"]+)"',
+            source,
+            re.I,
+        )
+        assert canonical is not None, f"indexable page has no canonical: {relative}"
+        indexable.add(canonical.group(1))
+
+    sitemap = ElementTree.parse(DIST / "sitemap.xml")
+    namespace = {"s": "http://www.sitemaps.org/schemas/sitemap/0.9"}
+    sitemap_urls = {
+        item.text
+        for item in sitemap.findall("s:url/s:loc", namespace)
+        if item.text
+    }
+    assert sitemap_urls == indexable, (
+        f"sitemap mismatch: missing={sorted(indexable - sitemap_urls)}, "
+        f"unexpected={sorted(sitemap_urls - indexable)}"
+    )
 
     print(f"Verified {len(actual)} Astro pages and static shared layout")
 

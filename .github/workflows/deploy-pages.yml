@@ -67,15 +67,6 @@ jobs:
       - name: Generate sitemap.xml
         run: python3 tools/generate-sitemap.py
 
-      - name: Add static assets to Astro output
-        run: |
-          rsync -a --exclude 'Icon_Pack/' --exclude '.DS_Store' assets/ dist/assets/
-          cp CNAME robots.txt favicon.ico favicon.svg favicon-16x16.png favicon-32x32.png apple-touch-icon.png dist/
-          cp services-feed.xml meta-services-feed.xml dist/
-          mkdir -p dist/reviews/icons
-          cp reviews/reviews.css reviews/reviews.js dist/reviews/
-          cp reviews/icons/* dist/reviews/icons/
-
       - name: Verify generated site, services and feeds
         run: |
           npm run check

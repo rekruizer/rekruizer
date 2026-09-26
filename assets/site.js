@@ -293,9 +293,10 @@
 
 
   var YANDEX_MAPS_API_KEY = "b945c399-6aeb-44f8-9973-bdd99309f45b";
+  var globalWindow = /** @type {any} */ (window);
 
   function loadYandexMapsApi(callback) {
-    if (window.ymaps && typeof window.ymaps.ready === "function") {
+    if (globalWindow.ymaps && typeof globalWindow.ymaps.ready === "function") {
       callback();
       return;
     }
@@ -321,9 +322,9 @@
     container.classList.add("is-loading");
 
     loadYandexMapsApi(function () {
-      window.ymaps.ready(function () {
+      globalWindow.ymaps.ready(function () {
         var coords = [55.749238, 37.419761];
-        var map = new window.ymaps.Map(container, {
+        var map = new globalWindow.ymaps.Map(container, {
           center: coords,
           zoom: 13,
           controls: []
@@ -334,7 +335,7 @@
 
         map.behaviors.enable(["scrollZoom", "drag", "multiTouch"]);
 
-        var placemark = new window.ymaps.Placemark(coords, {
+        var placemark = new globalWindow.ymaps.Placemark(coords, {
           hintContent: "Денис Пучков — массаж",
           balloonContent: "Москва, Рублёвское шоссе 34к2, INDI"
         }, {
@@ -528,44 +529,41 @@
       });
     }
 
-    function loadRemoteReviews(rail) {
-      if (!window.fetch) return Promise.resolve(false);
+    async function loadRemoteReviews(rail) {
+      if (!window.fetch) return false;
 
-      return window.fetch("/assets/data/reviews.json", {
-        headers: { Accept: "application/json" },
-        cache: "no-cache"
-      })
-        .then(function (response) {
-          if (!response.ok) throw new Error("Не удалось загрузить отзывы");
-          return response.json();
-        })
-        .then(function (payload) {
-          var reviews = payload && Array.isArray(payload.reviews)
-            ? payload.reviews.filter(function (review) {
-                return review && review.text && Number(review.rating) >= 4;
-              }).sort(function (a, b) {
-                var aTime = Date.parse(a.reviewDate || "") || 0;
-                var bTime = Date.parse(b.reviewDate || "") || 0;
-                return bTime - aTime;
-              })
-            : [];
-
-          if (!reviews.length) return false;
-
-          rail.querySelectorAll("[data-review-api-fallback]").forEach(function (card) {
-            card.remove();
-          });
-
-          reviews.forEach(function (review) {
-            rail.appendChild(createReviewCard(review));
-          });
-
-          return true;
-        })
-        .catch(function () {
-          // Если файл временно недоступен, посетитель увидит статические отзывы.
-          return false;
+      try {
+        var response = await window.fetch("/assets/data/reviews.json", {
+          headers: { Accept: "application/json" },
+          cache: "no-cache"
         });
+        if (!response.ok) throw new Error("Не удалось загрузить отзывы");
+        var payload = await response.json();
+        var reviews = payload && Array.isArray(payload.reviews)
+          ? payload.reviews.filter(function (review) {
+              return review && review.text && Number(review.rating) >= 4;
+            }).sort(function (a, b) {
+              var aTime = Date.parse(a.reviewDate || "") || 0;
+              var bTime = Date.parse(b.reviewDate || "") || 0;
+              return bTime - aTime;
+            })
+          : [];
+
+        if (!reviews.length) return false;
+
+        rail.querySelectorAll("[data-review-api-fallback]").forEach(function (card) {
+          card.remove();
+        });
+
+        reviews.forEach(function (review) {
+          rail.appendChild(createReviewCard(review));
+        });
+
+        return true;
+      } catch (_error) {
+        // Если файл временно недоступен, посетитель увидит статические отзывы.
+        return false;
+      }
     }
 
     function sortReviewCardsByDate(root) {

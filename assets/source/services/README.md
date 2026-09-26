@@ -1,6 +1,8 @@
 # Service image sources
 
-This directory contains the canonical PNG sources for service images.
+This directory contains the canonical PNG sources for service images. It lives
+under `assets/source/` to keep image inputs close to the generated public
+assets without mixing the two.
 
 - `site/` contains clean images without duration labels.
 - `catalog/` contains duration-specific images used by Yandex and Meta feeds.

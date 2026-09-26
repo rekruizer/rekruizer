@@ -64,7 +64,3 @@ export function legacyPages(): LegacyPage[] {
     })
     .sort((left, right) => left.route.localeCompare(right.route, "en"));
 }
-
-export function legacy404(): LegacyPage {
-  return parseLegacyDocument(join(ROOT, "404.html"), "404");
-}

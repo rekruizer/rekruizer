@@ -4,8 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "prepare:site": "python3 tools/export-astro-data.py && python3 tools/prepare-public-assets.py",
+    "predev": "npm run prepare:site",
     "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
-    "prebuild": "python3 tools/export-astro-data.py",
+    "prebuild": "npm run prepare:site",
     "build": "ASTRO_TELEMETRY_DISABLED=1 astro build",
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
     "check": "ASTRO_TELEMETRY_DISABLED=1 astro check"

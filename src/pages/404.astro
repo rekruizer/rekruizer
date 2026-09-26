@@ -1,18 +1,45 @@
 ---
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
-import LegacyLayout from "../layouts/LegacyLayout.astro";
-import { legacy404 } from "../lib/legacy";
-
-const page = legacy404();
+import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
-<LegacyLayout headHtml={page.headHtml} bodyClass={page.bodyClass}>
-  {page.segments.map((segment) => (
-    segment.type === "header"
-      ? <Header />
-      : segment.type === "footer"
-        ? <Footer />
-        : <Fragment set:html={segment.html} />
-  ))}
-</LegacyLayout>
+<BaseLayout
+  title="Страница не найдена — Денис Пучков"
+  description="Страница не найдена. Перейдите на главную, выберите услугу массажа или запишитесь онлайн к Денису Пучкову в Крылатском."
+  noindex
+>
+  <main class="page not-found-page">
+    <Header />
+
+    <section class="not-found-hero" aria-labelledby="not-found-title">
+      <div class="not-found-card">
+        <div class="eyebrow"><span class="dot"></span> Ошибка 404</div>
+        <p class="not-found-code">404</p>
+        <h1 id="not-found-title">Такой страницы нет</h1>
+        <p class="lead">
+          Возможно, ссылка устарела или в адресе опечатка. Вернитесь на главную,
+          посмотрите услуги массажа или сразу запишитесь на удобное время.
+        </p>
+
+        <div class="not-found-actions" aria-label="Что можно сделать дальше">
+          <a class="button primary" href="/">На главную</a>
+          <a class="button" href="/#services">Услуги и цены</a>
+          <a class="button" href="https://dikidi.net/massages" data-goal="online_booking_click">Онлайн-запись</a>
+        </div>
+      </div>
+
+      <aside class="not-found-side" aria-label="Быстрые ссылки">
+        <h2>Можно перейти сюда</h2>
+        <div class="not-found-links">
+          <a href="/services/">Все услуги <span>→</span></a>
+          <a href="/services/classic/">Классический массаж <span>→</span></a>
+          <a href="/services/back-neck/">Спина, плечи и шея <span>→</span></a>
+          <a href="/notes/">Полезные материалы <span>→</span></a>
+        </div>
+      </aside>
+    </section>
+
+    <Footer />
+  </main>
+</BaseLayout>
