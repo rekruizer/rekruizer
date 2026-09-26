@@ -17,4 +17,4 @@ dist/
 node_modules/
 public/
 src/generated/services.json
-docs
+docs/
