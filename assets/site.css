@@ -20,6 +20,7 @@
   --button-font-weight: var(--font-weight-medium);
   --button-bg: rgba(255,255,255,.07);
   --button-bg-hover: rgba(255,255,255,.12);
+  --button-border: rgba(245,241,234,.16);
   --button-border-hover: rgba(245,241,234,.26);
   --button-active-bg: linear-gradient(135deg, #f3d5b5, #d4a373);
   --button-active-bg-hover: linear-gradient(135deg, #f3d5b5, #d4a373);
@@ -142,7 +143,7 @@ nav a {
 
 nav a:hover {
   color: var(--text);
-  border-color: transparent;
+  border-color: var(--button-border-hover);
   background: rgba(255,255,255,.05);
 }
 
@@ -162,7 +163,6 @@ nav a:hover {
 .hero-main,
 .hero-side,
 .link-card {
-  border: 1px solid transparent;
   background: linear-gradient(145deg, rgba(255,255,255,.11), rgba(255,255,255,.045));
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
@@ -251,7 +251,7 @@ h1 {
   gap: 10px;
   padding: 14px 18px;
   border-radius: var(--button-radius-lg);
-  border: 1px solid transparent;
+  border: 1px solid var(--button-border);
   background: var(--button-bg);
   color: var(--text);
   font-size: var(--button-font-size-lg);
@@ -300,7 +300,6 @@ h1 {
   position: relative;
   min-height: 310px;
   border-radius: 24px;
-  border: 1px solid transparent;
   background: #15171b;
   display: grid;
   place-items: center;
@@ -450,7 +449,6 @@ header + .section {
   grid-template-columns: minmax(240px, .62fr) minmax(0, 1.65fr);
   gap: clamp(24px, 5vw, 54px);
   min-height: 620px;
-  border: 1px solid transparent;
   border-radius: 36px;
   padding: clamp(26px, 4vw, 44px);
   background:
@@ -639,7 +637,6 @@ header + .section {
 
 .subscription-card {
   min-height: 304px;
-  border: 1px solid transparent;
   border-radius: 24px;
   padding: 20px 18px;
   display: flex;
@@ -650,12 +647,11 @@ header + .section {
   box-shadow: var(--shadow);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  transition: transform .22s ease, border-color .22s ease, background .22s ease;
+  transition: transform .22s ease, background .22s ease;
 }
 
 .subscription-card:hover {
   transform: translateY(-4px);
-  border-color: rgba(156,207,147,.48);
   background:
     radial-gradient(circle at 14% 10%, rgba(156,207,147,.16), transparent 34%),
     linear-gradient(145deg, rgba(42,48,44,.98), rgba(25,29,29,.99));
@@ -766,7 +762,7 @@ header + .section {
   gap: 4px;
   margin-top: auto;
   min-height: 40px;
-  border: 1px solid transparent;
+  border: 1px solid var(--button-border);
   border-radius: var(--button-radius-md);
   padding: 10px 14px;
   color: var(--text);
@@ -1024,7 +1020,6 @@ footer a:hover {
   gap: 14px;
   width: min(620px, calc(100% - 40px));
   padding: 14px 16px;
-  border: 1px solid transparent;
   border-radius: 20px;
   color: var(--text);
   background: linear-gradient(145deg, rgba(35, 39, 37, .96), rgba(22, 24, 25, .96));
@@ -1183,7 +1178,7 @@ footer a:hover {
     width: fit-content;
     min-height: 42px;
     padding: 10px 14px;
-    border: 1px solid transparent;
+    border: 1px solid var(--button-border);
     border-radius: var(--button-radius-md);
     background: rgba(255,255,255,.07);
     color: var(--text);
@@ -1196,7 +1191,7 @@ footer a:hover {
   .mobile-menu__close {
     width: 42px;
     height: 42px;
-    border: 1px solid transparent;
+    border: 1px solid var(--button-border);
     border-radius: var(--button-radius-md);
     background: var(--button-bg);
     color: var(--text);
@@ -1605,7 +1600,6 @@ footer a:hover {
 }
 
 .wide-card {
-  border: 1px solid transparent;
   background: linear-gradient(145deg, rgba(255,255,255,.11), rgba(255,255,255,.045));
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
@@ -1910,7 +1904,6 @@ footer a:hover {
 .note-block,
 .note-card,
 .note-step {
-  border: 1px solid transparent;
   background: linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.04));
 }
 
@@ -1921,7 +1914,6 @@ footer a:hover {
 
 .note-block-head {
   padding: 14px 18px;
-  border-bottom: 1px solid transparent;
   color: #f3d5b5;
   background: rgba(212,163,115,.09);
   font-size: var(--font-badge);
@@ -2053,7 +2045,6 @@ footer a:hover {
   display: inline-flex;
   width: fit-content;
   align-items: center;
-  border: 1px solid transparent;
   border-radius: 999px;
   padding: 5px 10px;
   color: #f3d5b5;
@@ -2099,7 +2090,6 @@ footer a:hover {
 .note-content th,
 .note-content td {
   padding: 10px;
-  border-bottom: 1px solid transparent;
   text-align: left;
   vertical-align: top;
 }
@@ -2170,7 +2160,7 @@ footer a:hover {
   width: 100%;
   text-align: left;
   padding: 14px 16px;
-  border: 1px solid transparent;
+  border: 1px solid var(--button-border);
   border-radius: var(--button-radius-md);
   background: rgba(255,255,255,.055);
   color: var(--text);
@@ -2294,7 +2284,6 @@ footer a:hover {
 
 .sc-card {
   background: rgba(255,255,255,.055);
-  border: 1px solid transparent;
   border-radius: 16px;
   padding: 16px;
   text-align: center;
@@ -2440,7 +2429,6 @@ footer a:hover {
 
 .service-photo {
   overflow: hidden;
-  border: 1px solid transparent;
   border-radius: 28px;
   background: rgba(255,255,255,.045);
   box-shadow: var(--shadow);
@@ -2478,7 +2466,6 @@ footer a:hover {
   gap: 10px;
   margin-top: 26px;
   padding-top: 22px;
-  border-top: 1px solid transparent;
 }
 
 .service-option {
@@ -2583,15 +2570,13 @@ footer a:hover {
 .service-list-card {
   min-width: 0;
   overflow: hidden;
-  border: 1px solid transparent;
   border-radius: 38px 38px 22px 22px;
   background: rgba(255,255,255,.055);
-  transition: transform .22s ease, border-color .22s ease, background .22s ease;
+  transition: transform .22s ease, background .22s ease;
 }
 
 .other-service-card:hover,
 .service-list-card:hover {
-  border-color: rgba(212,163,115,.42);
   background: rgba(255,255,255,.08);
   transform: translateY(-2px);
 }
@@ -2979,7 +2964,6 @@ footer a:hover {
 
 .muscle-article th,
 .muscle-article td {
-  border: 1px solid transparent;
   padding: 12px 14px;
   vertical-align: top;
 }
@@ -3012,7 +2996,6 @@ footer a:hover {
 
 .obsidian-article .note-table-wrap {
   margin: 26px 0;
-  border: 1px solid transparent;
   border-radius: 18px;
   overflow: auto;
 }
@@ -3027,8 +3010,6 @@ footer a:hover {
 .obsidian-article .note-table-wrap th,
 .obsidian-article .note-table-wrap td {
   border: 0;
-  border-right: 1px solid transparent;
-  border-bottom: 1px solid transparent;
 }
 
 .obsidian-article .note-table-wrap th:last-child,
@@ -3125,7 +3106,6 @@ footer a:hover {
 }
 
 .muscle-letter {
-  border: 1px solid transparent;
   border-radius: 24px;
   padding: 20px;
   background: rgba(255,255,255,.055);
@@ -3145,7 +3125,7 @@ footer a:hover {
 
 .muscle-list a {
   padding: 12px 13px;
-  border: 1px solid transparent;
+  border: 1px solid var(--button-border);
   border-radius: 16px;
   background: rgba(255,255,255,.045);
   color: rgba(245,241,234,.9);
@@ -3167,7 +3147,7 @@ footer a:hover {
 .back-link a {
   display: inline-flex;
   padding: 12px 16px;
-  border: 1px solid transparent;
+  border: 1px solid var(--button-border);
   border-radius: var(--button-radius-lg);
   background: rgba(255,255,255,.06);
   color: #f3d5b5;
@@ -3598,7 +3578,6 @@ footer a:hover {
   grid-template-columns: minmax(0, .9fr) minmax(420px, 1.1fr);
   gap: clamp(18px, 3vw, 30px);
   align-items: stretch;
-  border: 1px solid transparent;
   border-radius: 36px;
   padding: clamp(22px, 4vw, 36px);
   background:
@@ -3646,7 +3625,6 @@ footer a:hover {
 .location-map {
   position: relative;
   min-height: 330px;
-  border: 1px solid transparent;
   border-radius: 28px;
   overflow: hidden;
   background: rgba(255,255,255,.055);
@@ -3846,7 +3824,7 @@ footer a:hover {
   justify-content: center;
   width: 48px;
   height: 48px;
-  border: 1px solid transparent;
+  border: 1px solid var(--button-border);
   border-radius: var(--button-radius-md);
   color: var(--text);
   background: var(--button-bg);
@@ -3897,7 +3875,6 @@ footer a:hover {
   justify-content: flex-start;
   gap: 16px;
   padding: 22px;
-  border: 1px solid transparent;
   border-radius: 28px;
   background:
     radial-gradient(circle at 18% 12%, rgba(212,163,115,.14), transparent 38%),
@@ -4103,7 +4080,6 @@ footer a:hover {
 .not-found-side {
   position: relative;
   overflow: hidden;
-  border: 1px solid transparent;
   border-radius: var(--radius);
   background: linear-gradient(145deg, rgba(255,255,255,.11), rgba(255,255,255,.045));
   box-shadow: var(--shadow);
@@ -4194,7 +4170,7 @@ footer a:hover {
   gap: 14px;
   min-height: 50px;
   padding: 14px 16px;
-  border: 1px solid transparent;
+  border: 1px solid var(--button-border);
   border-radius: var(--button-radius-md);
   color: var(--text);
   background: rgba(255,255,255,.055);
