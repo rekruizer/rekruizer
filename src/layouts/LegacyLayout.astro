@@ -5,12 +5,35 @@ interface Props {
 }
 
 const { headHtml, bodyClass = "" } = Astro.props;
+
+function attributeValue(tag: string, name: string): string | undefined {
+  return tag.match(new RegExp(`\\b${name}\\s*=\\s*(["'])(.*?)\\1`, "is"))?.[2];
+}
+
+const metaTags = headHtml.match(/<meta\b[^>]*>/gis) ?? [];
+const linkTags = headHtml.match(/<link\b[^>]*>/gis) ?? [];
+const title = headHtml.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i)?.[1].replace(/<[^>]*>/g, "").trim();
+const descriptionTag = metaTags
+  .find((tag) => attributeValue(tag, "name")?.toLowerCase() === "description");
+const canonicalTag = linkTags
+  .find((tag) => attributeValue(tag, "rel")?.toLowerCase().split(/\s+/).includes("canonical"));
+
+const descriptionContent = descriptionTag ? attributeValue(descriptionTag, "content") : undefined;
+const canonicalHref = canonicalTag ? attributeValue(canonicalTag, "href") : undefined;
+const hasMeta = (attribute: "name" | "property", value: string) => metaTags.some(
+  (tag) => attributeValue(tag, attribute)?.toLowerCase() === value,
+);
 ---
 
 <!doctype html>
 <html lang="ru">
   <head>
     <Fragment set:html={headHtml} />
+    {canonicalHref && title && !hasMeta("property", "og:title") && <meta property="og:title" content={title} />}
+    {canonicalHref && descriptionContent && !hasMeta("property", "og:description") && <meta property="og:description" content={descriptionContent} />}
+    {canonicalHref && !hasMeta("property", "og:url") && <meta property="og:url" content={canonicalHref} />}
+    {canonicalHref && title && !hasMeta("name", "twitter:title") && <meta name="twitter:title" content={title} />}
+    {canonicalHref && descriptionContent && !hasMeta("name", "twitter:description") && <meta name="twitter:description" content={descriptionContent} />}
   </head>
   <body class={bodyClass}>
     <slot />

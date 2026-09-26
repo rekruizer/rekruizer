@@ -56,6 +56,9 @@ def main() -> None:
     assert 'name="robots" content="noindex, follow"' in not_found
     assert 'rel="canonical"' not in not_found
 
+    home = (DIST / "index.html").read_text(encoding="utf-8")
+    assert 'data-breadcrumb-schema' not in home, "the home page must not describe a one-item breadcrumb trail"
+
     for source_page in (ROOT / "url").glob("*/index.html"):
         relative = source_page.relative_to(ROOT)
         built = (DIST / relative).read_text(encoding="utf-8")
@@ -98,6 +101,14 @@ def main() -> None:
             re.I,
         )
         assert canonical is not None, f"indexable page has no canonical: {relative}"
+        for social_meta in (
+            'property="og:title"',
+            'property="og:description"',
+            'property="og:url"',
+            'name="twitter:title"',
+            'name="twitter:description"',
+        ):
+            assert social_meta in source, f"indexable page has no {social_meta}: {relative}"
         indexable.add(canonical.group(1))
 
     sitemap = ElementTree.parse(DIST / "sitemap.xml")
