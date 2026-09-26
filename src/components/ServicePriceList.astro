@@ -12,7 +12,9 @@ let previousCategory = "";
       <div class="price-filter-group">
         <span>Направления</span>
         <div class="price-chips">
-          {servicesCatalogue.categories.map((category) => <span>{category}</span>)}
+          {servicesCatalogue.categories
+            .filter((category) => category !== "Акции %")
+            .map((category) => <span>{category}</span>)}
         </div>
       </div>
     </div>

@@ -68,21 +68,21 @@
     .decision-label { color: var(--accent); font-size: 12px; font-weight: var(--font-weight-bold); letter-spacing: .08em; text-transform: uppercase; }
     .decision-question { font-size: clamp(19px, 2.2vw, 26px); line-height: 1.35; letter-spacing: -0.03em; font-weight: var(--font-weight-bold); color: var(--text); margin-top: -4px; }
     .decision-options { display: grid; gap: 10px; }
-    .decision-option { width: 100%; text-align: left; padding: 15px 16px; border: 1px solid var(--line); border-radius: var(--button-radius-md); background: rgba(255,255,255,.055); color: var(--text); font: inherit; font-weight: var(--button-font-weight); line-height: 1.5; cursor: pointer; transition: background .16s, border-color .16s, transform .16s; }
+    .decision-option { width: 100%; text-align: left; padding: 15px 16px; border: 1px solid transparent; border-radius: var(--button-radius-md); background: rgba(255,255,255,.055); color: var(--text); font: inherit; font-weight: var(--button-font-weight); line-height: 1.5; cursor: pointer; transition: background .16s, border-color .16s, transform .16s; }
     .decision-option:hover:not([disabled]) { background: rgba(255,255,255,.095); border-color: rgba(212,163,115,.42); transform: translateY(-1px); }
     .decision-option[disabled] { cursor: default; }
     .decision-option.selected.best, .decision-option.best-answer { border-color: rgba(156,207,147,.78); background: rgba(156,207,147,.18); }
     .decision-option.selected.acceptable { border-color: rgba(212,163,115,.72); background: rgba(212,163,115,.16); }
     .decision-option.selected.weak { border-color: rgba(186,117,23,.7); background: rgba(186,117,23,.16); }
     .decision-option.selected.risky { border-color: rgba(211,91,91,.72); background: rgba(211,91,91,.18); }
-    .feedback-card { display: none; padding: 18px; border-radius: 18px; background: rgba(255,255,255,.06); border: 1px solid var(--line); }
+    .feedback-card { display: none; padding: 18px; border-radius: 18px; background: rgba(255,255,255,.06); border: 1px solid transparent; }
     .feedback-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
     .feedback-verdict { font-weight: var(--font-weight-bold); font-size: 17px; }
     .feedback-score { color: var(--muted); font-size: 13px; white-space: nowrap; }
     .feedback-card p { margin: 0 0 10px; color: var(--muted); line-height: 1.65; }
     .feedback-card p .text-bold { color: var(--text); font-weight: var(--font-weight-bold); }
     .details-btn { margin-top: 4px; border: 0; background: transparent; color: var(--accent); font: inherit; font-weight: var(--button-font-weight); cursor: pointer; padding: 0; }
-    .details-text { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--muted); line-height: 1.65; }
+    .details-text { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid transparent; color: var(--muted); line-height: 1.65; }
     .case-summary, .clinical-result { display: none; }
     .case-summary-card { text-align: center; padding: 18px 0; }
     .case-score { font-size: clamp(42px, 7vw, 76px); line-height: 1; font-weight: var(--font-weight-bold); letter-spacing: -0.06em; color: var(--text); }
@@ -92,7 +92,7 @@
     .profile-bar { height: 9px; background: rgba(245,241,234,.13); border-radius: 999px; overflow: hidden; }
     .profile-fill { height: 100%; border-radius: inherit; background: var(--accent); }
     .result-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 18px 0; }
-    .result-stat { background: rgba(255,255,255,.055); border: 1px solid var(--line); border-radius: 16px; padding: 16px; text-align: center; }
+    .result-stat { background: rgba(255,255,255,.055); border: 1px solid transparent; border-radius: 16px; padding: 16px; text-align: center; }
     .result-stat .text-bold { display: block; color: var(--text); font-size: 28px; font-weight: var(--font-weight-bold); letter-spacing: -0.03em; }
     .result-stat span { color: var(--muted); font-size: 12px; }
     .result-text { color: var(--muted); line-height: 1.65; }
