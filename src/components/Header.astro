@@ -1,4 +1,5 @@
 ---
+import booking from "../data/booking.json";
 import SocialLinks from "./SocialLinks.astro";
 ---
 
@@ -10,7 +11,7 @@ import SocialLinks from "./SocialLinks.astro";
   <nav class="site-nav" aria-label="Навигация">
     <a href="/services/">Услуги</a>
     <a href="/notes/">Полезное</a>
-    <a class="site-nav__booking" href="https://dikidi.net/massages" data-goal="online_booking_click">Онлайн-запись</a>
+    <a class="site-nav__booking" href={booking.url} data-goal="online_booking_click">Онлайн-запись</a>
   </nav>
   <button class="mobile-menu-toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="mobile-menu">
     <span></span><span></span>
@@ -38,7 +39,7 @@ import SocialLinks from "./SocialLinks.astro";
         <a class="mobile-menu__address" href="https://yandex.ru/maps/org/159539374930" target="_blank" rel="noopener noreferrer" data-goal="yandex_maps_route_click">Москва, Рублёвское шоссе 34к2</a>
       </div>
       <SocialLinks class="mobile-menu__social footer-social" />
-      <a class="button primary mobile-menu__cta" href="https://dikidi.net/massages" data-goal="online_booking_click">Записаться</a>
+      <a class="button primary mobile-menu__cta" href={booking.url} data-goal="online_booking_click">Записаться</a>
     </div>
   </div>
 </header>

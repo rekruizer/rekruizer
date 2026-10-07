@@ -37,7 +37,7 @@ def _read_json(path: Path) -> dict[str, Any]:
 
 
 def validate_presentation(value: dict[str, Any]) -> dict[str, Any]:
-    if value.get("schemaVersion") != 1:
+    if value.get("schemaVersion") not in {1, 2}:
         raise CatalogValidationError("Unsupported services-presentation schemaVersion")
     category_ids = value.get("categoryIds")
     pages = value.get("pages")
@@ -49,12 +49,11 @@ def validate_presentation(value: dict[str, Any]) -> dict[str, Any]:
         raise CatalogValidationError("services-presentation has no pages")
     if not isinstance(rows, list) or not rows:
         raise CatalogValidationError("services-presentation has no services")
-    if not isinstance(subscription_rows, list) or not subscription_rows:
+    if not isinstance(subscription_rows, list):
         raise CatalogValidationError("services-presentation has no subscriptions")
 
     ids: set[str] = set()
     offer_ids: set[str] = set()
-    image_files: set[str] = set()
     primary_slugs: set[str] = set()
     for row in rows:
         if not isinstance(row, dict):
@@ -65,7 +64,7 @@ def validate_presentation(value: dict[str, Any]) -> dict[str, Any]:
         image_file = row.get("imageFile")
         site_image_file = row.get("siteImageFile")
         if not re.fullmatch(r"\d+", service_id):
-            raise CatalogValidationError(f"Invalid DIKIDI id in presentation: {service_id!r}")
+            raise CatalogValidationError(f"Invalid service id in presentation: {service_id!r}")
         if not isinstance(slug, str) or not re.fullmatch(r"[a-z0-9-]+", slug):
             raise CatalogValidationError(f"Invalid page slug for service {service_id}")
         if not isinstance(offer_id, str) or not re.fullmatch(r"[a-z0-9-]+", offer_id):
@@ -82,13 +81,12 @@ def validate_presentation(value: dict[str, Any]) -> dict[str, Any]:
             raise CatalogValidationError(
                 f"Invalid local WebP siteImageFile for service {service_id}"
             )
-        if service_id in ids or offer_id in offer_ids or image_file in image_files:
+        if service_id in ids or offer_id in offer_ids:
             raise CatalogValidationError(
-                "Duplicate service id, offerId or imageFile in presentation"
+                "Duplicate service id or offerId in presentation"
             )
         ids.add(service_id)
         offer_ids.add(offer_id)
-        image_files.add(image_file)
         if row.get("primaryForPage"):
             if slug in primary_slugs:
                 raise CatalogValidationError(f"More than one primary service for /services/{slug}/")
@@ -114,9 +112,9 @@ def validate_presentation(value: dict[str, Any]) -> dict[str, Any]:
         image_file = row.get("imageFile")
         sessions = row.get("sessions")
         reference_service_id = str(row.get("referenceServiceId", ""))
-        if not re.fullmatch(r"\d+", service_id):
+        if not re.fullmatch(r"\d+|abonement:[1-9]\d*", service_id):
             raise CatalogValidationError(
-                f"Invalid DIKIDI subscription id: {service_id!r}"
+                f"Invalid subscription id: {service_id!r}"
             )
         if not isinstance(offer_id, str) or not re.fullmatch(r"[a-z0-9-]+", offer_id):
             raise CatalogValidationError(
@@ -136,13 +134,12 @@ def validate_presentation(value: dict[str, Any]) -> dict[str, Any]:
             raise CatalogValidationError(
                 f"Invalid reference service for subscription {service_id}"
             )
-        if service_id in ids or offer_id in offer_ids or image_file in image_files:
+        if service_id in ids or offer_id in offer_ids:
             raise CatalogValidationError(
-                "Duplicate service id, offerId or imageFile in presentation"
+                "Duplicate service id or offerId in presentation"
             )
         ids.add(service_id)
         offer_ids.add(offer_id)
-        image_files.add(image_file)
         if row.get("featured"):
             featured_subscriptions += 1
 
@@ -176,21 +173,35 @@ def validate_presentation(value: dict[str, Any]) -> dict[str, Any]:
                 if not isinstance(source, dict) or source.get("type") not in {
                     "manual",
                     "dikidi",
+                    "yclients",
                 }:
                     raise CatalogValidationError(
                         f"Invalid source for {field} in /services/{slug}/"
                     )
-                if source["type"] == "dikidi" and not re.fullmatch(
+                if source["type"] in {"dikidi", "yclients"} and not re.fullmatch(
                     r"\d+", str(source.get("serviceId", ""))
                 ):
                     raise CatalogValidationError(
-                        f"Missing DIKIDI source for {field} in /services/{slug}/"
+                        f"Missing source service for {field} in /services/{slug}/"
                     )
     missing_primary = slugs - primary_slugs
     if missing_primary:
         raise CatalogValidationError(
             f"Missing primaryForPage for: {', '.join(sorted(missing_primary))}"
         )
+    all_rows = rows + subscription_rows
+    meta_ids = [str(row.get("metaItemId", row["id"])) for row in all_rows]
+    if len(set(meta_ids)) != len(meta_ids) or any(not re.fullmatch(r"[a-zA-Z0-9:_-]{1,100}", item) for item in meta_ids):
+        raise CatalogValidationError("Invalid or duplicate stable Meta item ids")
+    if value.get("schemaVersion") == 2:
+        if value.get("provider") != "YCLIENTS":
+            raise CatalogValidationError("Version 2 presentation requires an explicit YCLIENTS provider")
+        source_categories = value.get("sourceCategoryIds")
+        if not isinstance(source_categories, dict) or not source_categories or any(
+            not re.fullmatch(r"(?:abonement-category:)?[1-9]\d*", str(key)) or not re.fullmatch(r"[1-9]\d*", str(item))
+            for key, item in source_categories.items()
+        ):
+            raise CatalogValidationError("Invalid YCLIENTS to stable feed category mapping")
     return value
 
 
@@ -200,8 +211,10 @@ def validate_catalog(
     *,
     require_local_images: bool = False,
 ) -> dict[str, Any]:
-    if value.get("schemaVersion") != 1 or value.get("provider") != "DIKIDI":
+    if (value.get("schemaVersion"), value.get("provider")) not in {(1, "DIKIDI"), (2, "YCLIENTS")}:
         raise CatalogValidationError("Unsupported services catalogue schema or provider")
+    if value.get("provider") != presentation.get("provider", "DIKIDI"):
+        raise CatalogValidationError("Catalogue and presentation providers do not match; migration must be paired")
     content_hash = value.get("contentHash")
     if not isinstance(content_hash, str) or not re.fullmatch(r"[a-f0-9]{64}", content_hash):
         raise CatalogValidationError("Catalogue has an invalid contentHash")
@@ -214,8 +227,18 @@ def validate_catalog(
         if not isinstance(service, dict):
             raise CatalogValidationError("Catalogue contains an invalid service")
         service_id = str(service.get("id", ""))
-        if not re.fullmatch(r"\d+", service_id) or service_id in by_id:
+        if not re.fullmatch(r"\d+|abonement:[1-9]\d*", service_id) or service_id in by_id:
             raise CatalogValidationError(f"Invalid or duplicate service id: {service_id!r}")
+        if value["provider"] == "YCLIENTS":
+            kind = service.get("entityType")
+            source_id = str(service.get("sourceId", ""))
+            if kind not in {"service", "subscription"} or not re.fullmatch(r"[1-9]\d*", source_id):
+                raise CatalogValidationError(f"Service {service_id} has invalid YCLIENTS identity")
+            if service_id != (f"abonement:{source_id}" if kind == "subscription" else source_id):
+                raise CatalogValidationError(f"Service {service_id} has inconsistent entity identity")
+            category_pattern = r"abonement-category:[1-9]\d*" if kind == "subscription" else r"[1-9]\d*"
+            if not re.fullmatch(category_pattern, str(service.get("categoryId", ""))):
+                raise CatalogValidationError(f"Service {service_id} has no source category id")
         for field in ("category", "name", "bookingUrl"):
             if not isinstance(service.get(field), str) or not service[field].strip():
                 raise CatalogValidationError(
@@ -257,16 +280,15 @@ def validate_catalog(
         for service_id in available_mapped_ids
         if not by_id[service_id]["published"]
     }
-    if unpublished_mapped_ids:
-        raise CatalogValidationError(
-            "mapped services are not published: "
-            + ", ".join(sorted(unpublished_mapped_ids))
-        )
+    available_mapped_ids -= unpublished_mapped_ids
 
     catalogue_categories = {
         by_id[service_id]["category"] for service_id in available_mapped_ids
     }
-    missing_categories = catalogue_categories - set(presentation["categoryIds"])
+    missing_categories = catalogue_categories - set(presentation["categoryIds"]) if value["provider"] == "DIKIDI" else {
+        by_id[service_id]["categoryId"] for service_id in available_mapped_ids
+        if by_id[service_id]["categoryId"] not in presentation["sourceCategoryIds"]
+    }
     if missing_categories:
         raise CatalogValidationError(
             f"Missing stable category ids for: {', '.join(sorted(missing_categories))}"
@@ -277,12 +299,15 @@ def validate_catalog(
             continue
         subscription = by_id[str(row["id"])]
         reference = by_id.get(str(row["referenceServiceId"]))
-        if not (
+        if value["provider"] == "YCLIENTS":
+            if subscription.get("entityType") != "subscription" or subscription.get("sessions") != row["sessions"] or subscription.get("referenceServiceId") != row["referenceServiceId"]:
+                raise CatalogValidationError(f"Subscription {subscription['id']} facts differ from its presentation mapping")
+        elif not (
             subscription["category"].casefold().startswith("абонемент")
             or subscription["name"].casefold().startswith("абонемент")
         ):
             raise CatalogValidationError(
-                f"Service {subscription['id']} is not a DIKIDI subscription"
+                f"Service {subscription['id']} is not a subscription"
             )
         if reference is None:
             continue
@@ -292,7 +317,7 @@ def validate_catalog(
                 f"reference service {reference['id']}"
             )
         regular_total = reference["priceRub"] * row["sessions"]
-        if subscription["priceRub"] > regular_total:
+        if value["provider"] == "DIKIDI" and subscription["priceRub"] > regular_total:
             raise CatalogValidationError(
                 f"Subscription {subscription['id']} costs more than separate sessions"
             )
@@ -354,21 +379,21 @@ def mapped_services(
         str(row["id"]): row for row in presentation["services"]
     }
     result: list[tuple[dict[str, Any], dict[str, Any]]] = []
-    # The catalogue is stored in DIKIDI display order. Presentation metadata
+    # The catalogue is stored in the provider's display order. Presentation metadata
     # decides how an item is rendered, but must not become a second ranking
     # system for ordinary services.
     for source_service in catalogue["services"]:
         row = presentation_by_id.get(str(source_service["id"]))
-        if row is None:
+        if row is None or not source_service["published"]:
             continue
         service = source_service
         display_name = row.get("displayName")
         if isinstance(display_name, str):
             service = {**service, "name": display_name}
-        # A DIKIDI row is a bookable variant (for example 55 or 90 minutes),
+        # A source row is a bookable variant (for example 55 or 90 minutes),
         # not a separate editorial entity. All variants linked to the same
         # site page therefore publish the same canonical description. The raw
-        # DIKIDI copy stays in services-catalog.json and is available in the
+        # source copy stays in services-catalog.json and is available in the
         # admin as an optional source when editing the common page text.
         page = presentation["pages"].get(str(row["slug"]), {})
         page_description = str(page.get("description", "")).strip()
@@ -384,7 +409,9 @@ def mapped_subscriptions(
     result: list[tuple[dict[str, Any], dict[str, Any]]] = []
     for row in presentation["subscriptions"]:
         service = by_id.get(str(row["id"]))
-        if service is None:
+        if service is None or not service["published"]:
+            continue
+        if str(row["referenceServiceId"]) not in by_id:
             continue
         if not service.get("description", "").strip():
             service = {
@@ -394,8 +421,17 @@ def mapped_subscriptions(
                     f"{service['durationMinutes']} минут."
                 ),
             }
+        if row.get("groupLabel"):
+            service = {**service, "description": f"{row['groupLabel']}. {service['description']}"}
         result.append((service, row))
     return result
+
+
+def stable_category_id(service: dict[str, Any], presentation: dict[str, Any]) -> str:
+    """Renaming a source category must not change its external feed identity."""
+    if presentation.get("provider") == "YCLIENTS":
+        return str(presentation["sourceCategoryIds"][service["categoryId"]])
+    return str(presentation["categoryIds"][service["category"]])
 
 
 def mapped_catalogue_items(

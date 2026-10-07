@@ -58,11 +58,15 @@ def generate_png_images(rows: list[tuple[dict, dict]]) -> None:
 
     IMAGE_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     expected: set[Path] = set()
+    processed: set[Path] = set()
     for service, row in rows:
         source = local_image_path(row)
         destination = IMAGE_OUTPUT_DIR / (Path(row["imageFile"]).stem + ".png")
         raw_destination = destination.with_suffix(".raw.png")
         expected.add(destination)
+        if source in processed:
+            continue
+        processed.add(source)
         subprocess.run(
             [
                 decoder,
@@ -126,8 +130,8 @@ def write_feed(rows: list[tuple[dict, dict]], subscription_ids: set[str]) -> Non
 
     for service, row in rows:
         item = SubElement(channel, "item")
-        item_id = str(service["id"])
-        is_subscription = item_id in subscription_ids
+        item_id = str(row.get("metaItemId", service["id"]))
+        is_subscription = str(service["id"]) in subscription_ids
         page_url = (
             SITE + "/#subscriptions"
             if is_subscription
@@ -177,7 +181,7 @@ def main() -> None:
     write_feed(rows, {str(service["id"]) for service, _row in subscriptions})
     print(
         f"Generated meta-services-feed.xml with {len(rows)} items and "
-        f"{len(rows)} PNG images"
+        f"{len({row['imageFile'] for _service, row in rows})} PNG images"
     )
 
 

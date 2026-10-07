@@ -24,7 +24,7 @@ from services_catalog import (
 
 
 DEFAULT_CATALOG_URL = (
-    "https://denisyuce-services-catalog.den100hero.workers.dev/services-catalog.json"
+    "https://admin.denisyuce.com/api/catalog/snapshot"
 )
 
 
@@ -97,7 +97,7 @@ def existing_snapshot_matches(
     expected_ids = {
         str(service["id"])
         for service in remote.get("services", [])
-        if isinstance(service, dict) and service.get("published") is True
+        if isinstance(service, dict)
     }
     current_services = current.get("services")
     if not isinstance(current_services, list):
@@ -109,6 +109,9 @@ def existing_snapshot_matches(
     }
     return (
         current.get("contentHash") == remote["contentHash"]
+        and current.get("provider") == remote.get("provider")
+        and current.get("companyId") == remote.get("companyId")
+        and current.get("masterId") == remote.get("masterId")
         and current_ids == expected_ids
     )
 
@@ -141,7 +144,7 @@ def install_catalogue(value: dict[str, Any]) -> bool:
     validate_catalog(public_value, presentation, require_local_images=True)
     print(
         f"Installed services catalogue {value['contentHash']}: "
-        f"{len(public_value['services'])} DIKIDI services, "
+        f"{len(public_value['services'])} {public_value['provider']} services, "
         f"{len(presentation_rows)} configured for the website, "
         f"{len(presentation_rows)} local WebP images"
     )
@@ -153,7 +156,7 @@ def report_github_warning(message: str) -> None:
     if os.environ.get("GITHUB_ACTIONS") != "true":
         return
     annotation = message.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
-    print(f"::warning title=Каталог услуг DIKIDI::{annotation}", file=sys.stderr)
+    print(f"::warning title=Каталог услуг::{annotation}", file=sys.stderr)
     summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
     if not summary_path:
         return

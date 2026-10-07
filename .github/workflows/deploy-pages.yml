@@ -5,8 +5,8 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    # Cloudflare refreshes at 04:20 Moscow time. GitHub reads the completed
-    # snapshot 50 minutes later and never calls the Worker's admin refresh.
+    # Cloudflare refreshes at 04:40 Moscow time. GitHub reads the completed
+    # snapshot 30 minutes later and never calls the Worker's admin refresh.
     - cron: "10 2 * * *"
 
 permissions:
@@ -50,7 +50,7 @@ jobs:
       - name: Read and validate services catalogue
         env:
           SERVICES_CATALOG_READ_TOKEN: ${{ secrets.SERVICES_CATALOG_READ_TOKEN }}
-        # An unknown or replaced DIKIDI service must not block unrelated site
+        # An unknown or replaced provider service must not block unrelated site
         # deployments. The sync script keeps the last validated snapshot and
         # adds a visible warning to this run instead.
         run: python3 tools/sync-services-catalog.py

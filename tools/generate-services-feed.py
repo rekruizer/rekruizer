@@ -14,6 +14,7 @@ from services_catalog import (
     mapped_services,
     mapped_subscriptions,
     public_image_path,
+    stable_category_id,
 )
 
 
@@ -52,7 +53,6 @@ class Offer:
 
 def build_offers() -> list[Offer]:
     catalogue, presentation = load_catalog(require_local_images=True)
-    category_ids = presentation["categoryIds"]
     offers: list[Offer] = []
     for service, row in mapped_services(catalogue, presentation):
         old_price = row.get("oldPriceRub")
@@ -71,7 +71,7 @@ def build_offers() -> list[Offer]:
                 booking_url=service["bookingUrl"],
                 picture=SITE + public_image_path(service, row),
                 description=service["description"],
-                category_id=str(category_ids[service["category"]]),
+                category_id=stable_category_id(service, presentation),
                 category_name=service["category"],
             )
         )
@@ -87,8 +87,8 @@ def build_offers() -> list[Offer]:
                 booking_url=service["bookingUrl"],
                 picture=SITE + public_image_path(service, row),
                 description=service["description"],
-                category_id=str(category_ids[service["category"]]),
-                category_name=service["category"],
+                category_id=stable_category_id(service, presentation),
+                category_name="Абонементы — " + str(row["groupLabel"]) if row.get("groupLabel") else service["category"],
                 sessions=int(row["sessions"]),
             )
         )

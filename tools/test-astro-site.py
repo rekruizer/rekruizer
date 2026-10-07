@@ -7,6 +7,7 @@ import re
 import json
 from pathlib import Path
 from xml.etree import ElementTree
+from services_catalog import load_catalog, services_by_slug
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -16,8 +17,8 @@ LEGACY_ROOTS = ("documents", "muscles", "notes", "quizzes", "reviews", "url")
 
 def expected_pages() -> set[str]:
     pages = {"index.html", "404.html", "services/index.html"}
-    presentation = json.loads((ROOT / "assets" / "data" / "services-presentation.json").read_text(encoding="utf-8"))
-    pages.update(f"services/{slug}/index.html" for slug in presentation["pages"])
+    catalogue, presentation = load_catalog()
+    pages.update(f"services/{slug}/index.html" for slug in services_by_slug(catalogue,presentation))
     for directory in LEGACY_ROOTS:
         pages.update(
             path.relative_to(ROOT).as_posix()

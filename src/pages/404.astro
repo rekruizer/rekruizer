@@ -1,4 +1,5 @@
 ---
+import booking from "../data/booking.json";
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
@@ -25,7 +26,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         <div class="not-found-actions" aria-label="Что можно сделать дальше">
           <a class="button primary" href="/">На главную</a>
           <a class="button" href="/#services">Услуги и цены</a>
-          <a class="button" href="https://dikidi.net/massages" data-goal="online_booking_click">Онлайн-запись</a>
+          <a class="button" href={booking.url} data-goal="online_booking_click">Онлайн-запись</a>
         </div>
       </div>
 

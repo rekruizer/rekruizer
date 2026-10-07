@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "categoryIds": {
     "Акции %": "1",
     "Массаж по зонам": "2",
@@ -21,8 +21,7 @@
           "type": "manual"
         },
         "cardTitle": {
-          "type": "dikidi",
-          "serviceId": "22022788"
+          "type": "manual"
         },
         "cardDescription": {
           "type": "manual"
@@ -42,8 +41,7 @@
           "type": "manual"
         },
         "cardTitle": {
-          "type": "dikidi",
-          "serviceId": "22446669"
+          "type": "manual"
         },
         "cardDescription": {
           "type": "manual"
@@ -63,8 +61,7 @@
           "type": "manual"
         },
         "cardTitle": {
-          "type": "dikidi",
-          "serviceId": "23447516"
+          "type": "manual"
         },
         "cardDescription": {
           "type": "manual"
@@ -84,8 +81,7 @@
           "type": "manual"
         },
         "cardTitle": {
-          "type": "dikidi",
-          "serviceId": "22446970"
+          "type": "manual"
         },
         "cardDescription": {
           "type": "manual"
@@ -105,15 +101,13 @@
           "type": "manual"
         },
         "cardTitle": {
-          "type": "dikidi",
-          "serviceId": "22461114"
+          "type": "manual"
         },
         "cardDescription": {
           "type": "manual"
         },
         "description": {
-          "type": "dikidi",
-          "serviceId": "22461114"
+          "type": "manual"
         }
       }
     },
@@ -133,8 +127,7 @@
           "type": "manual"
         },
         "description": {
-          "type": "dikidi",
-          "serviceId": "22446587"
+          "type": "manual"
         }
       }
     },
@@ -154,8 +147,7 @@
           "type": "manual"
         },
         "description": {
-          "type": "dikidi",
-          "serviceId": "22461255"
+          "type": "manual"
         }
       }
     },
@@ -169,151 +161,218 @@
           "type": "manual"
         },
         "cardTitle": {
-          "type": "dikidi",
-          "serviceId": "22679592"
+          "type": "manual"
         },
         "cardDescription": {
           "type": "manual"
         },
         "description": {
-          "type": "dikidi",
-          "serviceId": "22679592"
+          "type": "manual"
         }
       }
     }
   },
   "services": [
     {
-      "id": "22679592",
+      "id": "31807317",
       "slug": "first-visit",
       "offerId": "first-visit-90",
       "displayName": "Первый визит 90 мин — со скидкой!",
       "imageFile": "sale.webp",
       "siteImageFile": "sale.webp",
       "oldPriceRub": 3990,
-      "primaryForPage": true
+      "primaryForPage": true,
+      "metaItemId": "22679592"
     },
     {
-      "id": "22461255",
+      "id": "31807290",
       "slug": "back-neck",
       "offerId": "back-neck-30",
       "imageFile": "back-neck-30.webp",
       "siteImageFile": "back.webp",
-      "primaryForPage": true
+      "primaryForPage": true,
+      "metaItemId": "22461255"
     },
     {
-      "id": "22446587",
+      "id": "31807287",
       "slug": "face",
       "offerId": "face-30",
       "imageFile": "face-30.webp",
       "siteImageFile": "face.webp",
-      "primaryForPage": true
+      "primaryForPage": true,
+      "metaItemId": "22446587"
     },
     {
-      "id": "22022788",
+      "id": "31807293",
       "slug": "classic",
       "offerId": "classic-55",
       "imageFile": "classic-55.webp",
       "siteImageFile": "classic.webp",
-      "primaryForPage": true
+      "primaryForPage": true,
+      "metaItemId": "22022788"
     },
     {
-      "id": "22083841",
+      "id": "31807296",
       "slug": "classic",
       "offerId": "classic-90",
       "imageFile": "classic-90.webp",
-      "siteImageFile": "classic.webp"
+      "siteImageFile": "classic.webp",
+      "metaItemId": "22083841"
     },
     {
-      "id": "22446970",
+      "id": "31807302",
       "slug": "lymph",
       "offerId": "lymph-55",
       "imageFile": "lymph-55.webp",
       "siteImageFile": "lymph.webp",
-      "primaryForPage": true
+      "primaryForPage": true,
+      "metaItemId": "22446970"
     },
     {
-      "id": "22446974",
+      "id": "31807299",
       "slug": "lymph",
       "offerId": "lymph-90",
       "imageFile": "lymph-90.webp",
-      "siteImageFile": "lymph.webp"
+      "siteImageFile": "lymph.webp",
+      "metaItemId": "22446974"
     },
     {
-      "id": "22446669",
+      "id": "31807311",
       "slug": "relax",
       "offerId": "relax-55",
       "imageFile": "relax-55.webp",
       "siteImageFile": "relax.webp",
-      "primaryForPage": true
+      "primaryForPage": true,
+      "metaItemId": "22446669"
     },
     {
-      "id": "22446697",
+      "id": "31807314",
       "slug": "relax",
       "offerId": "relax-90",
       "imageFile": "relax-90.webp",
-      "siteImageFile": "relax.webp"
+      "siteImageFile": "relax.webp",
+      "metaItemId": "22446697"
     },
     {
-      "id": "22461114",
+      "id": "31807305",
       "slug": "sport",
       "offerId": "sport-55",
       "imageFile": "sport-55.webp",
       "siteImageFile": "sport.webp",
-      "primaryForPage": true
+      "primaryForPage": true,
+      "metaItemId": "22461114"
     },
     {
-      "id": "22461132",
+      "id": "31807308",
       "slug": "sport",
       "offerId": "sport-90",
       "imageFile": "sport-90.webp",
-      "siteImageFile": "sport.webp"
+      "siteImageFile": "sport.webp",
+      "metaItemId": "22461132"
     },
     {
-      "id": "23447516",
+      "id": "31807323",
       "slug": "deep",
       "offerId": "deep-55",
       "imageFile": "deep-55.webp",
       "siteImageFile": "deep.webp",
-      "primaryForPage": true
+      "primaryForPage": true,
+      "metaItemId": "23447516"
     },
     {
-      "id": "23447522",
+      "id": "31807320",
       "slug": "deep",
       "offerId": "deep-90",
       "imageFile": "deep-90.webp",
-      "siteImageFile": "deep.webp"
+      "siteImageFile": "deep.webp",
+      "metaItemId": "23447522"
     }
   ],
   "subscriptions": [
     {
-      "id": "22461095",
+      "id": "abonement:1963767",
       "offerId": "subscription-5-55",
       "imageFile": "abonement-5x55.webp",
       "sessions": 5,
-      "referenceServiceId": "22022788"
+      "referenceServiceId": "31807293",
+      "metaItemId": "22461095",
+      "groupLabel": "Классика / Расслабляющий / Лимфодренажный"
     },
     {
-      "id": "22461101",
+      "id": "abonement:1963782",
       "offerId": "subscription-5-90",
       "imageFile": "abonement-5x90.webp",
       "sessions": 5,
-      "referenceServiceId": "22083841"
+      "referenceServiceId": "31807296",
+      "metaItemId": "22461101",
+      "groupLabel": "Классика / Расслабляющий / Лимфодренажный"
     },
     {
-      "id": "22461104",
+      "id": "abonement:1963785",
       "offerId": "subscription-10-55",
       "imageFile": "abonement-10x55.webp",
       "sessions": 10,
-      "referenceServiceId": "22022788",
-      "featured": true
+      "referenceServiceId": "31807293",
+      "featured": true,
+      "metaItemId": "22461104",
+      "groupLabel": "Классика / Расслабляющий / Лимфодренажный"
     },
     {
-      "id": "22461106",
+      "id": "abonement:1963788",
       "offerId": "subscription-10-90",
       "imageFile": "abonement-10x90.webp",
       "sessions": 10,
-      "referenceServiceId": "22083841"
+      "referenceServiceId": "31807296",
+      "metaItemId": "22461106",
+      "groupLabel": "Классика / Расслабляющий / Лимфодренажный"
+    },
+    {
+      "id": "abonement:1963791",
+      "offerId": "subscription-premium-5-55",
+      "metaItemId": "yclients-abonement-1963791",
+      "imageFile": "abonement-5x55.webp",
+      "sessions": 5,
+      "referenceServiceId": "31807323",
+      "groupLabel": "Проминающий / Спорт"
+    },
+    {
+      "id": "abonement:1963794",
+      "offerId": "subscription-premium-10-55",
+      "metaItemId": "yclients-abonement-1963794",
+      "imageFile": "abonement-10x55.webp",
+      "sessions": 10,
+      "referenceServiceId": "31807323",
+      "groupLabel": "Проминающий / Спорт"
+    },
+    {
+      "id": "abonement:1963797",
+      "offerId": "subscription-premium-5-90",
+      "metaItemId": "yclients-abonement-1963797",
+      "imageFile": "abonement-5x90.webp",
+      "sessions": 5,
+      "referenceServiceId": "31807320",
+      "groupLabel": "Проминающий / Спорт"
+    },
+    {
+      "id": "abonement:1963800",
+      "offerId": "subscription-premium-10-90",
+      "metaItemId": "yclients-abonement-1963800",
+      "imageFile": "abonement-10x90.webp",
+      "sessions": 10,
+      "referenceServiceId": "31807320",
+      "groupLabel": "Проминающий / Спорт"
     }
-  ]
+  ],
+  "provider": "YCLIENTS",
+  "sourceCategoryIds": {
+    "28303929": "2",
+    "28303932": "3",
+    "28303935": "4",
+    "28303938": "6",
+    "28303941": "5",
+    "28303944": "1",
+    "28303947": "8",
+    "abonement-category:49638": "7",
+    "abonement-category:49641": "9"
+  }
 }

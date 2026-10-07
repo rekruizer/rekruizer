@@ -7,6 +7,10 @@ import copy
 import json
 import re
 import unittest
+import importlib.util
+import tempfile
+from pathlib import Path
+from unittest.mock import patch
 from html import escape
 from xml.etree import ElementTree
 
@@ -23,6 +27,7 @@ from services_catalog import (
     services_by_slug,
     validate_catalog,
     validate_presentation,
+    stable_category_id,
 )
 
 
@@ -39,7 +44,7 @@ class ServicesCatalogueTests(unittest.TestCase):
         cls.grouped = services_by_slug(cls.catalogue, cls.presentation)
 
     def test_expected_public_services_are_mapped_once(self) -> None:
-        catalogue_ids = {service["id"] for service in self.catalogue["services"]}
+        catalogue_ids = {service["id"] for service in self.catalogue["services"] if service["published"]}
         configured_ids = {
             row["id"]
             for row in self.presentation["services"]
@@ -64,6 +69,7 @@ class ServicesCatalogueTests(unittest.TestCase):
         new_service.update(
             {
                 "id": "99999999",
+                **({"sourceId":"99999999"} if altered["provider"] == "YCLIENTS" else {}),
                 "name": "Unexpected published service",
                 "published": True,
             }
@@ -258,7 +264,7 @@ class ServicesCatalogueTests(unittest.TestCase):
             re.S,
         )
         self.assertIsNotNone(block)
-        actual_ids = re.findall(r'data-service-id="(\d+)"', block.group(1))
+        actual_ids = re.findall(r'data-service-id="([^"]+)"', block.group(1))
         self.assertEqual(
             actual_ids,
             [service["id"] for service, _row in self.subscriptions],
@@ -267,16 +273,14 @@ class ServicesCatalogueTests(unittest.TestCase):
         for service, row in self.subscriptions:
             reference = by_id[row["referenceServiceId"]]
             saving = reference["priceRub"] * row["sessions"] - service["priceRub"]
-            self.assertIn(service["name"], block.group(1))
+            self.assertIn(escape(service["name"]), block.group(1))
             self.assertIn(service["bookingUrl"].replace("&", "&amp;"), block.group(1))
             self.assertIn(
                 f'{service["priceRub"]:,}'.replace(",", " ") + " ₽",
                 block.group(1),
             )
-            self.assertIn(
-                f'{saving:,}'.replace(",", " ") + " ₽",
-                block.group(1),
-            )
+            if saving > 0:
+                self.assertIn(f'{saving:,}'.replace(",", " ") + " ₽", block.group(1))
 
     def test_feed_matches_catalogue(self) -> None:
         root = ElementTree.parse(ROOT / "services-feed.xml").getroot()
@@ -286,11 +290,7 @@ class ServicesCatalogueTests(unittest.TestCase):
         }
         self.assertEqual(
             set(offers),
-            {
-                row["offerId"]
-                for row in self.presentation["services"]
-                + self.presentation["subscriptions"]
-            },
+            {row["offerId"] for _service, row in self.all_mapped},
         )
         for service, row in self.all_mapped:
             offer = offers[row["offerId"]]
@@ -318,11 +318,11 @@ class ServicesCatalogueTests(unittest.TestCase):
         }
         self.assertEqual(
             set(items),
-            {service["id"] for service, _row in self.all_mapped},
+            {str(row.get("metaItemId", service["id"])) for service, row in self.all_mapped},
         )
 
         for service, row in self.all_mapped:
-            item = items[service["id"]]
+            item = items[str(row.get("metaItemId", service["id"]))]
             self.assertEqual(
                 item.findtext("g:title", namespaces=namespace),
                 service["name"],
@@ -423,6 +423,179 @@ class ServicesCatalogueTests(unittest.TestCase):
         unsafe_site["services"][0]["siteImageFile"] = "../outside.webp"
         with self.assertRaisesRegex(CatalogValidationError, "siteImageFile"):
             validate_presentation(unsafe_site)
+
+
+class YclientsMigrationTests(unittest.TestCase):
+    def module(self, filename):
+        spec = importlib.util.spec_from_file_location(filename, ROOT / "tools" / f"{filename}.py")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+
+    def fixtures(self):
+        catalogue, presentation = load_catalog(require_local_images=False)
+        catalogue, presentation = copy.deepcopy(catalogue), copy.deepcopy(presentation)
+        catalogue.update(schemaVersion=2, provider="YCLIENTS")
+        presentation.update(schemaVersion=2, provider="YCLIENTS", sourceCategoryIds={})
+        # Synthetic IDs intentionally differ from production. Migration metadata
+        # preserves the old external IDs independently of the new source identity.
+        ids = {row["id"]: str(100_000_000 + i) for i, row in enumerate(presentation["services"], 1)}
+        ids.update({row["id"]: f"abonement:{1000 + i}" for i, row in enumerate(presentation["subscriptions"], 1)})
+        categories = {name: str(1000 + i) for i, name in enumerate(presentation["categoryIds"], 1)}
+        presentation["sourceCategoryIds"] = {categories[name]: stable for name, stable in presentation["categoryIds"].items()}
+        for row in presentation["services"] + presentation["subscriptions"]:
+            row["metaItemId"], row["id"] = row["id"], ids[row["id"]]
+            if "referenceServiceId" in row:
+                row["referenceServiceId"] = ids[row["referenceServiceId"]]
+        for page in presentation["pages"].values():
+            # Do not pretend a text copied from DIKIDI was copied from YCLIENTS.
+            page["fieldSources"] = {key: {"type": "manual"} for key in ("title", "cardTitle", "cardDescription", "description")}
+        rows = {row["id"]: row for row in presentation["services"] + presentation["subscriptions"]}
+        for service in catalogue["services"]:
+            service["id"] = ids[service["id"]]
+            service["sourceId"] = service["id"].removeprefix("abonement:")
+            service["entityType"] = "subscription" if service["id"].startswith("abonement:") else "service"
+            service["categoryId"] = categories[service["category"]]
+            service["bookingUrl"] = "https://n2616876.yclients.ru/"
+            if service["entityType"] == "subscription":
+                service["categoryId"] = "abonement-category:" + service["categoryId"]
+                presentation["sourceCategoryIds"][service["categoryId"]] = presentation["categoryIds"][service["category"]]
+                service.update(sessions=rows[service["id"]]["sessions"], referenceServiceId=rows[service["id"]]["referenceServiceId"])
+        return catalogue, presentation
+
+    def test_two_membership_sets_can_reuse_photos_without_reusing_offer_ids(self):
+        catalogue, presentation = self.fixtures()
+        original = presentation["subscriptions"][0]
+        second = copy.deepcopy(original)
+        second.update(id="abonement:9999", offerId="subscription-test-premium-5-55", metaItemId="yclients-abonement-9999", featured=False)
+        presentation["subscriptions"].append(second)
+        original_service = next(item for item in catalogue["services"] if item["id"] == original["id"])
+        second_service = copy.deepcopy(original_service)
+        second_service.update(id=second["id"], sourceId="9999", categoryId="abonement-category:999")
+        catalogue["services"].append(second_service)
+        presentation["sourceCategoryIds"][second_service["categoryId"]] = "99"
+        validate_catalog(catalogue, validate_presentation(presentation), require_local_images=True)
+        self.assertEqual(second["imageFile"], original["imageFile"])
+        second["offerId"] = original["offerId"]
+        with self.assertRaisesRegex(CatalogValidationError, "Duplicate service id or offerId"):
+            validate_presentation(presentation)
+
+    def test_real_migration_keeps_legacy_external_ids_and_confirmed_membership_groups(self):
+        catalogue, presentation = load_catalog()
+        if catalogue["provider"] != "YCLIENTS":
+            self.skipTest("YCLIENTS cutover has not happened")
+        by_id = {row["id"]: row for row in presentation["services"] + presentation["subscriptions"]}
+        self.assertEqual(by_id["31807293"]["offerId"], "classic-55")
+        self.assertEqual(by_id["31807293"]["metaItemId"], "22022788")
+        self.assertEqual(by_id["abonement:1963767"]["offerId"], "subscription-5-55")
+        self.assertEqual(by_id["abonement:1963767"]["metaItemId"], "22461095")
+        self.assertEqual(by_id["abonement:1963791"]["referenceServiceId"], "31807323")
+        self.assertEqual(presentation["sourceCategoryIds"]["abonement-category:49638"], "7")
+        self.assertEqual(presentation["sourceCategoryIds"]["abonement-category:49641"], "9")
+        booking = json.loads((ROOT / "src/data/booking.json").read_text())
+        for service, _ in mapped_services(catalogue,presentation):
+            self.assertEqual(service["bookingUrl"], booking["url"])
+
+    def test_paired_migration_retains_pages_images_and_external_ids(self):
+        catalogue, presentation = self.fixtures()
+        validate_catalog(catalogue, validate_presentation(presentation), require_local_images=True)
+        old_catalogue, old_presentation = load_catalog(require_local_images=False)
+        self.assertEqual(set(presentation["pages"]), set(old_presentation["pages"]))
+        self.assertEqual([r["offerId"] for r in presentation["services"] + presentation["subscriptions"]],
+                         [r["offerId"] for r in old_presentation["services"] + old_presentation["subscriptions"]])
+        self.assertEqual([r["metaItemId"] for r in presentation["services"] + presentation["subscriptions"]],
+                         [r["id"] for r in old_presentation["services"] + old_presentation["subscriptions"]])
+        with self.assertRaisesRegex(CatalogValidationError, "providers do not match"):
+            validate_catalog(dict(old_catalogue,schemaVersion=1,provider="DIKIDI"), presentation)
+        with self.assertRaisesRegex(CatalogValidationError, "providers do not match"):
+            validate_catalog(catalogue, dict(old_presentation,provider="DIKIDI"))
+
+    def test_hidden_services_are_not_published_and_renaming_categories_preserves_feed_id(self):
+        catalogue, presentation = self.fixtures()
+        service = catalogue["services"][0]
+        before = stable_category_id(service, presentation)
+        service["category"] = "Переименованная категория"
+        service["published"] = False
+        validate_catalog(catalogue, presentation)
+        self.assertEqual(stable_category_id(service, presentation), before)
+        self.assertNotIn(service["id"], [s["id"] for s, _ in mapped_services(catalogue, presentation)])
+
+    def test_subscription_facts_and_distinct_id_namespaces_are_checked(self):
+        catalogue, presentation = self.fixtures()
+        subscription = next(s for s in catalogue["services"] if s["entityType"] == "subscription")
+        subscription["sessions"] += 1
+        with self.assertRaisesRegex(CatalogValidationError, "facts differ"):
+            validate_catalog(catalogue, presentation)
+        duplicate = copy.deepcopy(presentation)
+        duplicate["services"][1]["metaItemId"] = duplicate["services"][0]["metaItemId"]
+        with self.assertRaisesRegex(CatalogValidationError, "Meta item ids"):
+            validate_presentation(duplicate)
+
+    def test_meta_feed_uses_stable_item_id_not_yclients_id(self):
+        catalogue, presentation = self.fixtures()
+        spec = importlib.util.spec_from_file_location("meta_feed", ROOT / "tools" / "generate-meta-services-feed.py")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        rows = mapped_catalogue_items(catalogue, presentation)
+        with tempfile.TemporaryDirectory() as directory:
+            with patch.object(module, "OUTPUT_PATH", Path(directory) / "meta-services-feed.xml"):
+                module.write_feed(rows, {s["id"] for s, _ in mapped_subscriptions(catalogue, presentation)})
+            xml = ElementTree.parse(Path(directory) / "meta-services-feed.xml")
+            actual = {node.text for node in xml.findall("./channel/item/{http://base.google.com/ns/1.0}id")}
+            self.assertEqual(actual, {str(row["metaItemId"]) for _, row in rows})
+
+    def test_unchanged_snapshot_includes_hidden_services_and_source_identity(self):
+        catalogue, presentation = self.fixtures()
+        catalogue["services"][0]["published"] = False
+        module = self.module("sync-services-catalog")
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "catalog.json"
+            path.write_text(json.dumps(catalogue), encoding="utf-8")
+            with patch.object(module, "CATALOG_PATH", path):
+                self.assertTrue(module.existing_snapshot_matches(catalogue, presentation))
+                other_source = dict(catalogue, companyId="999999")
+                self.assertFalse(module.existing_snapshot_matches(other_source, presentation))
+                removed = dict(catalogue, services=catalogue["services"][1:])
+                self.assertFalse(module.existing_snapshot_matches(removed, presentation))
+
+    def test_actual_membership_price_is_allowed_without_a_false_saving(self):
+        catalogue, presentation = self.fixtures()
+        subscription = next(s for s in catalogue["services"] if s["entityType"] == "subscription")
+        reference = next(s for s in catalogue["services"] if s["id"] == subscription["referenceServiceId"])
+        subscription.update(priceRub=reference["priceRub"] * subscription["sessions"] + 100, bookingAction="contact")
+        validate_catalog(catalogue, validate_presentation(presentation))
+        module = self.module("export-astro-data")
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "services.json"
+            with patch.object(module, "load_catalog", return_value=(catalogue, presentation)), patch.object(module, "OUTPUT", path):
+                module.main()
+            row = next(s for s in json.loads(path.read_text())["subscriptions"] if s["id"] == subscription["id"])
+            self.assertFalse(row["hasSaving"])
+            self.assertEqual(row["actionLabel"], "Оформить")
+
+    def test_price_increase_does_not_turn_the_old_price_into_a_discount(self):
+        module = self.module("export-astro-data")
+        catalogue, presentation = self.fixtures()
+        service, row = mapped_services(catalogue, presentation)[0]
+        for old_price in (service["priceRub"] - 1, service["priceRub"]):
+            result = module.service_item(service, dict(row, oldPriceRub=old_price))
+            self.assertIsNone(result["oldPriceRub"])
+            self.assertIsNone(result["oldPrice"])
+        self.assertEqual(module.service_item(service, dict(row, oldPriceRub=service["priceRub"] + 1))["oldPriceRub"], service["priceRub"] + 1)
+
+    def test_shared_image_is_converted_once_for_multiple_offers(self):
+        module = self.module("generate-meta-services-feed")
+        catalogue, presentation = self.fixtures()
+        rows = mapped_catalogue_items(catalogue, presentation)
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory)
+            def conversion(command, **_kwargs):
+                if "--output" in command:
+                    Path(command[command.index("--output") + 1]).write_bytes(b"test-png")
+            with patch.object(module, "IMAGE_OUTPUT_DIR", output), patch.object(module.shutil, "which", side_effect=lambda name: name), patch.object(module.subprocess, "run", side_effect=conversion) as run, patch.object(module, "png_dimensions", return_value=(1200, 1200)):
+                module.generate_png_images([rows[0], rows[0]])
+            self.assertEqual(run.call_count, 2)  # One decode + one optimization, not two pairs.
+            self.assertEqual(len(list(output.glob("*.png"))), 1)
 
 
 if __name__ == "__main__":

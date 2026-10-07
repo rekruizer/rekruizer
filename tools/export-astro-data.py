@@ -31,6 +31,9 @@ def per_session(total: int, sessions: int) -> str:
 
 
 def service_item(service: dict, row: dict) -> dict:
+    old_price = row.get("oldPriceRub")
+    if not isinstance(old_price, int) or old_price <= service["priceRub"]:
+        old_price = None
     return {
         "id": str(service["id"]),
         "name": service["name"],
@@ -38,8 +41,8 @@ def service_item(service: dict, row: dict) -> dict:
         "durationMinutes": service["durationMinutes"],
         "priceRub": service["priceRub"],
         "price": format_rubles(service["priceRub"]),
-        "oldPriceRub": row.get("oldPriceRub"),
-        "oldPrice": format_rubles(row["oldPriceRub"]) if row.get("oldPriceRub") else None,
+        "oldPriceRub": old_price,
+        "oldPrice": format_rubles(old_price) if old_price is not None else None,
         "bookingUrl": service["bookingUrl"],
         "slug": row["slug"],
         "goal": f"service_{row['slug'].replace('-', '_')}_{service['durationMinutes']}_click",
@@ -78,12 +81,15 @@ def main() -> None:
                 "name": service["name"],
                 "durationMinutes": service["durationMinutes"],
                 "bookingUrl": service["bookingUrl"],
+                "actionLabel": "Оформить" if service.get("bookingAction") == "contact" else "Купить",
                 "sessions": sessions,
+                "groupLabel": row.get("groupLabel", ""),
                 "featured": bool(row.get("featured")),
                 "price": format_rubles(service["priceRub"]),
                 "perSession": per_session(service["priceRub"], sessions),
                 "regularPrice": format_rubles(reference["priceRub"]),
                 "saving": format_rubles(saving),
+                "hasSaving": saving > 0,
                 "goal": f"service_sub_{sessions}_{service['durationMinutes']}_click",
             }
         )

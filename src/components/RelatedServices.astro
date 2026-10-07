@@ -9,7 +9,8 @@ const configured = (relatedBySlug as Record<string, { slug: string; eyebrow: str
     .filter((group) => group.slug !== slug)
     .slice(0, 4)
     .map((group) => ({ slug: group.slug, eyebrow: group.category }));
-const related = configured.map((item) => ({ ...item, group: groupBySlug(item.slug) })).filter((item) => item.group);
+const rank = new Map(servicesCatalogue.groups.map((group,index)=>[group.slug,index]));
+const related = configured.map((item) => ({ ...item, group: groupBySlug(item.slug) })).filter((item) => item.group).sort((left,right)=>(rank.get(left.slug) ?? 0)-(rank.get(right.slug) ?? 0));
 ---
 
 <section class="service-related section">

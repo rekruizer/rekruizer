@@ -70,7 +70,7 @@
     if (explicit) return explicit;
 
     var href = link.getAttribute("href") || "";
-    if (href.indexOf("dikidi.net") !== -1) return "online_booking_click";
+    if (href.indexOf("dikidi.net") !== -1 || /https:\/\/n\d+\.yclients\.(ru|com)\b/.test(href)) return "online_booking_click";
     if (href.indexOf("t.me/+79951568066") !== -1) return "telegram_click";
     if (href.indexOf("wa.me/79951568066") !== -1) return "whatsapp_click";
     if (href.indexOf("vk.com/denisyuce") !== -1) return "vk_click";

@@ -1,9 +1,13 @@
 ---
 import { servicesCatalogue } from "../lib/catalog";
+const groups = [...new Set(servicesCatalogue.subscriptions.map(row => row.groupLabel))];
 ---
 
+{groups.map(group => (
+<div class="subscription-group">
+  {group && <h3>{group}</h3>}
 <div class="subscription-grid">
-  {servicesCatalogue.subscriptions.map((subscription) => (
+  {servicesCatalogue.subscriptions.filter(row => row.groupLabel === group).map((subscription) => (
     <a
       class:list={["subscription-card", { "subscription-card-featured": subscription.featured }]}
       href={subscription.bookingUrl}
@@ -14,10 +18,17 @@ import { servicesCatalogue } from "../lib/catalog";
       <div class="subscription-total"><span>Стоимость</span><span class="text-bold">{subscription.price}</span></div>
       <div class="subscription-session">
         <div class="subscription-session-main"><span class="text-bold">{subscription.perSession}</span><span>/ сеанс</span></div>
-        <div class="subscription-usual"><span class="old-price">{subscription.regularPrice}</span></div>
+        {subscription.hasSaving && <div class="subscription-usual"><span class="old-price">{subscription.regularPrice}</span></div>}
       </div>
-      <div class="subscription-saving">Выгода <span class="text-bold">{subscription.saving}</span></div>
-      <div class="subscription-action">Купить <span class="arrow-right-icon" aria-hidden="true"></span></div>
+      {subscription.hasSaving && <div class="subscription-saving">Выгода <span class="text-bold">{subscription.saving}</span></div>}
+      <div class="subscription-action">{subscription.actionLabel} <span class="arrow-right-icon" aria-hidden="true"></span></div>
     </a>
   ))}
 </div>
+</div>
+))}
+
+<style>
+.subscription-group + .subscription-group { margin-top: 32px; }
+.subscription-group h3 { margin: 0 0 16px; }
+</style>
