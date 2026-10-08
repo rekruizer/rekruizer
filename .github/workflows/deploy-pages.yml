@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  repository_dispatch:
+    types: [site-content-updated]
   schedule:
     # Cloudflare refreshes at 04:40 Moscow time. GitHub reads the completed
     # snapshot 30 minutes later and never calls the Worker's admin refresh.
