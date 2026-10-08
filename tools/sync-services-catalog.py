@@ -24,7 +24,7 @@ from services_catalog import (
 
 
 DEFAULT_CATALOG_URL = (
-    "https://admin.denisyuce.com/api/catalog/snapshot"
+    "https://denisyuce-services-catalog.den100hero.workers.dev/services-catalog.json"
 )
 
 
