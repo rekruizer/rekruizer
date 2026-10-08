@@ -10,7 +10,8 @@
     "prebuild": "npm run prepare:site",
     "build": "ASTRO_TELEMETRY_DISABLED=1 astro build",
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
-    "check": "ASTRO_TELEMETRY_DISABLED=1 astro check"
+    "check": "ASTRO_TELEMETRY_DISABLED=1 astro check",
+    "test:seo": "node --test tools/test-seo-json.mjs"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.6",

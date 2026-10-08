@@ -46,6 +46,16 @@ def main() -> None:
         if relative not in {"404.html", "reviews/index.html"} and not relative.startswith("url/"):
             assert re.search(r'<link rel="canonical" href="https://denisyuce\.com/', source), relative
 
+    # The build must preserve valid structured data, including copied pages.
+    for relative in sorted(actual):
+        source = (DIST / relative).read_text(encoding="utf-8")
+        scripts = re.findall(r'<script\b[^>]*type="application/ld\+json"[^>]*>(.*?)</script>', source, re.S | re.I)
+        for script in scripts:
+            try:
+                json.loads(script)
+            except json.JSONDecodeError as error:
+                raise AssertionError(f"invalid JSON-LD in {relative}: {error}") from error
+
     for relative in ("index.html", "services/index.html", "services/classic/index.html", "notes/index.html"):
         source = (DIST / relative).read_text(encoding="utf-8")
         assert '<header class="site-header">' in source, relative
@@ -88,6 +98,11 @@ def main() -> None:
         "assets/data/services-catalog.json",
         "assets/data/services-presentation.json",
         "assets/source",
+        "docs",
+        "tools",
+        ".local",
+        ".git",
+        ".dev.vars",
     ):
         assert not (DIST / private_input).exists(), f"published build input: {private_input}"
 

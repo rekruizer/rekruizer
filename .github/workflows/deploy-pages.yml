@@ -72,6 +72,7 @@ jobs:
       - name: Verify generated site, services and feeds
         run: |
           npm run check
+          npm run test:seo
           python3 tools/test-services-catalog.py
           python3 tools/test-astro-site.py
 

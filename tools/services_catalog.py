@@ -14,14 +14,6 @@ CATALOG_PATH = ROOT / "assets" / "data" / "services-catalog.json"
 PRESENTATION_PATH = ROOT / "assets" / "data" / "services-presentation.json"
 SERVICE_IMAGES_DIR = ROOT / "assets" / "services"
 
-CONTENT_TYPE_EXTENSIONS = {
-    "image/jpeg": "jpg",
-    "image/png": "png",
-    "image/webp": "webp",
-    "image/avif": "avif",
-}
-
-
 class CatalogValidationError(RuntimeError):
     pass
 
@@ -270,7 +262,7 @@ def validate_catalog(
         str(row["id"])
         for row in presentation["services"] + presentation["subscriptions"]
     }
-    # New DIKIDI services are allowed. Until an image is selected in the site
+    # New provider services are allowed. Until an image is selected in the site
     # presentation they remain visible as an admin task instead of blocking an
     # otherwise healthy catalogue deployment. Stale presentation rows are also
     # allowed so a removed service can disappear without losing its settings.
