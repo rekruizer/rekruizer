@@ -78,7 +78,9 @@ class ServicesCatalogueTests(unittest.TestCase):
         validate_catalog(altered, self.presentation)
 
     def test_presentation_can_override_a_public_display_name(self) -> None:
-        first_row = self.presentation["services"][0]
+        presentation = copy.deepcopy(self.presentation)
+        first_row = next(row for row in presentation["services"] if row["id"] == self.mapped[0][0]["id"])
+        first_row["displayName"] = "Название для сайта"
         altered = copy.deepcopy(self.catalogue)
         raw_service = next(
             service
@@ -87,7 +89,7 @@ class ServicesCatalogueTests(unittest.TestCase):
         )
         raw_service["name"] = "Техническое название из DIKIDI"
 
-        remapped = mapped_services(altered, self.presentation)
+        remapped = mapped_services(altered, presentation)
         first_service = next(
             service
             for service, row in remapped
@@ -115,7 +117,7 @@ class ServicesCatalogueTests(unittest.TestCase):
         expected_ids = [
             service["id"]
             for service in self.catalogue["services"]
-            if any(
+            if service["published"] and any(
                 row["id"] == service["id"]
                 for row in self.presentation["services"]
             )

@@ -74,6 +74,7 @@ jobs:
           npm run check
           npm run test:seo
           python3 tools/test-services-catalog.py
+          python3 tools/test-catalog-lifecycle.py
           python3 tools/test-astro-site.py
 
       - name: Minify CSS and JS

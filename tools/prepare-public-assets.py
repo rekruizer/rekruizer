@@ -9,6 +9,7 @@ public tree for both local development and production builds.
 from __future__ import annotations
 
 import shutil
+import json
 from pathlib import Path
 
 
@@ -60,6 +61,14 @@ def main() -> None:
     copy_file(
         ASSETS / "data" / "reviews.json",
         PUBLIC / "assets" / "data" / "reviews.json",
+    )
+    from services_catalog import load_catalog
+    from catalog_publication import publication_manifest
+
+    catalogue, presentation = load_catalog(require_local_images=True)
+    (PUBLIC / "catalog-publication.json").write_text(
+        json.dumps(publication_manifest(catalogue, presentation), ensure_ascii=False) + "\n",
+        encoding="utf-8",
     )
 
     for name in ROOT_PUBLIC_FILES:

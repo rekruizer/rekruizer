@@ -403,7 +403,7 @@ def mapped_subscriptions(
         service = by_id.get(str(row["id"]))
         if service is None or not service["published"]:
             continue
-        if str(row["referenceServiceId"]) not in by_id:
+        if not by_id.get(str(row["referenceServiceId"]), {}).get("published"):
             continue
         if not service.get("description", "").strip():
             service = {
