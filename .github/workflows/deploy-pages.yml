@@ -76,6 +76,7 @@ jobs:
           python3 tools/test-services-catalog.py
           python3 tools/test-catalog-lifecycle.py
           python3 tools/test-astro-site.py
+          python3 tools/test-legal-documents.py
 
       - name: Minify CSS and JS
         run: |
