@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import re
 from decimal import Decimal
 from pathlib import Path
 
@@ -30,10 +31,23 @@ def per_session(total: int, sessions: int) -> str:
     return f"{int(whole):,}".replace(",", " ") + f",{fraction} ₽"
 
 
-def service_item(service: dict, row: dict) -> dict:
+def service_item(service: dict, row: dict, catalogue: dict) -> dict:
     old_price = row.get("oldPriceRub")
     if not isinstance(old_price, int) or old_price <= service["priceRub"]:
         old_price = None
+    booking_url = service["bookingUrl"]
+    company, master, source = (
+        str(catalogue.get("companyId", "")),
+        str(catalogue.get("masterId", "")),
+        str(service.get("sourceId", "")),
+    )
+    if (
+        catalogue["provider"] == "YCLIENTS"
+        and service.get("entityType") == "service"
+        and re.fullmatch(r"https://n[0-9]+\.yclients\.ru/?", booking_url)
+        and all(re.fullmatch(r"[1-9][0-9]*", value) for value in (company, master, source))
+    ):
+        booking_url = f"{booking_url.rstrip('/')}/company/{company}/select-time?o=m{master}s{source}"
     return {
         "id": str(service["id"]),
         "name": service["name"],
@@ -43,7 +57,7 @@ def service_item(service: dict, row: dict) -> dict:
         "price": format_rubles(service["priceRub"]),
         "oldPriceRub": old_price,
         "oldPrice": format_rubles(old_price) if old_price is not None else None,
-        "bookingUrl": service["bookingUrl"],
+        "bookingUrl": booking_url,
         "slug": row["slug"],
         "goal": f"service_{row['slug'].replace('-', '_')}_{service['durationMinutes']}_click",
         "image": public_site_image_path(service, row),
@@ -54,7 +68,7 @@ def service_item(service: dict, row: dict) -> dict:
 def main() -> None:
     catalogue, presentation = load_catalog(require_local_images=True)
     grouped = services_by_slug(catalogue, presentation)
-    services = [service_item(service, row) for service, row in mapped_services(catalogue, presentation)]
+    services = [service_item(service, row, catalogue) for service, row in mapped_services(catalogue, presentation)]
     groups = []
     for slug, rows in grouped.items():
         primary, primary_row = primary_service(rows)
@@ -65,7 +79,7 @@ def main() -> None:
                 "category": primary["category"],
                 "image": public_site_image_path(primary, primary_row),
                 "imageAlt": primary["name"],
-                "services": [service_item(service, row) for service, row in rows],
+                "services": [service_item(service, row, catalogue) for service, row in rows],
             }
         )
 

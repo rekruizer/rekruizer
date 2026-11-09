@@ -574,16 +574,34 @@ class YclientsMigrationTests(unittest.TestCase):
             row = next(s for s in json.loads(path.read_text())["subscriptions"] if s["id"] == subscription["id"])
             self.assertFalse(row["hasSaving"])
             self.assertEqual(row["actionLabel"], "Оформить")
+            self.assertEqual(row["bookingUrl"], subscription["bookingUrl"])
+
+    def test_site_booking_links_preselect_each_yclients_service(self):
+        catalogue, presentation = self.fixtures()
+        catalogue.update(companyId="123", masterId="456")
+        module = self.module("export-astro-data")
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "services.json"
+            with patch.object(module, "load_catalog", return_value=(catalogue, presentation)), patch.object(module, "OUTPUT", path):
+                module.main()
+            data = json.loads(path.read_text())
+        for item in data["services"] + [item for group in data["groups"] for item in group["services"]]:
+            self.assertEqual(item["bookingUrl"], f"https://n2616876.yclients.ru/company/123/select-time?o=m456s{item['id']}")
+
+        service, row = mapped_services(catalogue, presentation)[0]
+        self.assertEqual(module.service_item(service, row, dict(catalogue, masterId=None))["bookingUrl"], service["bookingUrl"])
+        custom = dict(service, bookingUrl="https://n2616876.yclients.ru/custom")
+        self.assertEqual(module.service_item(custom, row, catalogue)["bookingUrl"], custom["bookingUrl"])
 
     def test_price_increase_does_not_turn_the_old_price_into_a_discount(self):
         module = self.module("export-astro-data")
         catalogue, presentation = self.fixtures()
         service, row = mapped_services(catalogue, presentation)[0]
         for old_price in (service["priceRub"] - 1, service["priceRub"]):
-            result = module.service_item(service, dict(row, oldPriceRub=old_price))
+            result = module.service_item(service, dict(row, oldPriceRub=old_price), catalogue)
             self.assertIsNone(result["oldPriceRub"])
             self.assertIsNone(result["oldPrice"])
-        self.assertEqual(module.service_item(service, dict(row, oldPriceRub=service["priceRub"] + 1))["oldPriceRub"], service["priceRub"] + 1)
+        self.assertEqual(module.service_item(service, dict(row, oldPriceRub=service["priceRub"] + 1), catalogue)["oldPriceRub"], service["priceRub"] + 1)
 
     def test_shared_image_is_converted_once_for_multiple_offers(self):
         module = self.module("generate-meta-services-feed")
