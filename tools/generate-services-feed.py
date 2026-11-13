@@ -20,6 +20,7 @@ from services_catalog import (
 
 SITE = "https://denisyuce.com"
 MOSCOW_TZ = ZoneInfo("Europe/Moscow")
+DESCRIPTION_LIMIT = 3000  # Yandex Business YML limit.
 
 CONTACT = {
     "region": "Москва, Крылатское, Молодёжная, Кунцево",
@@ -153,7 +154,7 @@ def write_feed(offers: list[Offer]) -> None:
         add(offer, "currencyId", "RUR")
         add(offer, "categoryId", item.category_id)
         add(offer, "picture", item.picture)
-        add(offer, "description", item.description)
+        add(offer, "description", item.description[:DESCRIPTION_LIMIT].rstrip())
         duration_note = (
             f"{item.sessions} сеансов × {item.duration_min} минут"
             if item.sessions

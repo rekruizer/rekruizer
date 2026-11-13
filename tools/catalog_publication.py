@@ -21,6 +21,8 @@ def item_fingerprint(service: dict, row: dict, page: dict | None) -> str:
         bool(row.get("featured")), page.get("title", ""), page.get("cardTitle", ""),
         page.get("cardDescription", ""), page.get("description", ""),
     ]
+    if row.get("feedDescription") and row["feedDescription"] != page.get("description"):
+        fields.append(row["feedDescription"])
     encoded = json.dumps(fields, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
 

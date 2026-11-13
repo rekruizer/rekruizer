@@ -98,15 +98,22 @@ class ServicesCatalogueTests(unittest.TestCase):
 
         self.assertEqual(first_service["name"], first_row["displayName"])
 
-    def test_variants_use_one_canonical_page_description(self) -> None:
-        for slug, rows in self.grouped.items():
-            expected = self.presentation["pages"][slug]["description"]
-            self.assertTrue(expected.strip(), slug)
-            self.assertEqual(
-                {service["description"] for service, _row in rows},
-                {expected},
-                slug,
-            )
+    def test_feed_descriptions_are_required_and_independent_of_page_copy(self) -> None:
+        presentation = copy.deepcopy(self.presentation)
+        variants = [row for row in presentation["services"] if row["slug"] == "classic"]
+        self.assertEqual(len(variants), 2)
+        previous_feed_text = variants[1]["feedDescription"]
+        presentation["pages"]["classic"]["description"] = "Новый текст только для сайта."
+        variants[0]["feedDescription"] = "Описание только одного варианта."
+        variants[0]["displayName"] = "Особое название варианта"
+        validate_presentation(presentation)
+        offers = {service["id"]: service for service, _ in mapped_catalogue_items(self.catalogue, presentation)}
+        self.assertEqual(offers[variants[0]["id"]]["description"], variants[0]["feedDescription"])
+        self.assertEqual(offers[variants[0]["id"]]["name"], variants[0]["displayName"])
+        self.assertEqual(offers[variants[1]["id"]]["description"], previous_feed_text)
+        del variants[0]["feedDescription"]
+        with self.assertRaisesRegex(CatalogValidationError, "feedDescription"):
+            validate_presentation(presentation)
 
     def test_every_service_page_has_managed_content(self) -> None:
         self.assertTrue(
@@ -298,7 +305,7 @@ class ServicesCatalogueTests(unittest.TestCase):
             offer = offers[row["offerId"]]
             self.assertEqual(offer.findtext("name"), service["name"])
             self.assertEqual(offer.findtext("price"), str(service["priceRub"]))
-            self.assertEqual(offer.findtext("description"), service["description"])
+            self.assertEqual(offer.findtext("description"), service["description"][:3000].rstrip())
             self.assertEqual(
                 offer.findtext("picture"),
                 "https://denisyuce.com" + public_image_path(service, row),

@@ -86,6 +86,9 @@ def validate_presentation(value: dict[str, Any]) -> dict[str, Any]:
         old_price = row.get("oldPriceRub")
         if old_price is not None and (not isinstance(old_price, int) or old_price <= 0):
             raise CatalogValidationError(f"Invalid oldPriceRub for service {service_id}")
+        description = row.get("feedDescription")
+        if not isinstance(description, str) or not description.strip() or len(description) > 3000:
+            raise CatalogValidationError(f"Invalid feedDescription for service {service_id}")
         display_name = row.get("displayName")
         if display_name is not None and (
             not isinstance(display_name, str)
@@ -382,14 +385,7 @@ def mapped_services(
         display_name = row.get("displayName")
         if isinstance(display_name, str):
             service = {**service, "name": display_name}
-        # A source row is a bookable variant (for example 55 or 90 minutes),
-        # not a separate editorial entity. All variants linked to the same
-        # site page therefore publish the same canonical description. The raw
-        # source copy stays in services-catalog.json and is available in the
-        # admin as an optional source when editing the common page text.
-        page = presentation["pages"].get(str(row["slug"]), {})
-        page_description = str(page.get("description", "")).strip()
-        service = {**service, "description": page_description}
+        service = {**service, "description": row["feedDescription"].strip()}
         result.append((service, row))
     return result
 
