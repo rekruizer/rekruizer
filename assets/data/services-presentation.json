@@ -374,6 +374,15 @@
       "sessions": 10,
       "referenceServiceId": "31807320",
       "groupLabel": "Проминающий / Спорт / Авторский"
+    },
+    {
+      "id": "abonement:2090985",
+      "offerId": "yclients-abonement-2090985",
+      "metaItemId": "yclients-abonement-2090985",
+      "imageFile": "abonement-10x90.webp",
+      "referenceServiceId": "31807320",
+      "sessions": 5,
+      "groupLabel": "Проминающий / Спорт / Авторский"
     }
   ],
   "provider": "YCLIENTS",
