@@ -1,5 +1,6 @@
 .DS_Store
 .local/
+.impeccable/review/
 
 __pycache__/
 *.py[cod]

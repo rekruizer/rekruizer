@@ -1,0 +1,143 @@
+---
+import type { EducationEntry } from "../data/education";
+
+interface Props {
+  entries: EducationEntry[];
+}
+
+const { entries } = Astro.props;
+---
+
+{entries.length > 0 && (
+  <section class="section education" id="education" aria-labelledby="education-title">
+    <div class="education-heading">
+      <h2 id="education-title">Образование</h2>
+    </div>
+    <ol class="education-records" role="list">
+      {entries.map((entry) => (
+        <li class="education-record">
+          <time class="education-year" datetime={String(entry.year)}>{entry.year}</time>
+          <div class="education-content">
+            <h3 id={`education-${entry.id}`}>{entry.programme}</h3>
+            <p class="education-school">{entry.school.replace(/([А-ЯЁ]\.)\s+(?=[А-ЯЁ])/g, "$1\u00a0")}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </section>
+)}
+
+<style>
+  .education {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 5fr);
+    gap: clamp(32px, 5vw, 72px);
+    padding: 40px 0 8px;
+    scroll-margin-top: 28px;
+  }
+
+  .education h2 {
+    margin: 0;
+    font-size: var(--font-section-title);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+  }
+
+  .education-records {
+    position: relative;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .education-records::before {
+    content: "";
+    position: absolute;
+    top: 14px;
+    bottom: 12px;
+    left: 0;
+    width: 1px;
+    background: var(--line);
+  }
+
+  .education-record {
+    position: relative;
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: 24px;
+    align-items: baseline;
+    padding: 0 0 40px 28px;
+  }
+
+  .education-record:last-child {
+    padding-bottom: 0;
+  }
+
+  .education-record::before {
+    content: "";
+    position: absolute;
+    top: 12px;
+    left: -3px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .education-year {
+    color: var(--accent);
+    font-size: 0.875rem;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.6;
+  }
+
+  .education-content {
+    min-width: 0;
+  }
+
+  .education h3 {
+    margin: 0;
+    color: var(--text);
+    max-width: 38ch;
+    font-size: 18px;
+    font-weight: var(--font-weight-regular);
+    line-height: 1.35;
+    letter-spacing: 0;
+    overflow-wrap: break-word;
+    text-wrap: pretty;
+  }
+
+  .education-school {
+    max-width: 50ch;
+    margin: 8px 0 0;
+    color: rgba(245, 241, 234, 0.72);
+    font-size: 1rem;
+    line-height: 1.5;
+    overflow-wrap: break-word;
+    text-wrap: pretty;
+  }
+
+  .education ::selection {
+    color: var(--bg);
+    background: var(--accent);
+  }
+
+  @media (max-width: 800px) {
+    .education {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 32px;
+      padding-top: 16px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .education-record {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 8px;
+      padding-left: 24px;
+      padding-bottom: 32px;
+    }
+  }
+</style>

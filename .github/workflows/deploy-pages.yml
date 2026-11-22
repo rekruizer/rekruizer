@@ -73,6 +73,7 @@ jobs:
         run: |
           npm run check
           npm run test:seo
+          npm run test:education
           python3 tools/test-services-catalog.py
           python3 tools/test-catalog-lifecycle.py
           python3 tools/test-astro-site.py

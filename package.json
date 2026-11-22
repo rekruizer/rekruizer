@@ -11,7 +11,8 @@
     "build": "ASTRO_TELEMETRY_DISABLED=1 astro build",
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
     "check": "ASTRO_TELEMETRY_DISABLED=1 astro check",
-    "test:seo": "node --test tools/test-seo-json.mjs"
+    "test:seo": "node --test tools/test-seo-json.mjs",
+    "test:education": "node --test tools/test-education.mjs"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.6",

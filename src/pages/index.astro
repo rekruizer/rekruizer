@@ -1,5 +1,7 @@
 ---
 import booking from "../data/booking.json";
+import { education } from "../data/education";
+import Education from "../components/Education.astro";
 import FAQ from "../components/FAQ.astro";
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
@@ -35,7 +37,10 @@ const faq = [
           <p class="lead">Помогаю снять зажатость в спине, шее и плечах, восстановиться после нагрузки и выйти с ощущением лёгкости — без жёсткой боли и суеты.</p>
           <div class="hero-tags" aria-label="Районы рядом с кабинетом"><span>Крылатское</span><span>Молодёжная</span><span>Кунцево</span></div>
         </div>
-        <div class="hero-actions"><a class="button primary" href={booking.url} data-goal="online_booking_click">Онлайн-запись</a></div>
+        <div class="hero-actions">
+          <a class="button primary" href={booking.url} data-goal="online_booking_click">Онлайн-запись</a>
+          {education.length > 0 && <a class="education-link" href="#education">Образование<svg viewBox="0 0 16 16" width="16" height="16" fill="none" aria-hidden="true"><path d="M8 3v10m-4-4 4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" /></svg></a>}
+        </div>
       </div>
       <aside class="hero-side" id="about">
         <div class="orb"></div>
@@ -49,6 +54,7 @@ const faq = [
       <div class="section-head"><h2>Абонементы</h2><p>Если после первого сеанса вы понимаете, что хотите ходить регулярно, можно выбрать абонемент на 5 или 10 встреч. Так каждый сеанс получается выгоднее.</p></div>
       <Subscriptions />
     </section>
+    <Education entries={education} />
     <section class="section" id="location">
       <div class="location-panel">
         <div class="location-copy"><div class="eyebrow"><span class="dot"></span> Где проходит приём</div><h2>Адрес</h2><p>Принимаю в комфортном коворкинге INDI:<br />Москва, Рублёвское шоссе 34к2.</p><a class="button" href="https://yandex.ru/maps/org/159539374930" target="_blank" rel="noopener noreferrer" data-goal="yandex_maps_route_click">Открыть в Яндекс Картах →</a></div>
@@ -61,3 +67,35 @@ const faq = [
     <Footer />
   </main>
 </BaseLayout>
+
+<style is:global>
+  .education-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 48px;
+    padding: 10px 2px;
+    color: var(--muted);
+    font-size: var(--font-small);
+    text-underline-offset: 5px;
+    text-decoration-thickness: 1px;
+    transition: color 160ms ease;
+  }
+
+  .education-link:hover {
+    color: var(--text);
+    text-decoration-line: underline;
+  }
+
+  .education-link:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 5px;
+    border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .education-link {
+      transition: none;
+    }
+  }
+</style>
