@@ -135,9 +135,25 @@ const { entries } = Astro.props;
   @media (max-width: 480px) {
     .education-record {
       grid-template-columns: minmax(0, 1fr);
-      gap: 8px;
+      gap: 6px;
       padding-left: 24px;
-      padding-bottom: 32px;
+      padding-bottom: 24px;
+    }
+
+    .education h3 {
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+
+    .education-school {
+      margin-top: 6px;
+      font-size: 0.875rem;
+      line-height: 1.45;
+    }
+
+    .education-year {
+      font-size: 0.75rem;
+      line-height: 1.5;
     }
   }
 </style>
