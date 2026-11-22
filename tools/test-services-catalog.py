@@ -274,22 +274,36 @@ class ServicesCatalogueTests(unittest.TestCase):
         )
         self.assertIsNotNone(block)
         actual_ids = re.findall(r'data-service-id="([^"]+)"', block.group(1))
+        # The page groups memberships; a newly appended row can join an earlier group.
+        groups = dict.fromkeys(row.get("groupLabel", "") for _service, row in self.subscriptions)
         self.assertEqual(
             actual_ids,
-            [service["id"] for service, _row in self.subscriptions],
+            [
+                service["id"]
+                for group in groups
+                for service, row in self.subscriptions
+                if row.get("groupLabel", "") == group
+            ],
         )
         by_id = {service["id"]: service for service in self.catalogue["services"]}
         for service, row in self.subscriptions:
+            card = re.search(
+                rf'<a\b[^>]*\bdata-service-id="{re.escape(service["id"])}"[^>]*>(.*?)</a>',
+                block.group(1),
+                re.S,
+            )
+            self.assertIsNotNone(card, service["id"])
+            card_html = card.group(0)
             reference = by_id[row["referenceServiceId"]]
             saving = reference["priceRub"] * row["sessions"] - service["priceRub"]
-            self.assertIn(escape(service["name"]), block.group(1))
-            self.assertIn(service["bookingUrl"].replace("&", "&amp;"), block.group(1))
+            self.assertIn(escape(service["name"]), card_html)
+            self.assertIn(f'href="{escape(service["bookingUrl"], quote=True)}"', card_html)
             self.assertIn(
                 f'{service["priceRub"]:,}'.replace(",", " ") + " ₽",
-                block.group(1),
+                card_html,
             )
             if saving > 0:
-                self.assertIn(f'{saving:,}'.replace(",", " ") + " ₽", block.group(1))
+                self.assertIn(f'{saving:,}'.replace(",", " ") + " ₽", card_html)
 
     def test_feed_matches_catalogue(self) -> None:
         root = ElementTree.parse(ROOT / "services-feed.xml").getroot()
@@ -432,6 +446,56 @@ class ServicesCatalogueTests(unittest.TestCase):
         unsafe_site["services"][0]["siteImageFile"] = "../outside.webp"
         with self.assertRaisesRegex(CatalogValidationError, "siteImageFile"):
             validate_presentation(unsafe_site)
+
+
+class SubscriptionCardRegressionTests(unittest.TestCase):
+    def setUp(self):
+        self.directory = tempfile.TemporaryDirectory()
+        self.addCleanup(self.directory.cleanup)
+        self.site = Path(self.directory.name)
+        self.check = ServicesCatalogueTests("test_subscription_cards_use_catalogue_prices")
+        self.check.catalogue = {"services": [{"id": "reference", "priceRub": 1000}]}
+        self.check.subscriptions = []
+        for service_id, group, price in [("a", "Classic", 4000), ("b", "Deep", 3500), ("c", "Classic", 3000)]:
+            service = {"id": service_id, "name": f"Package <{service_id}>", "priceRub": price,
+                       "bookingUrl": f"https://example.test/?service={service_id}&from=site"}
+            row = {"referenceServiceId": "reference", "sessions": 5, "groupLabel": group}
+            self.check.subscriptions.append((service, row))
+        self.cards = {}
+        for service, row in self.check.subscriptions:
+            price = f'{service["priceRub"]:,}'.replace(",", " ") + " ₽"
+            saving = f'{5000 - service["priceRub"]:,}'.replace(",", " ") + " ₽"
+            self.cards[service["id"]] = (
+                f'<a href="{escape(service["bookingUrl"], quote=True)}" data-service-id="{service["id"]}">'
+                f'<span>{escape(service["name"])}</span><span>{price}</span><span>{saving}</span></a>'
+            )
+
+    def verify(self, order, cards=None):
+        rendered = "".join((cards or self.cards)[service_id] for service_id in order)
+        (self.site / "index.html").write_text(
+            f'<section class="section" id="subscriptions">{rendered}</section>', encoding="utf-8"
+        )
+        with patch(f"{__name__}.SITE_ROOT", self.site):
+            self.check.test_subscription_cards_use_catalogue_prices()
+
+    def test_new_membership_joins_existing_group_without_blocking_publication(self):
+        self.verify(["a", "c", "b"])
+
+    def test_missing_duplicate_and_wrong_group_order_still_fail(self):
+        for order in [["a", "b"], ["a", "c", "c", "b"], ["a", "b", "c"]]:
+            with self.subTest(order=order), self.assertRaises(AssertionError):
+                self.verify(order)
+
+    def test_price_or_booking_url_from_another_card_cannot_hide_a_wrong_card(self):
+        for old, new in [("4 000 ₽", "3 500 ₽"), ("service=a", "service=b")]:
+            cards = {**self.cards, "a": self.cards["a"].replace(old, new)}
+            with self.subTest(value=old), self.assertRaises(AssertionError):
+                self.verify(["a", "c", "b"], cards)
+
+    def test_unlabelled_group_and_removed_membership_do_not_block_publication(self):
+        self.check.subscriptions[0][1]["groupLabel"] = ""
+        self.check.subscriptions.pop()
+        self.verify(["a", "b"])
 
 
 class YclientsMigrationTests(unittest.TestCase):
