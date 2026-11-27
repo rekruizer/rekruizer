@@ -18,7 +18,7 @@ test("education uses explicit, unique records rather than inferred credentials",
 test("the home page never shows an empty education section or a dead anchor", () => {
   const html = readFileSync(new URL("../dist/index.html", import.meta.url), "utf8");
   assert.equal(html.includes('id="education"'), education.length > 0);
-  assert.equal(html.includes('href="#education"'), education.length > 0);
+  assert.equal(html.includes('href="#education"'), false);
   assert.equal((html.match(/<li\b[^>]*class="education-record"/g) || []).length, education.length);
   for (const entry of education) assert.ok(html.includes(`id="education-${entry.id}"`));
   const schools = [...html.matchAll(/<p\b[^>]*class="education-school"[^>]*>(.*?)<\/p>/gs)];

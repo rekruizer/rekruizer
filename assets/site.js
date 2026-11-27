@@ -767,8 +767,8 @@
     banner.setAttribute("role", "status");
     banner.innerHTML = [
       '<div class="cookie-notice__text">',
-      '  Мы используем Яндекс Метрику и cookies, чтобы понимать, как работает сайт и какие материалы полезны.',
-      '  <a href="/documents/privacy/">Политика конфиденциальности</a>',
+      '  Сайт использует cookies для работы и Яндекс Метрику для анализа посещаемости. Подробнее — в',
+      '  <a href="/documents/privacy/">Политике обработки персональных данных</a>.',
       '</div>',
       '<button class="cookie-notice__button" type="button">Понятно</button>'
     ].join("");

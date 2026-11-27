@@ -39,7 +39,6 @@ const faq = [
         </div>
         <div class="hero-actions">
           <a class="button primary" href={booking.url} data-goal="online_booking_click">Онлайн-запись</a>
-          {education.length > 0 && <a class="education-link" href="#education">Образование<svg viewBox="0 0 16 16" width="16" height="16" fill="none" aria-hidden="true"><path d="M8 3v10m-4-4 4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" /></svg></a>}
         </div>
       </div>
       <aside class="hero-side" id="about">
@@ -67,35 +66,3 @@ const faq = [
     <Footer />
   </main>
 </BaseLayout>
-
-<style is:global>
-  .education-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    min-height: 48px;
-    padding: 10px 2px;
-    color: var(--muted);
-    font-size: var(--font-small);
-    text-underline-offset: 5px;
-    text-decoration-thickness: 1px;
-    transition: color 160ms ease;
-  }
-
-  .education-link:hover {
-    color: var(--text);
-    text-decoration-line: underline;
-  }
-
-  .education-link:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 5px;
-    border-radius: 4px;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .education-link {
-      transition: none;
-    }
-  }
-</style>
